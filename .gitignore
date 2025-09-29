@@ -1,0 +1,19 @@
+.DS_Store
+
+# Python virtual environments
+.venv/
+.venv312/
+
+# Python caches
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+
+# Local environment files
+.env
+
+# Notebook and tooling temp files
+.ipynb_checkpoints/
+
