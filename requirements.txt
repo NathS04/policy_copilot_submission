@@ -1,0 +1,9 @@
+# Lightweight core for offline BM25 + evaluation + plotting
+rank-bm25
+numpy
+pandas
+matplotlib
+tqdm
+python-dotenv
+pydantic
+# rich  # optional
