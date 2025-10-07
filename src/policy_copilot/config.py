@@ -32,3 +32,20 @@ def _bool_from_cfg(key: str, default: str = "true") -> bool:
 
 
 class Settings(BaseModel):
+    # API keys
+    OPENAI_API_KEY: str | None = os.getenv("OPENAI_API_KEY")
+    ANTHROPIC_API_KEY: str | None = os.getenv("ANTHROPIC_API_KEY")
+
+    # paths
+    DATA_DIR: Path = Path("data")
+    RAW_CORPUS_DIR: Path = Path("data/corpus/raw")
+    UPLOADS_DIR: Path = Path("data/corpus/raw/uploads")
+    CORPUS_DIR: Path = Path("data/corpus/processed")
+    PROCESSED_DATA_DIR: Path = Path("data/corpus/processed")
+    CORPUS_JSONL: Path = Path("data/corpus/processed/paragraphs.jsonl")
+    INDEX_DIR: Path = Path("data/corpus/processed/index")
+    MANIFEST_PATH: Path = Path("data/corpus/manifests/corpus_manifest.csv")
+    GOLDEN_SET_PATH: Path = Path("eval/golden_set/golden_set.csv")
+
+    # embedding model
+    EMBEDDING_MODEL: str = "sentence-transformers/all-MiniLM-L6-v2"
