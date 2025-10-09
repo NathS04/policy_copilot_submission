@@ -66,3 +66,20 @@ class Settings(BaseModel):
     ABSTAIN_THRESHOLD: float = float(_json_cfg.get("abstain_threshold", os.getenv("ABSTAIN_THRESHOLD", "0.30")))
     MIN_SUPPORT_RATE: float = float(_json_cfg.get("min_support_rate", os.getenv("MIN_SUPPORT_RATE", "0.80")))
     ENABLE_LLM_VERIFY: bool = _bool_from_cfg("enable_llm_verify", "false")
+    ENABLE_LLM_CONTRADICTIONS: bool = _bool_from_cfg("enable_llm_contradictions", "false")
+    CONTRADICTION_POLICY: str = _json_cfg.get("contradiction_policy", os.getenv("CONTRADICTION_POLICY", "surface"))
+
+    # run tracking
+    RUN_NAME: str = _json_cfg.get("run_name", os.getenv("RUN_NAME", datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")))
+    OUTPUT_DIR: str = ""  # computed below
+
+    def get_output_dir(self, run_name: str | None = None) -> Path:
+        name = run_name or self.RUN_NAME
+        return Path("results/runs") / name
+
+    def to_dict(self) -> dict:
+        """Serialisable snapshot of effective config (no secrets)."""
+        return {
+            "provider": self.PROVIDER,
+            "model": self.LLM_MODEL,
+            "temperature": self.TEMPERATURE,
