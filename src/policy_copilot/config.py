@@ -83,3 +83,21 @@ class Settings(BaseModel):
             "provider": self.PROVIDER,
             "model": self.LLM_MODEL,
             "temperature": self.TEMPERATURE,
+            "max_tokens": self.MAX_TOKENS,
+            "top_k": self.TOP_K,
+            "seed": self.SEED,
+            "enable_llm": self.ENABLE_LLM,
+            "embedding_model": self.EMBEDDING_MODEL,
+            "run_name": self.RUN_NAME,
+            "retrieve_k_candidates": self.RETRIEVE_K_CANDIDATES,
+            "rerank_k_final": self.RERANK_K_FINAL,
+            "rerank_model": self.RERANK_MODEL,
+            "abstain_threshold": self.ABSTAIN_THRESHOLD,
+            "min_support_rate": self.MIN_SUPPORT_RATE,
+            "enable_llm_verify": self.ENABLE_LLM_VERIFY,
+            "enable_llm_contradictions": self.ENABLE_LLM_CONTRADICTIONS,
+            "contradiction_policy": self.CONTRADICTION_POLICY,
+        }
+
+
+settings = Settings()
