@@ -4,3 +4,6 @@ import sys
 def setup_logging(name: str = "policy_copilot"):
     logger = logging.getLogger(name)
     logger.setLevel(logging.INFO)
+    
+    handler = logging.StreamHandler(sys.stdout)
+    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
