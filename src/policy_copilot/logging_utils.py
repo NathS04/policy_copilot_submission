@@ -7,3 +7,6 @@ def setup_logging(name: str = "policy_copilot"):
     
     handler = logging.StreamHandler(sys.stdout)
     formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    handler.setFormatter(formatter)
+    
+    if not logger.handlers:
