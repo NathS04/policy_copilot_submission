@@ -10,3 +10,6 @@ def setup_logging(name: str = "policy_copilot"):
     handler.setFormatter(formatter)
     
     if not logger.handlers:
+        logger.addHandler(handler)
+        
+    return logger
