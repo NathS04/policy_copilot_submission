@@ -14,3 +14,7 @@ def normalize_whitespace(text: str) -> str:
 def fix_hyphenation(text: str) -> str:
     """
     Joins hyphenated words at line breaks (e.g., 'inter-\nnal' -> 'internal').
+    """
+    return re.sub(r'(\w+)-\n(\w+)', r'\1\2', text)
+
+def extract_text_from_pdf(pdf_path: str) -> List[Dict]:
