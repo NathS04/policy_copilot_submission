@@ -18,3 +18,7 @@ def fix_hyphenation(text: str) -> str:
     return re.sub(r'(\w+)-\n(\w+)', r'\1\2', text)
 
 def extract_text_from_pdf(pdf_path: str) -> List[Dict]:
+    """
+    Extracts text from a PDF file page by page.
+    Returns: List[Dict] with 'page' (1-based) and 'text'.
+    """
