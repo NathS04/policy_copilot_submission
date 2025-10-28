@@ -22,3 +22,7 @@ def extract_text_from_pdf(pdf_path: str) -> List[Dict]:
     Extracts text from a PDF file page by page.
     Returns: List[Dict] with 'page' (1-based) and 'text'.
     """
+    results = []
+    try:
+        reader = pypdf.PdfReader(pdf_path)
+        for i, page in enumerate(reader.pages):
