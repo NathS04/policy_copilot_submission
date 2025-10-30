@@ -26,3 +26,7 @@ def extract_text_from_pdf(pdf_path: str) -> List[Dict]:
     try:
         reader = pypdf.PdfReader(pdf_path)
         for i, page in enumerate(reader.pages):
+            text = page.extract_text()
+            if text:
+                # Basic cleanup before further processing
+                # We fix hyphenation first (as newlines matter there)
