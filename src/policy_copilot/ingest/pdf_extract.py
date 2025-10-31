@@ -30,3 +30,7 @@ def extract_text_from_pdf(pdf_path: str) -> List[Dict]:
             if text:
                 # Basic cleanup before further processing
                 # We fix hyphenation first (as newlines matter there)
+                # But pypdf might not give perfect newlines.
+                # Heuristic: replace hyphen followed by space/newline with nothing if it looks like a word break?
+                # Actually, pypdf often processes layout. Let's try a simple approach first.
+                clean_text = text.replace('\x00', '') # Remove null bytes
