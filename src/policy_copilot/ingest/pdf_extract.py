@@ -34,3 +34,12 @@ def extract_text_from_pdf(pdf_path: str) -> List[Dict]:
                 # Heuristic: replace hyphen followed by space/newline with nothing if it looks like a word break?
                 # Actually, pypdf often processes layout. Let's try a simple approach first.
                 clean_text = text.replace('\x00', '') # Remove null bytes
+                results.append({
+                    "page": i + 1,
+                    "text": clean_text
+                })
+    except Exception as e:
+        logger.error(f"Error reading PDF {pdf_path}: {e}")
+        return []
+        
+    return results
