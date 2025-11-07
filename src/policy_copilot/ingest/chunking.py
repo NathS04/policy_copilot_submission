@@ -14,3 +14,11 @@ def clean_paragraph(text: str) -> str:
 
 
 def _split_large_chunk(text: str, max_chars: int = 400) -> List[str]:
+    """Split a large chunk on sentence boundaries.
+
+    Tries to keep each resulting piece <= max_chars while splitting at
+    sentence-ending punctuation (. ! ?) followed by a space.
+    """
+    if len(text) <= max_chars:
+        return [text]
+
