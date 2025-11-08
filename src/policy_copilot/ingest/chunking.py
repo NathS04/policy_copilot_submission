@@ -22,3 +22,11 @@ def _split_large_chunk(text: str, max_chars: int = 400) -> List[str]:
     if len(text) <= max_chars:
         return [text]
 
+    # Sentence-split regex: look for '. ', '! ', '? ' as split points
+    sentences = re.split(r'(?<=[.!?])\s+', text)
+    pieces: List[str] = []
+    current = ""
+
+    for sent in sentences:
+        if current and len(current) + len(sent) + 1 > max_chars:
+            pieces.append(current.strip())
