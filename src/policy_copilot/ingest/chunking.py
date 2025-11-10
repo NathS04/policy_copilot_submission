@@ -30,3 +30,11 @@ def _split_large_chunk(text: str, max_chars: int = 400) -> List[str]:
     for sent in sentences:
         if current and len(current) + len(sent) + 1 > max_chars:
             pieces.append(current.strip())
+            current = sent
+        else:
+            current = f"{current} {sent}".strip() if current else sent
+
+    if current.strip():
+        pieces.append(current.strip())
+
+    return pieces
