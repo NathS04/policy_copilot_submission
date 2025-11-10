@@ -1,0 +1,96 @@
+from typing import List, Dict
+import os
+from policy_copilot.config import settings
+from policy_copilot.logging_utils import setup_logging
+
+logger = setup_logging()
+
+class Retriever:
+    def __init__(self, index_dir: str = settings.INDEX_DIR, backend: str = "dense"):
+        self.loaded = False
+        self.dense_index = None
+        self.bm25_retriever = None
+
+        # Determine requested backend (env override takes priority)
+        env_backend = os.getenv("POLICY_COPILOT_BACKEND")
+        if env_backend:
+            logger.info(f"Retriever: Overriding backend to {env_backend} from environment.")
+            requested = env_backend
+        else:
+            requested = backend
+
+        self.backend_requested = requested
+        self.backend_used = requested  # will be mutated on fallback
+
+        if requested == "dense":
+            try:
+                from policy_copilot.index.faiss_index import FaissIndex
+                self.dense_index = FaissIndex()
+                self.dense_index.load(index_dir)
+                self.loaded = True
+                self.backend_used = "dense"
+            except ImportError:
+                logger.warning("Dense backend requested but dependencies missing. Falling back to BM25.")
+                self.backend_used = "bm25"
+            except Exception as e:
+                logger.warning(f"Could not load FAISS index from {index_dir}: {e}. Falling back to BM25.")
+                self.backend_used = "bm25"
+
+        if self.backend_used == "bm25":
+            self.loaded = self._init_bm25_backend()
+
+    # Keep .backend as alias for backward compat (used throughout codebase)
+    @property
+    def backend(self):
+        return self.backend_used
+
+    def _init_bm25_backend(self) -> bool:
+        """Initialise BM25 backend if not already ready."""
+        if self.bm25_retriever is not None and self.bm25_retriever.is_ready:
+            return True
+        try:
+            from policy_copilot.retrieve.bm25_retriever import BM25Retriever
+            self.bm25_retriever = BM25Retriever()
+            return self.bm25_retriever.is_ready
+        except Exception as e:
+            logger.error(f"Failed to initialize BM25 backend: {e}")
+            self.bm25_retriever = None
+            return False
+
+    def retrieve(self, query: str, k: int = 5) -> List[Dict]:
+        if not self.loaded:
+            logger.error("Retriever not loaded.")
+            return []
+
+        if self.backend_used == "bm25" and self.bm25_retriever:
+            return self.bm25_retriever.retrieve(query, k=k)
+
+        from policy_copilot.index.embeddings import embed_texts
+
+        try:
+            query_vec = embed_texts([query])[0]
+            distances, _, metas = self.dense_index.search(query_vec, k)
+        except Exception as e:
+            logger.error(f"Dense retrieval failed: {e}")
+            logger.warning("Attempting runtime fallback to BM25 retriever.")
+            if self._init_bm25_backend():
+                self.backend_used = "bm25"
+                self.loaded = True
+                return self.bm25_retriever.retrieve(query, k=k)
+            return []
+
+        results = []
+        for dist, meta in zip(distances[0], metas):
+            if meta:
+                similarity = 1.0 / (1.0 + float(dist))
+                results.append({
+                    "score": similarity,
+                    "dist_l2": float(dist),
+                    "paragraph_id": meta.get("paragraph_id"),
+                    "doc_id": meta.get("doc_id"),
+                    "page": meta.get("page"),
+                    "text": meta.get("text"),
+                    "source_file": meta.get("source_file"),
+                    "backend": "dense"
+                })
+        return results
