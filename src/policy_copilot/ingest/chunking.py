@@ -38,3 +38,11 @@ def _split_large_chunk(text: str, max_chars: int = 400) -> List[str]:
         pieces.append(current.strip())
 
     return pieces
+
+
+def chunk_text_to_paragraphs(page_text: str) -> List[str]:
+    """
+    Splits page text into paragraphs.
+    Heuristic: Double newlines usually mean new paragraph in raw extraction.
+    Large chunks are further split on sentence boundaries (~400 chars).
+    """
