@@ -46,3 +46,11 @@ def chunk_text_to_paragraphs(page_text: str) -> List[str]:
     Heuristic: Double newlines usually mean new paragraph in raw extraction.
     Large chunks are further split on sentence boundaries (~400 chars).
     """
+    # Normalize line endings
+    text = page_text.replace('\r\n', '\n').replace('\r', '\n')
+
+    # Split by double newline (common visual paragraph break)
+    raw_blocks = text.split('\n\n')
+    paragraphs = []
+
+    for block in raw_blocks:
