@@ -54,3 +54,15 @@ def chunk_text_to_paragraphs(page_text: str) -> List[str]:
     paragraphs = []
 
     for block in raw_blocks:
+        # Join inner lines of the block
+        joined = block.replace('\n', ' ')
+        cleaned = clean_paragraph(joined)
+
+        # Filter out empty or very short noise (e.g. page numbers)
+        if len(cleaned) > 20:
+            # Sub-split large chunks on sentence boundaries
+            for piece in _split_large_chunk(cleaned, max_chars=400):
+                if len(piece) > 20:
+                    paragraphs.append(piece)
+
+    return paragraphs
