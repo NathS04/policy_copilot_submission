@@ -10,3 +10,7 @@ def test_paragraph_id_determinism():
     
     id1 = generate_paragraph_id(doc_id, page, idx, content)
     id2 = generate_paragraph_id(doc_id, page, idx, content)
+    
+    assert id1 == id2
+    assert "test_doc::p0001::i0000::" in id1
+
