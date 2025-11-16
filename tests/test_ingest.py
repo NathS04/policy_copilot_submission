@@ -6,3 +6,7 @@ def test_paragraph_id_determinism():
     doc_id = "test_doc"
     page = 1
     idx = 0
+    content = "This is a test paragraph."
+    
+    id1 = generate_paragraph_id(doc_id, page, idx, content)
+    id2 = generate_paragraph_id(doc_id, page, idx, content)
