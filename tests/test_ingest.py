@@ -14,3 +14,7 @@ def test_paragraph_id_determinism():
     assert id1 == id2
     assert "test_doc::p0001::i0000::" in id1
 
+def test_paragraph_id_changes_with_content():
+    """Test that different content produces different IDs."""
+    id1 = generate_paragraph_id("doc", 1, 0, "Content A")
+    id2 = generate_paragraph_id("doc", 1, 0, "Content B")
