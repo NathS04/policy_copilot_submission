@@ -18,3 +18,7 @@ def test_paragraph_id_changes_with_content():
     """Test that different content produces different IDs."""
     id1 = generate_paragraph_id("doc", 1, 0, "Content A")
     id2 = generate_paragraph_id("doc", 1, 0, "Content B")
+    assert id1 != id2
+
+def test_clean_paragraph():
+    """Test whitespace normalization and hyphen fixing."""
