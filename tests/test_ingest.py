@@ -22,3 +22,11 @@ def test_paragraph_id_changes_with_content():
 
 def test_clean_paragraph():
     """Test whitespace normalization and hyphen fixing."""
+    # Test valid hyphenation fix
+    raw = "This is an example of inter- nal hyphenation."
+    cleaned = clean_paragraph(raw)
+    assert "internal" in cleaned
+    
+    # Test whitespace collapse
+    raw = "This   has    too   many spaces."
+    assert clean_paragraph(raw) == "This has too many spaces."
