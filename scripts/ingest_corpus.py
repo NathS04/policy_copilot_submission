@@ -42,3 +42,25 @@ def update_manifest(manifest_path: Path, doc_info: dict):
         "doc_id": doc_info['doc_id'],
         "source_file": doc_info['source_file'],
         "sha256": doc_info['sha256'],
+        "pages": doc_info['pages'],
+        "added_utc": doc_info['added_utc'],
+        "notes": "",
+        "license_ok": ""
+    }
+    
+    if existing_idx is not None:
+        # Update existing (keep notes/license if present)
+        current = rows[existing_idx]
+        new_row['notes'] = current.get('notes', '')
+        new_row['license_ok'] = current.get('license_ok', '')
+        rows[existing_idx] = new_row
+    else:
+        rows.append(new_row)
+        
+    with open(manifest_path, 'w', newline='', encoding='utf-8') as f:
+        fieldnames = ["doc_id", "source_file", "sha256", "pages", "added_utc", "notes", "license_ok"]
+        writer = csv.DictWriter(f, fieldnames=fieldnames)
+        writer.writeheader()
+        writer.writerows(rows)
+
+def ingest_pdfs(
