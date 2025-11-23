@@ -64,3 +64,25 @@ def update_manifest(manifest_path: Path, doc_info: dict):
         writer.writerows(rows)
 
 def ingest_pdfs(
+    pdf_paths: list,
+    output_dir: Path,
+    manifest_path: Path,
+    append: bool = False,
+) -> int:
+    """Ingest a list of PDF files into paragraphs.jsonl + paragraphs.csv.
+
+    Args:
+        pdf_paths: List of Path objects pointing to PDF files.
+        output_dir: Directory for processed output (paragraphs.jsonl etc.).
+        manifest_path: Path to the corpus manifest CSV.
+        append: If True, append new paragraphs to existing files instead of
+                overwriting. Use this when adding documents via the UI.
+
+    Returns:
+        Number of paragraphs produced from this batch.
+    """
+    output_dir.mkdir(parents=True, exist_ok=True)
+    jsonl_out = output_dir / "paragraphs.jsonl"
+    csv_out = output_dir / "paragraphs.csv"
+    ensure_manifest(manifest_path)
+
