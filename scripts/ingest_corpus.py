@@ -86,3 +86,25 @@ def ingest_pdfs(
     csv_out = output_dir / "paragraphs.csv"
     ensure_manifest(manifest_path)
 
+    if not pdf_paths:
+        logger.warning("No PDF files provided.")
+        return 0
+
+    logger.info(f"Ingesting {len(pdf_paths)} PDF(s)...")
+
+    all_paragraphs = []
+
+    for pdf_file in tqdm(pdf_paths, desc="Ingesting PDFs"):
+        pdf_file = Path(pdf_file)
+        doc_id = pdf_file.stem.lower().replace(" ", "_")
+        file_sha = get_file_sha256(pdf_file)
+
+        try:
+            pages = extract_text_from_pdf(str(pdf_file))
+            num_pages = len(pages)
+
+            update_manifest(manifest_path, {
+                "doc_id": doc_id,
+                "source_file": pdf_file.name,
+                "sha256": file_sha,
+                "pages": num_pages,
