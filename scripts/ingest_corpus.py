@@ -108,3 +108,25 @@ def ingest_pdfs(
                 "source_file": pdf_file.name,
                 "sha256": file_sha,
                 "pages": num_pages,
+                "added_utc": datetime.now(timezone.utc).isoformat()
+            })
+
+            for page in pages:
+                paras = chunk_text_to_paragraphs(page['text'])
+                for idx, text in enumerate(paras):
+                    para_id = generate_paragraph_id(doc_id, page['page'], idx, text)
+                    all_paragraphs.append({
+                        "doc_id": doc_id,
+                        "source_file": pdf_file.name,
+                        "page": page['page'],
+                        "paragraph_index": idx,
+                        "paragraph_id": para_id,
+                        "text": text,
+                        "char_len": len(text)
+                    })
+
+        except Exception as e:
+            logger.error(f"Failed to process {pdf_file.name}: {e}")
+            continue
+
+    # -- Write outputs --------------------------------------------------------
