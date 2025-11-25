@@ -130,3 +130,25 @@ def ingest_pdfs(
             continue
 
     # -- Write outputs --------------------------------------------------------
+    write_mode = 'a' if append else 'w'
+
+    logger.info(f"Writing {len(all_paragraphs)} paragraphs to {jsonl_out} (mode={write_mode})...")
+    with open(jsonl_out, write_mode, encoding='utf-8') as f:
+        for p in all_paragraphs:
+            f.write(json.dumps(p) + '\n')
+
+    logger.info(f"Writing to {csv_out} (mode={write_mode})...")
+    if append and csv_out.exists():
+        # Append rows without re-writing the header
+        with open(csv_out, 'a', newline='', encoding='utf-8') as f:
+            if all_paragraphs:
+                writer = csv.DictWriter(f, fieldnames=all_paragraphs[0].keys())
+                writer.writerows(all_paragraphs)
+    else:
+        with open(csv_out, 'w', newline='', encoding='utf-8') as f:
+            if all_paragraphs:
+                writer = csv.DictWriter(f, fieldnames=all_paragraphs[0].keys())
+                writer.writeheader()
+                writer.writerows(all_paragraphs)
+
+    logger.info("Ingestion complete.")
