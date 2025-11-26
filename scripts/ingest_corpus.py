@@ -152,3 +152,26 @@ def ingest_pdfs(
                 writer.writerows(all_paragraphs)
 
     logger.info("Ingestion complete.")
+    return len(all_paragraphs)
+
+
+def main():
+    parser = argparse.ArgumentParser(description="Ingest PDFs into structured JSONL.")
+    parser.add_argument("--input_dir", default="data/corpus/raw", help="Directory containing raw PDFs")
+    parser.add_argument("--output_dir", default="data/corpus/processed", help="Output directory")
+    parser.add_argument("--manifest_path", default="data/corpus/manifests/corpus_manifest.csv", help="Manifest path")
+    args = parser.parse_args()
+
+    input_path = Path(args.input_dir)
+    pdf_files = list(input_path.glob("*.pdf"))
+
+    ingest_pdfs(
+        pdf_paths=pdf_files,
+        output_dir=Path(args.output_dir),
+        manifest_path=Path(args.manifest_path),
+        append=False,
+    )
+
+
+if __name__ == "__main__":
+    main()
