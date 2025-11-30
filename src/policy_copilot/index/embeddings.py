@@ -8,3 +8,8 @@ logger = setup_logging()
 _model_instance = None
 _sentence_transformer_cls = None
 
+def _try_import_sentence_transformers():
+    """Lazily import SentenceTransformer or raise friendly error."""
+    global _sentence_transformer_cls
+    if _sentence_transformer_cls:
+        return _sentence_transformer_cls
