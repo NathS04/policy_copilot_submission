@@ -13,3 +13,8 @@ def _try_import_sentence_transformers():
     global _sentence_transformer_cls
     if _sentence_transformer_cls:
         return _sentence_transformer_cls
+        
+    try:
+        from sentence_transformers import SentenceTransformer
+        _sentence_transformer_cls = SentenceTransformer
+        return _sentence_transformer_cls
