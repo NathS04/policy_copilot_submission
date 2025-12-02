@@ -18,3 +18,8 @@ def _try_import_sentence_transformers():
         from sentence_transformers import SentenceTransformer
         _sentence_transformer_cls = SentenceTransformer
         return _sentence_transformer_cls
+    except ImportError:
+        raise RuntimeError(
+            "sentence-transformers not installed. "
+            "Install with `pip install -e .[ml]` to use dense embeddings."
+        )
