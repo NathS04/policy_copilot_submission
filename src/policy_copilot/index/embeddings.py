@@ -23,3 +23,8 @@ def _try_import_sentence_transformers():
             "sentence-transformers not installed. "
             "Install with `pip install -e .[ml]` to use dense embeddings."
         )
+
+def get_embedding_model() -> Any:
+    """
+    Returns the singleton SentenceTransformer model.
+    """
