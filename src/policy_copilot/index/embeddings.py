@@ -28,3 +28,8 @@ def get_embedding_model() -> Any:
     """
     Returns the singleton SentenceTransformer model.
     """
+    global _model_instance
+    if _model_instance is None:
+        ST = _try_import_sentence_transformers()
+        logger.info(f"Loading embedding model: {settings.EMBEDDING_MODEL}")
+        _model_instance = ST(settings.EMBEDDING_MODEL)
