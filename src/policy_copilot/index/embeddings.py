@@ -33,3 +33,12 @@ def get_embedding_model() -> Any:
         ST = _try_import_sentence_transformers()
         logger.info(f"Loading embedding model: {settings.EMBEDDING_MODEL}")
         _model_instance = ST(settings.EMBEDDING_MODEL)
+    return _model_instance
+
+def embed_texts(texts: List[str]) -> np.ndarray:
+    """
+    Embeds a list of texts. Returns numpy array of shape (n, dim).
+    """
+    model = get_embedding_model()
+    embeddings = model.encode(texts, convert_to_numpy=True, show_progress_bar=True)
+    return embeddings
