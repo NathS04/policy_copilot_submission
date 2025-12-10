@@ -12,3 +12,10 @@ class FaissIndex:
         self.dimension = dimension
         self.index = faiss.IndexFlatL2(dimension)
         self.docstore: Dict[int, Dict] = {} # maps ID (int) -> paragraph meta
+    
+    def add(self, vectors: np.ndarray, metadata: List[Dict]):
+        """
+        Adds vectors and corresponding metadata to the index.
+        """
+        if len(vectors) != len(metadata):
+            raise ValueError("Number of vectors and metadata items must match.")
