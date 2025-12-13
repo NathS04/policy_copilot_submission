@@ -19,3 +19,10 @@ class FaissIndex:
         """
         if len(vectors) != len(metadata):
             raise ValueError("Number of vectors and metadata items must match.")
+        
+        start_id = self.index.ntotal
+        self.index.add(vectors)
+        
+        for i, meta in enumerate(metadata):
+            self.docstore[start_id + i] = meta
+            
