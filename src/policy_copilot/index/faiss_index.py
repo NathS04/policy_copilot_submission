@@ -26,3 +26,10 @@ class FaissIndex:
         for i, meta in enumerate(metadata):
             self.docstore[start_id + i] = meta
             
+    def search(self, query_vector: np.ndarray, k: int = 5) -> Tuple[np.ndarray, np.ndarray, List[Dict]]:
+        """
+        Searches the index. returns (distances, indices, metadata_list)
+        """
+        distances, indices = self.index.search(query_vector.reshape(1, -1), k)
+        
+        results_meta = []
