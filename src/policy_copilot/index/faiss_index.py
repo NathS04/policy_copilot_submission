@@ -33,3 +33,10 @@ class FaissIndex:
         distances, indices = self.index.search(query_vector.reshape(1, -1), k)
         
         results_meta = []
+        for idx in indices[0]:
+            if idx != -1:
+                results_meta.append(self.docstore.get(idx, {}))
+            else:
+                results_meta.append({})
+                
+        return distances, indices, results_meta
