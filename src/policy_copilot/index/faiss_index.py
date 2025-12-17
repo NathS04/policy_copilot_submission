@@ -40,3 +40,10 @@ class FaissIndex:
                 results_meta.append({})
                 
         return distances, indices, results_meta
+    
+    def save(self, path: Path):
+        path = Path(path)
+        path.mkdir(parents=True, exist_ok=True)
+        
+        # Save FAISS index
+        faiss.write_index(self.index, str(path / "faiss.index"))
