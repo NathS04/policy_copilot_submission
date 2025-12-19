@@ -47,3 +47,10 @@ class FaissIndex:
         
         # Save FAISS index
         faiss.write_index(self.index, str(path / "faiss.index"))
+        
+        # Save docstore
+        with open(path / "docstore.jsonl", "w", encoding="utf-8") as f:
+            for idx, meta in self.docstore.items():
+                entry = {"faiss_id": idx, "meta": meta}
+                f.write(json.dumps(entry) + "\n")
+                
