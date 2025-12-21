@@ -54,3 +54,10 @@ class FaissIndex:
                 entry = {"faiss_id": idx, "meta": meta}
                 f.write(json.dumps(entry) + "\n")
                 
+        # Save meta
+        with open(path / "index_meta.json", "w", encoding="utf-8") as f:
+            json.dump({
+                "dimension": self.dimension,
+                "count": self.index.ntotal
+            }, f)
+            
