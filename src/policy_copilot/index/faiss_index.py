@@ -61,3 +61,17 @@ class FaissIndex:
                 "count": self.index.ntotal
             }, f)
             
+    def load(self, path: Path):
+        path = Path(path)
+        
+        # Load FAISS
+        self.index = faiss.read_index(str(path / "faiss.index"))
+        
+        # Load docstore
+        self.docstore = {}
+        with open(path / "docstore.jsonl", "r", encoding="utf-8") as f:
+            for line in f:
+                entry = json.loads(line)
+                self.docstore[entry["faiss_id"]] = entry["meta"]
+                
+        logger.info(f"Loaded index with {self.index.ntotal} vectors.")
