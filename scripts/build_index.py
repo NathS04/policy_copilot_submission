@@ -10,3 +10,15 @@ logger = setup_logging()
 
 
 def build_index(input_path: Path, index_dir: Path) -> None:
+    """Read paragraphs JSONL, embed texts, build FAISS index, and save.
+
+    Args:
+        input_path: Path to the paragraphs.jsonl file.
+        index_dir:  Directory to write the FAISS index artefacts into.
+
+    Raises:
+        SystemExit: If ML deps are missing or the input file is empty/absent.
+    """
+    # Fail fast: check ML deps BEFORE reading corpus
+    try:
+        from policy_copilot.index.embeddings import embed_texts
