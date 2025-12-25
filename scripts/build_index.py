@@ -22,3 +22,15 @@ def build_index(input_path: Path, index_dir: Path) -> None:
     # Fail fast: check ML deps BEFORE reading corpus
     try:
         from policy_copilot.index.embeddings import embed_texts
+        from policy_copilot.index.faiss_index import FaissIndex
+    except ImportError:
+        logger.error("Dense indexing requires extras: pip install -e '.[ml]'")
+        raise
+
+    input_path = Path(input_path)
+    if not input_path.exists():
+        raise FileNotFoundError(f"Input file not found: {input_path}")
+
+    logger.info("Reading corpus...")
+    paragraphs = []
+    texts = []
