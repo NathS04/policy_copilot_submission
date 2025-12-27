@@ -34,3 +34,15 @@ def build_index(input_path: Path, index_dir: Path) -> None:
     logger.info("Reading corpus...")
     paragraphs = []
     texts = []
+    with open(input_path, 'r', encoding='utf-8') as f:
+        for line in f:
+            p = json.loads(line)
+            paragraphs.append(p)
+            texts.append(p['text'])
+
+    if not texts:
+        raise ValueError("No paragraphs found in corpus JSONL.")
+
+    logger.info(f"Loaded {len(texts)} paragraphs.")
+
+    logger.info("Generating embeddings (this may take a while)...")
