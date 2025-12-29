@@ -46,3 +46,15 @@ def build_index(input_path: Path, index_dir: Path) -> None:
     logger.info(f"Loaded {len(texts)} paragraphs.")
 
     logger.info("Generating embeddings (this may take a while)...")
+    embeddings = embed_texts(texts)
+
+    logger.info("Building FAISS index...")
+    index = FaissIndex(dimension=embeddings.shape[1])
+    index.add(embeddings, paragraphs)
+
+    logger.info(f"Saving index to {index_dir}...")
+    index.save(index_dir)
+    logger.info("Done.")
+
+
+def main():
