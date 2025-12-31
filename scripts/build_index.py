@@ -58,3 +58,17 @@ def build_index(input_path: Path, index_dir: Path) -> None:
 
 
 def main():
+    parser = argparse.ArgumentParser(description="Build FAISS index from processed corpus.")
+    parser.add_argument("--input_path", default="data/corpus/processed/paragraphs.jsonl", help="Input JSONL path")
+    parser.add_argument("--index_dir", default=settings.INDEX_DIR, help="Directory to save index")
+    args = parser.parse_args()
+
+    try:
+        build_index(Path(args.input_path), Path(args.index_dir))
+    except (ImportError, FileNotFoundError, ValueError) as exc:
+        logger.error(str(exc))
+        sys.exit(1)
+
+
+if __name__ == "__main__":
+    main()
