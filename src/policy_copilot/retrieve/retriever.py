@@ -18,3 +18,13 @@ class Retriever:
             requested = env_backend
         else:
             requested = backend
+
+        self.backend_requested = requested
+        self.backend_used = requested  # will be mutated on fallback
+
+        if requested == "dense":
+            try:
+                from policy_copilot.index.faiss_index import FaissIndex
+                self.dense_index = FaissIndex()
+                self.dense_index.load(index_dir)
+                self.loaded = True
