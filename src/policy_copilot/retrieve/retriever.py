@@ -28,3 +28,13 @@ class Retriever:
                 self.dense_index = FaissIndex()
                 self.dense_index.load(index_dir)
                 self.loaded = True
+                self.backend_used = "dense"
+            except ImportError:
+                logger.warning("Dense backend requested but dependencies missing. Falling back to BM25.")
+                self.backend_used = "bm25"
+            except Exception as e:
+                logger.warning(f"Could not load FAISS index from {index_dir}: {e}. Falling back to BM25.")
+                self.backend_used = "bm25"
+
+        if self.backend_used == "bm25":
+            self.loaded = self._init_bm25_backend()
