@@ -38,3 +38,13 @@ class Retriever:
 
         if self.backend_used == "bm25":
             self.loaded = self._init_bm25_backend()
+
+    # Keep .backend as alias for backward compat (used throughout codebase)
+    @property
+    def backend(self):
+        return self.backend_used
+
+    def _init_bm25_backend(self) -> bool:
+        """Initialise BM25 backend if not already ready."""
+        if self.bm25_retriever is not None and self.bm25_retriever.is_ready:
+            return True
