@@ -48,3 +48,13 @@ class Retriever:
         """Initialise BM25 backend if not already ready."""
         if self.bm25_retriever is not None and self.bm25_retriever.is_ready:
             return True
+        try:
+            from policy_copilot.retrieve.bm25_retriever import BM25Retriever
+            self.bm25_retriever = BM25Retriever()
+            return self.bm25_retriever.is_ready
+        except Exception as e:
+            logger.error(f"Failed to initialize BM25 backend: {e}")
+            self.bm25_retriever = None
+            return False
+
+    def retrieve(self, query: str, k: int = 5) -> List[Dict]:
