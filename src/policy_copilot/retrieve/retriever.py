@@ -68,3 +68,13 @@ class Retriever:
         from policy_copilot.index.embeddings import embed_texts
 
         try:
+            query_vec = embed_texts([query])[0]
+            distances, _, metas = self.dense_index.search(query_vec, k)
+        except Exception as e:
+            logger.error(f"Dense retrieval failed: {e}")
+            logger.warning("Attempting runtime fallback to BM25 retriever.")
+            if self._init_bm25_backend():
+                self.backend_used = "bm25"
+                self.loaded = True
+                return self.bm25_retriever.retrieve(query, k=k)
+            return []
