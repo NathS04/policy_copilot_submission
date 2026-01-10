@@ -58,3 +58,13 @@ class Retriever:
             return False
 
     def retrieve(self, query: str, k: int = 5) -> List[Dict]:
+        if not self.loaded:
+            logger.error("Retriever not loaded.")
+            return []
+
+        if self.backend_used == "bm25" and self.bm25_retriever:
+            return self.bm25_retriever.retrieve(query, k=k)
+
+        from policy_copilot.index.embeddings import embed_texts
+
+        try:
