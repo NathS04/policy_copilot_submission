@@ -78,3 +78,19 @@ class Retriever:
                 self.loaded = True
                 return self.bm25_retriever.retrieve(query, k=k)
             return []
+
+        results = []
+        for dist, meta in zip(distances[0], metas):
+            if meta:
+                similarity = 1.0 / (1.0 + float(dist))
+                results.append({
+                    "score": similarity,
+                    "dist_l2": float(dist),
+                    "paragraph_id": meta.get("paragraph_id"),
+                    "doc_id": meta.get("doc_id"),
+                    "page": meta.get("page"),
+                    "text": meta.get("text"),
+                    "source_file": meta.get("source_file"),
+                    "backend": "dense"
+                })
+        return results
