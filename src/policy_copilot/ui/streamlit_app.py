@@ -22,3 +22,15 @@ if str(_PROJECT_ROOT) not in sys.path:
 
 from policy_copilot.config import settings
 from policy_copilot.logging_utils import setup_logging
+
+logger = setup_logging()
+
+# ---------------------------------------------------------------------------
+# Helpers
+# ---------------------------------------------------------------------------
+
+_SAFE_FILENAME_RE = re.compile(r"[^\w\s\-.]", re.ASCII)
+
+
+def _sanitise_filename(name: str) -> str:
+    """Return a filesystem-safe version of *name* (no path traversal)."""
