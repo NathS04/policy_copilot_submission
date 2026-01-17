@@ -34,3 +34,15 @@ _SAFE_FILENAME_RE = re.compile(r"[^\w\s\-.]", re.ASCII)
 
 def _sanitise_filename(name: str) -> str:
     """Return a filesystem-safe version of *name* (no path traversal)."""
+    name = Path(name).name  # strip any directory parts
+    name = _SAFE_FILENAME_RE.sub("_", name)
+    return name or "uploaded.pdf"
+
+
+def _save_uploaded_files(uploaded_files) -> list[Path]:
+    """Persist Streamlit UploadedFile objects to UPLOADS_DIR and return paths."""
+    dest_dir = Path(settings.UPLOADS_DIR)
+    dest_dir.mkdir(parents=True, exist_ok=True)
+
+    saved: list[Path] = []
+    for uf in uploaded_files:
