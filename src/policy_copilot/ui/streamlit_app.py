@@ -46,3 +46,15 @@ def _save_uploaded_files(uploaded_files) -> list[Path]:
 
     saved: list[Path] = []
     for uf in uploaded_files:
+        safe_name = _sanitise_filename(uf.name)
+        target = dest_dir / safe_name
+        # Avoid silent overwrites – add a numeric suffix if needed
+        counter = 1
+        stem, suffix = target.stem, target.suffix
+        while target.exists():
+            target = dest_dir / f"{stem}_{counter}{suffix}"
+            counter += 1
+        target.write_bytes(uf.getbuffer())
+        saved.append(target)
+    return saved
+
