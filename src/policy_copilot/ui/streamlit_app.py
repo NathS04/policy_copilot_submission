@@ -58,3 +58,15 @@ def _save_uploaded_files(uploaded_files) -> list[Path]:
         saved.append(target)
     return saved
 
+
+# ---------------------------------------------------------------------------
+# Page config
+# ---------------------------------------------------------------------------
+st.set_page_config(page_title="Policy Copilot", page_icon="📜", layout="wide")
+
+# ---------------------------------------------------------------------------
+# Sidebar – Upload PDFs
+# ---------------------------------------------------------------------------
+with st.sidebar:
+    st.header("📂 Add Documents")
+    uploaded = st.file_uploader(
