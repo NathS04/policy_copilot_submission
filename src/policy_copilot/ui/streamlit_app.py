@@ -70,3 +70,15 @@ st.set_page_config(page_title="Policy Copilot", page_icon="📜", layout="wide")
 with st.sidebar:
     st.header("📂 Add Documents")
     uploaded = st.file_uploader(
+        "Upload one or more PDFs to add to the corpus.",
+        type=["pdf"],
+        accept_multiple_files=True,
+    )
+
+    process_btn = st.button(
+        "Process & Add to Corpus",
+        disabled=not uploaded,
+        use_container_width=True,
+    )
+
+    if process_btn and uploaded:
