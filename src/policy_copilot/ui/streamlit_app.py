@@ -82,3 +82,15 @@ with st.sidebar:
     )
 
     if process_btn and uploaded:
+        with st.spinner("Saving files & ingesting…"):
+            try:
+                saved_paths = _save_uploaded_files(uploaded)
+
+                # Lazy-import so the app still starts even if scripts/ isn't
+                # on the path yet (we added _PROJECT_ROOT above).
+                sys.path.insert(0, str(_PROJECT_ROOT / "scripts"))
+                from ingest_corpus import ingest_pdfs
+                from build_index import build_index
+
+                n = ingest_pdfs(
+                    pdf_paths=saved_paths,
