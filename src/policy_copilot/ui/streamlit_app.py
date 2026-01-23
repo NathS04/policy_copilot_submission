@@ -94,3 +94,15 @@ with st.sidebar:
 
                 n = ingest_pdfs(
                     pdf_paths=saved_paths,
+                    output_dir=Path(settings.CORPUS_DIR),
+                    manifest_path=Path(settings.MANIFEST_PATH),
+                    append=True,
+                )
+
+                build_index(
+                    input_path=Path(settings.CORPUS_JSONL),
+                    index_dir=Path(settings.INDEX_DIR),
+                )
+
+                # Invalidate any cached retriever so the next query picks
+                # up the new index.
