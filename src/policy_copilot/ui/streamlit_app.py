@@ -106,3 +106,15 @@ with st.sidebar:
 
                 # Invalidate any cached retriever so the next query picks
                 # up the new index.
+                st.cache_resource.clear()
+
+                st.success(f"✅ Added {n} paragraph(s) from {len(saved_paths)} PDF(s). You can now ask questions!")
+            except Exception:
+                logger.error(traceback.format_exc())
+                st.error("❌ Something went wrong during processing. Check the server logs for details.")
+
+    # Optional: show corpus stats
+    jsonl = Path(settings.CORPUS_JSONL)
+    if jsonl.exists():
+        count = sum(1 for _ in open(jsonl, encoding="utf-8"))
+        st.caption(f"Corpus: **{count}** paragraphs indexed")
