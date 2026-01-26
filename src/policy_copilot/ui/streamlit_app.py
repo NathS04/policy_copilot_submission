@@ -118,3 +118,15 @@ with st.sidebar:
     if jsonl.exists():
         count = sum(1 for _ in open(jsonl, encoding="utf-8"))
         st.caption(f"Corpus: **{count}** paragraphs indexed")
+
+# ---------------------------------------------------------------------------
+# Main area – Q&A
+# ---------------------------------------------------------------------------
+st.title("📜 Policy Copilot – Audit Mode")
+
+query = st.text_input("Enter your policy question:")
+
+if query:
+    st.write("Processing…")
+    # TODO: Connect to backend retriever + generator
+    st.info("Retrieve & Generate placeholder")
