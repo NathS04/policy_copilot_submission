@@ -130,3 +130,15 @@ if query:
     st.write("Processing…")
     # TODO: Connect to backend retriever + generator
     st.info("Retrieve & Generate placeholder")
+
+
+def main():
+    """Entry-point when invoked as `python -m policy_copilot.ui.streamlit_app`."""
+    # Streamlit re-executes the whole script on each interaction, so the
+    # module-level code above already handles everything.  This function
+    # exists only so `if __name__` works for convenience.
+    pass
+
+
+if __name__ == "__main__":
+    main()
