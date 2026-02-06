@@ -136,3 +136,49 @@
   judging with strict JSON prompts. Results cached to JSONL for reproducibility and cost control.
   Falls back to Tier-1 heuristics on error.
 
+### 3.7 Critic Mode
+- **Label Definitions (L1–L6)**: Normative/loaded language (L1), framing imbalance (L2),
+  unsupported claims (L3), internal contradictions (L4), false dilemma (L5), slippery slope (L6).
+- **Tier-1 Detection**: Lexicon-based heuristic using curated trigger lists and regex patterns.
+- **Tier-2 Detection**: LLM-based classification with strict JSON output format and JSONL caching.
+- **Evaluation Dataset**: 50 policy snippets (25 neutral, 25 manipulated) with ground-truth labels.
+  Every label appears ≥8 times in the manipulated set. Multi-label examples included.
+- **Metrics**: Per-label precision/recall/F1, macro-averaged F1, and exact match accuracy.
+
+### 3.8 Evaluation Methodology
+- **Golden Set**: 63 queries with dev/test splits (33 answerable, 20 unanswerable, 10 contradiction).
+  Answerable queries require gold_paragraph_ids; contradiction probes require ≥2 conflicting IDs.
+- **Human Rubric**: Groundedness (G0 binary, G1 support ratio, G2 citation correctness 0–2)
+  and usefulness (U1 clarity 1–5, U2 actionability 1–5). Two-rater setup with Cohen's kappa
+  for inter-rater agreement.
+- **Automated Metrics**: Abstention accuracy/precision/recall, citation precision/recall,
+  evidence recall@k, MRR, ungrounded claim rate.
+
+### 3.9 UI & Audit Report Export
+- Streamlit interface design.
+- Export functionality for audit trails.
+
+### 3.10 Validation & Testing
+- Unit tests for core logic.
+- Integration tests for the full pipeline.
+- Verification of reproducibility.
+
+## Chapter 4: Results, Evaluation and Discussion
+
+### 4.1 Setup
+- Final corpus statistics.
+- Cost/Time analysis of the evaluation run.
+- Golden set composition and split allocation.
+
+### 4.2 Baseline Comparison Results
+- Quantitative tables (B1 vs B2 vs B3).
+- `<!-- INSERT: results/figures/fig_baselines.png -->`
+- `<!-- INSERT: results/tables/run_summary.csv -->`
+
+### 4.3 Ablation Results
+- **No reranking** (`--no_rerank`): Does retrieval score ordering suffice?
+- **No claim verification** (`--no_verify`): Impact on ungrounded-claim rate.
+- **No contradiction detection** (`--no_contradictions`): Effect on contradictory-evidence handling.
+- Each ablation produces a separate run with `summary.json` and `metrics.csv` for comparison.
+- `<!-- INSERT: results/figures/fig_groundedness.png -->`
+- `<!-- INSERT: results/figures/fig_tradeoff.png -->`
