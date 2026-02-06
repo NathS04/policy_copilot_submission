@@ -90,3 +90,49 @@
 - Metrics: Precision/Recall for retrieval, Accuracy for abstention, Faithfulness scores.
 
 ### 2.6 Experimental Protocol
+- Hardware/Software setup.
+- Deterministic seed usage.
+- Caching strategies for API cost management.
+
+### 2.7 Ethical/Legal/Social/Professional Considerations
+- Copyright of corpus documents.
+- Bias in LLM outputs.
+- "Human in the loop" necessity for policy decisions.
+
+## Chapter 3: Implementation and Validation
+
+### 3.1 Implementation Overview
+- Tech stack: Python 3.10+, LangChain/LlamaIndex (or custom), FAISS, Streamlit.
+- Repository structure explanation.
+
+### 3.2 Ingestion & Normalisation
+- PDF text extraction challenges (layout analysis).
+- The stable paragraph ID system (critical for auditability).
+
+### 3.3 Indexing & Retrieval
+- Embedding model selection.
+- Indexing process/hyperparameters.
+
+### 3.4 Reranking
+- Cross-encoder (`cross-encoder/ms-marco-MiniLM-L-6-v2`) rescores (query, paragraph) pairs.
+- Retrieve 20 candidates from FAISS, rerank to top 5 for generation.
+- Graceful fallback to retrieval scores if cross-encoder fails.
+
+### 3.5 Evidence-Grounded Generation
+- B3 prompt requires per-sentence `[CITATION: paragraph_id]` inline citations.
+- Strict JSON schema enforcement with repair retry loop.
+- Answer text parsed to extract sentence-level claims and their cited paragraph IDs.
+
+### 3.6 Reliability Layer
+- **Abstention Logic**: `max(top-5 rerank scores) < threshold` triggers `INSUFFICIENT_EVIDENCE`.
+  Default threshold 0.30, configurable via CLI or config. Also computes `mean_top3_rerank`.
+- **Per-Claim Verification**: Each sentence checked against cited paragraph(s) using Jaccard
+  keyword overlap (threshold 0.10) plus numeric match bonus. If `support_rate < min_support_rate`,
+  system abstains; otherwise unsupported claims are removed from the final answer.
+- **Contradiction Handling**: Pairwise evidence comparison using negation/antonym pairs
+  (`must` vs `must not`, `allowed` vs `forbidden`) and numeric conflict detection.
+  Policy: `surface` (add note) or `abstain_on_high` (abstain on high-confidence conflicts).
+- **Tier-2 LLM Verification** (optional): LLM-based claim support checking and contradiction
+  judging with strict JSON prompts. Results cached to JSONL for reproducibility and cost control.
+  Falls back to Tier-1 heuristics on error.
+
