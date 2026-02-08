@@ -182,3 +182,50 @@
 - Each ablation produces a separate run with `summary.json` and `metrics.csv` for comparison.
 - `<!-- INSERT: results/figures/fig_groundedness.png -->`
 - `<!-- INSERT: results/figures/fig_tradeoff.png -->`
+
+### 4.4 Critic Mode Results
+- Per-label precision/recall/F1 table (L1–L6).
+- Macro F1 and exact match accuracy.
+- Comparison of Tier-1 (heuristic) vs Tier-2 (LLM) detection.
+- `<!-- INSERT: results/runs/critic_*/critic_summary.json -->`
+
+### 4.5 Human Evaluation Results
+- Groundedness scores (G0, G1, G2) distribution.
+- Usefulness scores (U1, U2) distribution.
+- Inter-rater agreement (Cohen's kappa on G0 and binned U1).
+- `<!-- INSERT: results/runs/*/human_eval_summary_test.json -->`
+
+### 4.6 Error Analysis
+- Taxonomy of remaining errors (e.g., "Missed Retrieval", "Reasoning Error").
+- Qualitative examples of success/failure.
+
+### 4.7 Discussion
+- Interpretation of results in context of RQs.
+- Trade-offs discovered (Speed vs Accuracy).
+
+### 4.8 Limitations
+- Domain specificity.
+- Dependence on proprietary LLM APIs.
+
+### 4.9 Conclusions
+- Summary of achievements.
+- Final verdict on hypothesis.
+
+### 4.10 Future Work
+- Multimodal support (Charts/Tables).
+- Fine-tuning open weights models to replace APIs.
+
+## References
+- Leeds Harvard style citations.
+
+## Appendix A: Self-Appraisal
+- Reflection on the project management.
+- Skills learned.
+- What I would do differently.
+
+## Appendix B: External Materials
+- **B.1**: List of third-party libraries.
+- **B.2**: Source document catalog.
+- **B.3**: Full prompt templates.
+- **B.4**: Golden set examples & marking rubrics.
+- **B.5**: Original Outline Specification.
