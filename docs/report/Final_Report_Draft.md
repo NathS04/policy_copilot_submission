@@ -30,3 +30,35 @@ The project concludes that lightweight, deterministic reliability controls can s
 
 ## Acknowledgements
 
+I would like to thank my supervisor for their guidance and feedback throughout this project. I would also like to thank the module coordinators for COMP3931 for providing clear expectations and resources.
+
+*Note: No proofreading assistance was sought or received beyond standard word-processing tools (spell check). All writing is my own.*
+
+---
+
+## Table of Contents
+
+- [Summary](#summary)
+- [Acknowledgements](#acknowledgements)
+- [Chapter 1: Introduction and Background Research](#chapter-1-introduction-and-background-research)
+- [Chapter 2: Methodology](#chapter-2-methodology)
+- [Chapter 3: Implementation and Validation](#chapter-3-implementation-and-validation)
+- [Chapter 4: Results, Evaluation and Discussion](#chapter-4-results-evaluation-and-discussion)
+- [List of References](#list-of-references)
+- [Appendix A: Self-appraisal](#appendix-a-self-appraisal)
+- [Appendix B: External Materials](#appendix-b-external-materials)
+
+---
+
+## Chapter 1: Introduction and Background Research
+
+### 1.1 Introduction
+
+Internal policy documents — employee handbooks, IT security addenda, data protection guidelines — are essential governance tools in any organisation. When employees need answers to policy questions, they face two problems: finding the right document and extracting the correct answer. Manual search is slow, inconsistent, and scales poorly as document volumes grow.
+
+Large Language Models (LLMs) can generate fluent natural-language answers, but they are prone to **hallucination**: generating plausible-sounding but factually unsupported statements. In compliance-sensitive domains, a hallucinated policy answer could lead to regulatory violations, data breaches, or disciplinary consequences.
+
+The core research question motivating this project is:
+> *Can we build a question-answering system over policy documents that is reliably grounded in source evidence, and that knows when to stay silent rather than guess?*
+
+### 1.2 Aims and Objectives
