@@ -94,3 +94,35 @@ Ji et al. (2023) survey hallucination in NLG, identifying it as the primary barr
 
 #### 1.4.3 Comparison of Approaches
 The table below situates Policy Copilot against existing approaches.
+
+| Approach | Corpus Type | Grounding Method | Evaluation Focus | Limitations | Relevance to Project |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **Standard RAG** (Lewis et al., 2020) | Open Domain (Wiki) | Implicit (Context Injection) | Answer Accuracy | No citation guarantees; hallucinates freely | Baseline (B2) |
+| **Attributed QA** (Bohnet et al.) | Open Domain | Training-based citation | Citation Recall | Requires fine-tuning; not explicitly verifiable | Conceptual inspiration |
+| **RARR** (Gao et al., 2023) | Open Domain | Post-hoc editing (LLM) | Attribution | High latency; expensive (multiple LLM calls) | Verification logic |
+| **Self-RAG** (Asai et al., 2024) | Open Domain | Training (Reflection tokens) | Generation Quality | Complex training pipeline; overkill for closed corpus | Verification logic |
+| **Policy Copilot** (This Project) | **Closed Domain (Policy)** | **Deterministic Verification** | **Reliability & Abstention** | **Strict scope; conservative** | **Proposed Solution** |
+
+#### 1.4.4 Gap Analysis
+Existing work largely focuses on *open-domain* QA, where broad coverage is prioritized and slight inaccuracies are tolerable. There is a gap in **closed-domain, high-stakes policy QA**, where:
+1.  **Precision > Recall**: It is better to answer nothing than to answer incorrectly.
+2.  **Auditability**: Every answer needs a precise paragraph-level citation.
+3.  **Conflict Detection**: Policies often contradict each other (e.g., Group policy vs. Local addendum), a problem rarely addressed in standard RAG benchmarks.
+
+Policy Copilot addresses this gap by implementing a "safety-first" architecture with deterministic reliability layers.
+
+---
+
+## Chapter 2: Methodology
+
+### 2.1 Development Process
+The project followed an iterative, agile-like methodology with six distinct phases:
+1.  **Corpus Engineering**: Creating synthetic policy documents and an ingestion pipeline.
+2.  **Retrieval Pipeline**: Implementing FAISS indexing and Dense Retrieval.
+3.  **Generative Pipeline**: Integrating LLMs with prompt engineering for JSON output.
+4.  **Reliability Layers**: Adding Reranking (Cross-encoder), Verification, and Contradiction detection.
+5.  **Critic Mode**: Developing the heuristic policy auditor.
+6.  **Rigorous Evaluation**: Creating the Golden Set, implementing Extractive Fallback, and conducting ablation studies.
+
+### 2.2 Requirements Analysis
+The system was designed to meet the following Functional (FR) and Non-Functional (NFR) requirements.
