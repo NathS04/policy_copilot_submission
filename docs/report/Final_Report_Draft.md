@@ -62,3 +62,35 @@ The core research question motivating this project is:
 > *Can we build a question-answering system over policy documents that is reliably grounded in source evidence, and that knows when to stay silent rather than guess?*
 
 ### 1.2 Aims and Objectives
+
+The aim of this project is to develop and evaluate an **Audit-Ready Retrieval-Augmented Generation (RAG)** system for organisational policy documents.
+
+**Objectives:**
+1.  **Build a RAG system** that answers policy questions only when supported by cited evidence (Target: ungrounded answer rate ≤ 5%).
+2.  **Implement abstention** mechanisms so the system refuses to answer when evidence is insufficient (Target: abstention accuracy ≥ 80% on unanswerable queries).
+3.  **Achieve high retrieval quality** through dense retrieval with cross-encoder reranking (Target: evidence recall@5 ≥ 80%).
+4.  **Detect contradictions** between policy documents and surface them to the user.
+5.  **Develop a Critic Mode** to audit policy text for problematic language patterns.
+6.  **Evaluate systematically** using a golden set with automated metrics, comparing generative (LLM) and extractive (non-LLM) modes.
+
+### 1.3 Systematic Search Strategy
+
+To ensure a comprehensive background review, a systematic search was conducted using Google Scholar, ACM Digital Library, and arXiv.
+
+-   **Keywords**: "Retrieval-Augmented Generation", "LLM Hallucination Mitigation", "Fact Verification", "RAG Evaluation", "Policy Question Answering".
+-   **Inclusion Criteria**: Papers published 2020-2024 (post-GPT-3), focusing on grounded generation, citation enforcement, or legal/policy domains.
+-   **Review Process**: Initially 40+ papers were identified; 15 were selected for detailed review based on relevance to the "cited or silent" reliability problem.
+
+### 1.4 Background Research and Related Work
+
+#### 1.4.1 Retrieval-Augmented Generation (RAG)
+RAG (Lewis et al., 2020) decomposes QA into retrieval and generation. Standard RAG uses dense retrieval (Karpukhin et al., 2020) to find relevant passages, which are then passed to the LLM. While effective for knowledge-intensive tasks, standard RAG lacks explicit verification, leading to "hallucination loops" where the model ignores retrieved context or misinterprets it.
+
+#### 1.4.2 Hallucination and Attribution
+Ji et al. (2023) survey hallucination in NLG, identifying it as the primary barrier to adoption in high-stakes fields. Recent work focuses on **attribution**:
+-   **Attributed QA** (Bohnet et al., 2022) requires models to cite sources.
+-   **RARR** (Gao et al., 2023) retroactively edits claims to match evidence.
+-   **Self-RAG** (Asai et al., 2024) trains the LLM to output reflection tokens (e.g., `[Retrieve]`, `[Relevant]`).
+
+#### 1.4.3 Comparison of Approaches
+The table below situates Policy Copilot against existing approaches.
