@@ -126,3 +126,35 @@ The project followed an iterative, agile-like methodology with six distinct phas
 
 ### 2.2 Requirements Analysis
 The system was designed to meet the following Functional (FR) and Non-Functional (NFR) requirements.
+
+| ID | Requirement | Acceptance Criteria | Priority |
+| :--- | :--- | :--- | :--- |
+| **FR1** | **Evidence Grounding** | All answers must cite specific paragraph IDs. | High |
+| **FR2** | **Abstention** | System returns `INSUFFICIENT_EVIDENCE` if confidence < threshold. | High |
+| **FR3** | **Citation Verification** | Claims not supported by cited text are removed. | High |
+| **FR4** | **Extractive Fallback** | System functions without LLM if enabled, returning raw text. | Medium |
+| **FR5** | **Conflict Detection** | Contradictions between documents are flagged. | Medium |
+| **NFR1** | **Latency** | End-to-end response time < 10 seconds (P95). | Medium |
+| **NFR2** | **Reproducibility** | Evaluation pipeline is deterministic and scriptable. | High |
+| **NFR3** | **Modularity** | Components (Reranker, Verifier) can be toggled via config. | Low |
+
+### 2.3 System Architecture
+The system follows a modular "Retrieve-and-Rerank-then-Generate-and-Verify" pipeline.
+
+*[Placeholder: Figure 2.1 - System Architecture Diagram showing the flow: Query -> Retriever -> Reranker -> LLM -> Verifier -> Output]*
+
+1.  **Ingestion**: PDFs are chunked into paragraphs and assigned stable IDs.
+2.  **Retrieval**: Bi-encoder finds top-20 candidates from FAISS index.
+3.  **Reranking**: Cross-encoder scores query-candidate pairs for precise relevance.
+4.  **Generation**: LLM constructs an answer with citations (Generative Mode) OR top paragraph is returned (Extractive Mode).
+5.  **Verification**: Heuristic checks ensure claims match evidence.
+6.  **Response**: The final verified answer or an abstention message is returned.
+
+### 2.4 Design Decisions and Alternatives Considered
+
+**Decision 1: RAG vs. Long-Context Window**
+*Alternative*: Dumping all 53 pages of policy into the context window of a >100k context model (e.g., Claude 3).
+*Why Rejected*: Long-context models suffer from "lost-in-the-middle" phenomena (Liu et al., 2023) and are expensive per query. RAG is more scalable and forces explicit selection of evidence.
+
+**Decision 2: Dense Retrieval + Reranking vs. Sparse Retrieval (BM25)**
+*Alternative*: Using simple keyword search (BM25).
