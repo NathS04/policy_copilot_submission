@@ -158,3 +158,35 @@ The system follows a modular "Retrieve-and-Rerank-then-Generate-and-Verify" pipe
 
 **Decision 2: Dense Retrieval + Reranking vs. Sparse Retrieval (BM25)**
 *Alternative*: Using simple keyword search (BM25).
+*Why Rejected*: Policy questions often use synonyms (e.g., "remote work" vs "work from home") that keyword search misses. Dense retrieval captures semantics. Reranking adds the necessary precision for the citation guarantee.
+
+**Decision 3: Deterministic Verification vs. LLM-only Verification**
+*Alternative*: Asking a second LLM "Is this claim supported?"
+*Why Rejected*: LLM-as-a-judge is slow, expensive, and non-deterministic. Deterministic metrics (token overlap, numeric matching) provide a fast, auditable baseline that doesn't hallucinate.
+
+### 2.5 Evaluation Methodology
+Three baselines were defined to measure progress:
+*   **B1 (Prompt-Only)**: Zero-shot LLM (measures hallucination baseline).
+*   **B2 (Naive RAG)**: Standard Retrieval + Generation (no verification).
+*   **B3 (Policy Copilot)**: Full pipeline with Reranking, Verification, Contradiction Detection.
+
+**Metrics**:
+*   **Answer Rate**: % of answerable queries answered.
+*   **Abstention Accuracy**: % of unanswerable queries refused.
+*   **Ungrounded Rate**: % of claims without valid evidence support.
+*   **Evidence Recall@5**: % of gold paragraphs found in top-5.
+
+---
+
+## Chapter 3: Implementation and Validation
+
+### 3.1 Technology Stack
+*   **Language**: Python 3.10+
+*   **Retrieval**: `sentence-transformers` (all-MiniLM-L6-v2), `FAISS` (IndexFlatL2).
+*   **Reranking**: `cross-encoder/ms-marco-MiniLM-L-6-v2`.
+*   **LLM Integration**: OpenAI API (configurable) with Pydantic for schema validation.
+*   **Config**: `pydantic-settings` for robust environment management.
+*   **Testing**: `pytest`.
+
+### 3.2 Component Walkthrough
+
