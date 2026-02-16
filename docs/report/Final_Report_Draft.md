@@ -190,3 +190,35 @@ Three baselines were defined to measure progress:
 
 ### 3.2 Component Walkthrough
 
+#### 3.2.1 Ingestion (`src/policy_copilot/ingest`)
+The ingestion module normalizes PDF text. A critical innovation here is the **Stable ID Scheme**: ids are generated as `doc_id::page::index::hash`. This ensures that even if documents are re-ingested, citations in old logs remain valid unless the specific paragraph content changed.
+
+#### 3.2.2 Indexing and Retrieval (`src/policy_copilot/retrieve`)
+The `Retriever` class manages the FAISS index. It handles the bi-encoder embedding. A `Reranker` class wraps the cross-encoder. The reranker output includes a confidence score (logit) which is the primary signal for the **Abstention Gate**. If `max_score < threshold`, the query is rejected before generation.
+
+#### 3.2.3 Generation (`src/policy_copilot/generate`)
+The `Answerer` class constructs the prompt. It uses a "One-Shot" prompting strategy with an example of a correctly cited answer. The strict JSON schema forces the model to separate `answer` text from `citations` list, simplifying parsing.
+
+#### 3.2.4 Verification (`src/policy_copilot/verify`)
+Post-generation, the `Verifier` decomposes the answer into claims (sentences).
+1.  **Token Overlap**: Jaccard similarity between claim and cited paragraph.
+2.  **Numeric Check**: If the claim contains strict numbers ("30 days"), they must appear in the source.
+3.  **Pruning**: Claims failing verification are stripped from the response.
+
+#### 3.2.5 Critic Mode (`src/policy_copilot/critic`)
+A separate module containing regex-based logical rule checkers for 6 types of "bad policy language" (e.g., Vague Quantifiers like "some", "appropriate").
+
+### 3.3 Testing and Validation
+The codebase is covered by a comprehensive test suite (79 tests).
+
+| Test Suite | Scope | Validates |
+| :--- | :--- | :--- |
+| `test_ingest` | PDF parsing | Text extraction, ID stability |
+| `test_abstain` | Logic | Threshold gating mechanics |
+| `test_claim_verification` | Heuristic | Logic for token overlap/numeric checking |
+| `test_contradictions` | Logic | Handling of 'must' vs 'must not' |
+| `test_reranker` | Model | Sorting correctness of cross-encoder |
+| `test_critic` | Heuristic | Precision/Recall of regex patterns |
+
+This rigorous testing ensures that the reliability mechanisms (the core contribution) function deterministically.
+
