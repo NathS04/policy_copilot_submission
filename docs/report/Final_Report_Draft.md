@@ -222,3 +222,35 @@ The codebase is covered by a comprehensive test suite (79 tests).
 
 This rigorous testing ensures that the reliability mechanisms (the core contribution) function deterministically.
 
+---
+
+## Chapter 4: Results, Evaluation and Discussion
+
+### 4.1 Experimental Setup
+Evaluation was conducted in two modes:
+1.  **Generative Mode**: Standard LLM-based RAG. Used for B1, B2, and B3 (Generative).
+2.  **Extractive Mode**: A "safe mode" where the LLM is disabled. B3 falls back to returning the exact text of the top-ranked paragraph if confidence is high. This isolates retrieval performance from generation quality.
+
+**Golden Set**: 63 queries (36 Answerable, 17 Unanswerable, 10 Contradiction).
+
+### 4.2 Baseline Results
+The baseline comparison highlights the impact of reliability controls.
+
+![Baseline Comparison](results/figures/fig_baselines.png)
+*Figure 4.1: Comparison of B1 (Prompt), B2 (Naive), and B3 (Full) across key metrics.*
+
+**What to notice**: B1 and B2 have an **Abstention Accuracy of 0.0**, meaning they hallucinate answers for 100% of unanswerable queries. B3 achieves **58% to 100% abstention accuracy** (depending on configuration) while maintaining a high Answer Rate (~92%). This confirms the "cited or silent" hypothesis.
+
+### 4.3 Retrieval Performance
+Retrieval is the foundation of reliability.
+
+![Retrieval Performance](results/figures/fig_retrieval.png)
+*Figure 4.2: Retrieval quality: Dense Retrieval (B2) vs Reranked (B3).*
+
+**Interpretation**: Reranking (B3) significantly improves **Precision@5** and **MRR** compared to raw vector search (B2). High MRR is crucial for the Extractive Mode, where the top-1 result is returned directly.
+
+### 4.4 Groundedness and Verification
+The system's ability to ensure grounded answers is its primary safety feature.
+
+![Groundedness Metrics](results/figures/fig_groundedness.png)
+*Figure 4.3: Ungrounded Rate and Citation Precision metrics.*
