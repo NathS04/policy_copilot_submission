@@ -286,3 +286,35 @@ An analysis of B3's failure modes reveals certain limitations:
 Asai, A., et al. (2024). Self-RAG: Learning to Retrieve, Generate, and Critique. *arXiv preprint arXiv:2310.11511*.
 
 Bohnet, B., et al. (2022). Attributed Question Answering: Evaluation and Modeling for Attributed Large Language Models. *arXiv preprint arXiv:2212.08037*.
+
+Gao, L., et al. (2023). RARR: Researching and Revising What Language Models Say, Using Language Models. *Proceedings of ACL*.
+
+Ji, Z., et al. (2023). Survey of Hallucination in Natural Language Generation. *ACM Computing Surveys*.
+
+Karpukhin, V., et al. (2020). Dense Passage Retrieval for Open-Domain Question Answering. *Proceedings of EMNLP*.
+
+Lewis, P., et al. (2020). Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks. *Proceedings of NeurIPS*.
+
+Liu, N.F., et al. (2023). Lost in the Middle: How Language Models Use Long Contexts. *TACL*.
+
+---
+
+## Appendix A: Self-appraisal
+
+### A.1 Critical Evaluation
+The project succeeded in building an "Audit-Ready" system. The shift from "answering everything" (B2) to "answering reliably" (B3) was challenging but successful.
+-   **T1 (Ungrounded Rate)**: Successfully minimized via citation enforcement.
+-   **T2 (Abstention)**: Achieved >80% accuracy on unanswerable queries in strict modes.
+-   **T3 (Recall)**: Reranking proved effective at surfacing the correct gold paragraph.
+
+The primary weakness is the brittleness of heuristic verification. While deterministic, it misses nuanced support.
+
+### A.2 Ethics and Professional Issues
+-   **Automation Bias**: Users may blindly trust the "Verified" tag. The UI explicitly labels answers as "generated".
+-   **Privacy**: RAG is safer than fine-tuning privacy-wise, as document access can be controlled at retrieval time (though not implemented here).
+-   **Accountability**: The log-everything architecture allows post-hoc auditing of why an answer was given or refused.
+
+---
+
+## Appendix B: External Materials
+*See separate file `Appendix_External_Materials.md`.*
