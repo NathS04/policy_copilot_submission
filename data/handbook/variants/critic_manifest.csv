@@ -1,0 +1,51 @@
+snippet_id,version,labels,notes
+s_0001,neutral,,Neutral data classification
+s_0002,neutral,,Neutral remote work
+s_0003,neutral,,Neutral access control
+s_0004,neutral,,Neutral passwords
+s_0005,neutral,,Neutral breach reporting
+s_0006,neutral,,Neutral records
+s_0007,neutral,,Neutral training
+s_0008,neutral,,Neutral physical access
+s_0009,neutral,,Neutral backups
+s_0010,neutral,,Neutral incident response
+s_0011,neutral,,Neutral third party
+s_0012,neutral,,Neutral encryption
+s_0013,neutral,,Neutral network segmentation
+s_0014,neutral,,Neutral disposal
+s_0015,neutral,,Neutral RBAC
+s_0016,neutral,,Neutral patching
+s_0017,neutral,,Neutral BCP
+s_0018,neutral,,Neutral governance
+s_0019,neutral,,Neutral visitor access
+s_0020,neutral,,Neutral data retention
+s_0021,neutral,,Neutral offboarding
+s_0022,neutral,,Neutral change mgmt
+s_0023,neutral,,Neutral pen testing
+s_0024,neutral,,Neutral wireless
+s_0025,neutral,,Neutral AUP
+s_1001,manipulated,"L1",Loaded language: obviously + everyone knows
+s_1002,manipulated,"L1",Loaded language: clearly + goes without saying
+s_1003,manipulated,"L2",Framing: merely + nothing more than
+s_1004,manipulated,"L2",Framing: sole reason + exclusively
+s_1005,manipulated,"L2;L5",Framing + false dilemma
+s_1006,manipulated,"L3",Unsupported: guarantees + eliminates all
+s_1007,manipulated,"L3",Unsupported: proven beyond doubt + impossible
+s_1008,manipulated,"L3",Unsupported: proves + universally ensures
+s_1009,manipulated,"L4",Contradiction: must vs must not
+s_1010,manipulated,"L4",Contradiction: shall vs shall not
+s_1011,manipulated,"L4",Contradiction: allowed vs not allowed
+s_1012,manipulated,"L5",False dilemma: must choose between
+s_1013,manipulated,"L5",False dilemma: only two options
+s_1014,manipulated,"L5",False dilemma: only two choices
+s_1015,manipulated,"L6",Slippery slope: inevitably + eventually
+s_1016,manipulated,"L6",Slippery slope: dangerous precedent + certainly cause
+s_1017,manipulated,"L6",Slippery slope: opens the door + cascade
+s_1018,manipulated,"L1;L5;L6",Multi-label: loaded + dilemma + slope
+s_1019,manipulated,"L1;L3",Multi-label: loaded + unsupported
+s_1020,manipulated,"L2;L3",Multi-label: framing + unsupported
+s_1021,manipulated,"L1;L6",Multi-label: loaded + slope
+s_1022,manipulated,"L2;L4",Multi-label: framing + contradiction
+s_1023,manipulated,"L1;L2;L5",Multi-label: loaded + framing + dilemma
+s_1024,manipulated,"L3;L6",Multi-label: unsupported + slope
+s_1025,manipulated,"L1;L2;L3;L5",Multi-label: 4 labels
