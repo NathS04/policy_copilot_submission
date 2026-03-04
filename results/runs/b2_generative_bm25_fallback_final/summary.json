@@ -1,0 +1,13 @@
+{
+  "baseline": "b2",
+  "total_queries": 63,
+  "answer_rate": 0.8333,
+  "abstention_accuracy": 0.7647,
+  "evidence_recall_at_5": 0.7391,
+  "evidence_precision_at_5": 0.2913,
+  "evidence_mrr": 0.767,
+  "citation_precision": 1.0,
+  "citation_recall": 0.4333,
+  "contradiction_recall": 0.0,
+  "contradiction_precision": "N/A"
+}
