@@ -4,15 +4,12 @@ Tests for the Reviewer Service — rubric capture, export, and summary stats.
 import csv
 import io
 import json
-import tempfile
-from pathlib import Path
 
 import pytest
 
 from policy_copilot.service.reviewer_service import (
     ReviewerService,
     ReviewRubric,
-    ReviewSession,
 )
 
 

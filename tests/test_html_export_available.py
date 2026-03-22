@@ -4,7 +4,6 @@ Acceptance test: HTML audit export must work in the default test environment.
 This test fails if jinja2 is missing from the dev dependency group, which
 would mean 'pip install -e .[dev]' + 'pytest -q' produces a broken test run.
 """
-import pytest
 
 
 def test_jinja2_importable():
@@ -16,7 +15,6 @@ def test_jinja2_importable():
 def test_html_export_produces_real_html():
     """AuditReportService.to_html() must produce a full audit report, not a fallback."""
     from policy_copilot.service.schemas import (
-        AuditReport,
         ClaimDetail,
         ClaimVerificationResult,
         EvidenceItem,

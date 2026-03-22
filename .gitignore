@@ -1,0 +1,47 @@
+# ── Python ──────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+*.egg
+
+# ── Virtual Environments ───────────────────────
+.venv/
+.venv*/
+venv/
+
+# ── Tool Caches ────────────────────────────────
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+.ipynb_checkpoints/
+
+# ── Environment ────────────────────────────────
+.env
+.env.local
+.env.*.local
+
+# ── OS ─────────────────────────────────────────
+.DS_Store
+Thumbs.db
+
+# ── IDE ────────────────────────────────────────
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# ── Data (too large for git) ───────────────────
+data/corpus/raw/
+data/corpus/processed/index/
+
+# ── Submission-only artefacts ──────────────────
+Helper/
+generate_history.py
+INSTRUCTIONS_FOR_GPT.md
+generate_presentation.py
+Dissertation_Progress_Presentation.pptx
+Speaking_Script.pdf
