@@ -30,7 +30,7 @@ problematic policy language. Every answer carries a full audit trail.
 | **Contradiction detection** | Surfaces conflicting evidence across retrieved paragraphs |
 | **Critic mode (L1–L6)** | Detects normative language, framing bias, unsupported claims, internal contradictions, false dilemmas, and slippery-slope reasoning |
 | **Audit trail export** | JSON/HTML audit reports with full provenance metadata |
-| **Interactive workbench** | 5-mode Streamlit UI: Ask, Audit Trace, Critic Lens, Experiment Explorer, Reviewer |
+| **Interactive workbench** | 5-mode Streamlit UI: Ask, Audit Trace, Critic Lens, Experiment Explorer, Reviewer Mode |
 
 ## Architecture
 
@@ -133,7 +133,7 @@ See [INSTRUCTIONS_FOR_EVALUATOR.md](INSTRUCTIONS_FOR_EVALUATOR.md) for detailed 
 
 ## Golden Set
 
-63 queries with dev/test splits:
+63 queries split into 19 dev (threshold tuning) and 44 test (evaluation):
 
 | Category | Count |
 |---|---|

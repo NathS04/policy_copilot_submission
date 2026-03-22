@@ -73,7 +73,7 @@ Doctoral-level backward/forward citation chaining and conflict identification fo
 - **Venue tier:** **Tier-1** (ICLR)
 
 #### Source 8: Barnett et al. 2024 — Seven Failure Points
-- **Full citation:** Barnett, S., Kurniawan, S., Thudumu, S., Brber, Z. and Kashyap, M. (2024) 'Seven Failure Points When Engineering a Retrieval Augmented Generation System', *Proceedings of the 2024 IEEE/ACM 3rd International Conference on AI Engineering (CAIN 2024)*. arXiv:2401.05856.
+- **Full citation:** Barnett, S., Kurniawan, S., Thudumu, S., Barber, Z. and Kashyap, M. (2024) 'Seven Failure Points When Engineering a Retrieval Augmented Generation System', *Proceedings of the 2024 IEEE/ACM 3rd International Conference on AI Engineering (CAIN 2024)*. arXiv:2401.05856.
 - **URL:** https://arxiv.org/abs/2401.05856
 - **Relationship:** **Criticising** — systematic engineering analysis identifying seven distinct failure modes in RAG systems across three case studies (research, education, biomedical).
 - **Assessment:** Highly relevant for framing the dissertation's verification layer as addressing specific, empirically-documented failure modes. The finding that "RAG system robustness evolves rather than being designed in" directly supports the audit-trail approach. Complements the theoretical gap analysis with practitioner evidence.

@@ -11,8 +11,8 @@ Any contradiction with this file in other documents is a bug.
 | Answerable | 36 | CSV `category` column |
 | Unanswerable | 17 | CSV `category` column |
 | Contradiction | 10 | CSV `category` column |
-| Dev split | 18 | CSV `split` column |
-| Test split | 45 | CSV `split` column |
+| Dev split | 19 | CSV `split` column |
+| Test split | 44 | CSV `split` column |
 | Frozen version | `golden_set_frozen_v1.csv` | `eval/golden_set/` |
 
 ## Baselines

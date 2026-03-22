@@ -38,7 +38,7 @@ Maps major claims made in the dissertation report to their backing artifacts in 
 | Claim | Report Section | Backing Artifact |
 |-------|---------------|------------------|
 | Golden set: 63 queries (36 answerable, 17 unanswerable, 10 contradiction) | Section 2.3 | `eval/golden_set/golden_set.csv` |
-| Dev/test split | Section 2.3 | CSV `split` column: 18 dev, 45 test |
+| Dev/test split | Section 2.3 | CSV `split` column: 19 dev, 44 test |
 | Human evaluation on 20 queries | Section 4.8b | `eval/human_eval/README.md`, report Table 4.7b |
 | Bootstrapped confidence intervals | Section 4.8c | Report Table 4.7c |
 
