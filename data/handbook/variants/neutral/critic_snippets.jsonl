@@ -1,0 +1,25 @@
+{"snippet_id":"s_0001","source":"handbook","text":"All employees must adhere to data classification procedures as outlined in the internal guidelines.","labels":[]}
+{"snippet_id":"s_0002","source":"handbook","text":"Remote work arrangements require prior written approval from the relevant department head.","labels":[]}
+{"snippet_id":"s_0003","source":"handbook","text":"Access to sensitive systems is restricted to authorised personnel with appropriate clearance.","labels":[]}
+{"snippet_id":"s_0004","source":"handbook","text":"Password policies are reviewed annually to ensure alignment with current security standards.","labels":[]}
+{"snippet_id":"s_0005","source":"handbook","text":"Employees should report any suspected data breaches to the IT security team within 24 hours.","labels":[]}
+{"snippet_id":"s_0006","source":"handbook","text":"The organisation maintains comprehensive records of all access control decisions.","labels":[]}
+{"snippet_id":"s_0007","source":"handbook","text":"Training sessions on data handling procedures are conducted quarterly for all relevant staff.","labels":[]}
+{"snippet_id":"s_0008","source":"handbook","text":"Physical access to server rooms requires multi-factor authentication and logging.","labels":[]}
+{"snippet_id":"s_0009","source":"handbook","text":"Backup procedures are tested monthly to verify data integrity and recovery capability.","labels":[]}
+{"snippet_id":"s_0010","source":"handbook","text":"Incident response plans are updated following each significant security event.","labels":[]}
+{"snippet_id":"s_0011","source":"handbook","text":"All third-party service providers must comply with the organisation's data protection standards.","labels":[]}
+{"snippet_id":"s_0012","source":"handbook","text":"Encryption is required for all data transmissions involving personal or sensitive information.","labels":[]}
+{"snippet_id":"s_0013","source":"handbook","text":"Network segmentation is used to isolate critical systems from general-purpose infrastructure.","labels":[]}
+{"snippet_id":"s_0014","source":"handbook","text":"Disposal of electronic equipment follows certified data destruction procedures.","labels":[]}
+{"snippet_id":"s_0015","source":"handbook","text":"Role-based access controls are applied consistently across all information systems.","labels":[]}
+{"snippet_id":"s_0016","source":"handbook","text":"Software updates and patches are applied within the timeframes specified in the vulnerability management policy.","labels":[]}
+{"snippet_id":"s_0017","source":"handbook","text":"Business continuity plans are tested at least twice per year using tabletop exercises.","labels":[]}
+{"snippet_id":"s_0018","source":"handbook","text":"All security policies are subject to annual review and approval by the governance committee.","labels":[]}
+{"snippet_id":"s_0019","source":"handbook","text":"Visitor access to restricted areas requires escort by an authorised employee at all times.","labels":[]}
+{"snippet_id":"s_0020","source":"handbook","text":"Data retention schedules are maintained for each category of business record.","labels":[]}
+{"snippet_id":"s_0021","source":"handbook","text":"User accounts are deactivated within 24 hours of an employee's departure date.","labels":[]}
+{"snippet_id":"s_0022","source":"handbook","text":"Change management procedures apply to all modifications of production systems.","labels":[]}
+{"snippet_id":"s_0023","source":"handbook","text":"Penetration testing is conducted annually by an independent third party.","labels":[]}
+{"snippet_id":"s_0024","source":"handbook","text":"All wireless networks are secured using WPA3 or equivalent encryption standards.","labels":[]}
+{"snippet_id":"s_0025","source":"handbook","text":"The acceptable use policy defines permitted and prohibited activities on company systems.","labels":[]}
