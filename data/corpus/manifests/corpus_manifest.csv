@@ -1,0 +1,7 @@
+doc_id,source_file,sha256,pages,added_utc,notes,license_ok
+test_generated,test_generated.pdf,65b01aacdf2ba6f5784ddb1ca611e9f6cab85a3e51c51812ae5e732ef9f5532e,1,2026-02-10T13:35:57.611073+00:00,,
+internal_policy_handbook_v2,internal_policy_handbook_v2.pdf,0b32e6f07df3011ef9636c6c63ee7cb7b6eb2e1eb1cbc264c78a87874420f4e0,18,2026-02-11T16:40:38.664878+00:00,,
+it_security_addendum_2025,it_security_addendum_2025.pdf,a412895b522a211265196c13afa45e317c8181934db31e3e834bdfd1b2dd5101,13,2026-02-11T16:40:38.683508+00:00,,
+business_continuity_plan,business_continuity_plan.pdf,143d5a30c14e22173fd7f5709faaebc8e7de28fe2657dce7463111134c43c70e,7,2026-02-11T16:40:38.633079+00:00,,
+hr_procedures_manual,hr_procedures_manual.pdf,3f136311c22220ce05bae8fd89fca851dbc14bb5196889336e599fe5d2684be8,9,2026-02-11T16:40:38.642621+00:00,,
+dpia_guide,dpia_guide.pdf,25230d55b4ee6de34efcb4b2ff4cc319f44452218e46fe014e91614817c3e74e,6,2026-02-11T16:40:38.671494+00:00,,

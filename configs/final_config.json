@@ -1,0 +1,13 @@
+{
+  "abstain_threshold": 0.0,
+  "min_support_rate": 0.0,
+  "retrieve_k_candidates": 20,
+  "rerank_k_final": 5,
+  "enable_llm_verify": false,
+  "enable_llm_contradictions": false,
+  "contradiction_policy": "surface",
+  "provider": "openai",
+  "model_name": "gpt-4o-mini",
+  "temperature": 0.0,
+  "seed": 42
+}

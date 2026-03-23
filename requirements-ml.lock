@@ -1,0 +1,6 @@
+# Pinned ML dependencies for dense retrieval / reranking.
+# Install with: pip install -r requirements-ml.lock
+faiss-cpu==1.7.4
+sentence-transformers==2.7.0
+transformers==4.41.2
+torch==2.3.1
