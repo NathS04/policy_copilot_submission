@@ -5,13 +5,10 @@ Creates temporary run directories with known fixtures to test
 listing, loading, and comparison.
 """
 import json
-import os
-import tempfile
 import pytest
-from pathlib import Path
 
 from policy_copilot.service.run_inspector import RunInspector
-from policy_copilot.service.schemas import RunDetail, RunSummary, ComparisonResult
+from policy_copilot.service.schemas import RunDetail, ComparisonResult
 
 
 # ------------------------------------------------------------------ #

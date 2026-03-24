@@ -4,7 +4,6 @@ Tests for the hybrid retriever (Reciprocal Rank Fusion).
 Uses mock dense and sparse retrievers with known rankings to verify
 deterministic fusion behaviour.
 """
-import pytest
 from unittest.mock import MagicMock
 
 from policy_copilot.retrieve.hybrid import HybridRetriever

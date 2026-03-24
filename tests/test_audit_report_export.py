@@ -5,7 +5,6 @@ Verifies that all required fields are present in exported reports
 and that round-trip serialisation works correctly.
 """
 import json
-import pytest
 
 from policy_copilot.service.schemas import (
     AuditReport,

@@ -4,7 +4,6 @@ Tests for the ChatOrchestrator service layer.
 Uses mock retrievers and mocked answerer to test pipeline flow without
 requiring ML models, API keys, or a FAISS index.
 """
-import pytest
 from unittest.mock import MagicMock, patch
 
 from policy_copilot.service.chat_orchestrator import ChatOrchestrator
