@@ -157,6 +157,7 @@ def load_run_data(runs_dir: Path, strict: bool = False):
                 "citation_recall": get_metric("citation_recall"),
                 "ungrounded_rate": get_metric("ungrounded_rate"),
                 "contradiction_recall": get_metric("contradiction_recall"),
+                "contradiction_precision": get_metric("contradiction_precision"),
                 "support_rate_mean": get_metric("support_rate_mean"),
             }
             data.append(row)

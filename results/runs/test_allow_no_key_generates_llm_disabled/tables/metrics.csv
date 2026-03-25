@@ -1,0 +1,2 @@
+baseline,total_queries,answer_rate,abstention_accuracy,evidence_recall_at_5,evidence_precision_at_5,evidence_mrr,contradiction_recall,contradiction_precision
+b2,44,0.0,0.0,0.7344,0.2875,0.7562,0.0,N/A

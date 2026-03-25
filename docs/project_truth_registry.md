@@ -73,6 +73,29 @@ Any contradiction with this file in other documents is a bug.
 | Offline reproduction backend | BM25 (lexical), extractive mode |
 | Online reproduction backend | Dense (FAISS), generative mode |
 
+## Test Suite
+
+| Fact | Value | Source |
+|------|-------|--------|
+| Total test files | 38 | `tests/` directory |
+| Total test cases | 186 | `pytest -q` output |
+| Conditionally skipped | 1 | FAISS-dependent test |
+
+## Evaluation Artefacts (added in Final Maximiser phase)
+
+| Artefact | File | Status |
+|----------|------|--------|
+| Risk audit table | `docs/risk_audit_table.md` | Complete — 10 failure modes with detection, mitigation, residual risk |
+| Failure-mode taxonomy | `eval/analysis/error_taxonomy.md` + `scripts/classify_errors.py` | Complete — 8 categories, automated classification, per-baseline CSV |
+| Auditability rubric | `eval/rubrics/auditability_rubric.md` + `scripts/compute_auditability_scores.py` | Complete — 5-axis rubric with automated scoring |
+| Ablation comparison | `scripts/compare_ablations.py` | Complete — side-by-side delta table across baselines |
+| Token/cost reporting | `schemas.py:TokenUsage` + `chat_orchestrator.py` + `run_eval.py` | Schema and pipeline wired; shipped final runs predate this feature so contain no token data; future runs will capture tokens per query |
+| Objective slice evaluation | `eval/golden_set/golden_set.csv` (objective_slice column) + `scripts/eval_objective_slice.py` | Complete — 16 deterministically-checkable queries tagged; evaluator produces `objective_slice_results.csv` |
+| Demo storyline scripts | `docs/demo_scripts.md` | Complete — 3 viva demo journeys documented |
+| Failure taxonomy CSV | `results/tables/failure_taxonomy.csv` | Generated from shipped runs |
+| Auditability scores CSV | `results/tables/auditability_scores.csv` | Generated from shipped runs |
+| Ablation comparison CSV | `results/tables/ablation_comparison.csv` | Generated from shipped runs |
+
 ## Claims NOT Made
 
 - No claim of multi-model evaluation (only OpenAI tested)

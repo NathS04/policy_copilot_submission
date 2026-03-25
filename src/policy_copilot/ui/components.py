@@ -91,7 +91,8 @@ def render_evidence_card(
         score_parts.append(f"fused={ev.fused_score:.6f}")
     score_str = "  ".join(score_parts)
 
-    label = f"**{index}.** `{ev.paragraph_id}` — {ev.source_file} p.{ev.page}"
+    doc_label = f" [{ev.doc_type}]" if ev.doc_type and ev.doc_type != "policy document" else ""
+    label = f"**{index}.** `{ev.paragraph_id}` — {ev.source_file} p.{ev.page}{doc_label}"
 
     with st.expander(label, expanded=expanded):
         meta_parts = [f'<span class="pc-evidence-score">{score_str}</span>']
@@ -106,6 +107,8 @@ def render_evidence_card(
             f'<div class="pc-evidence-text" style="{border_style}">{text}</div>',
             unsafe_allow_html=True,
         )
+        cite_str = f"{ev.source_file}, p.{ev.page}, §{ev.paragraph_id}"
+        st.code(cite_str, language=None)
 
 
 def render_evidence_rail(

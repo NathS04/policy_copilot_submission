@@ -42,9 +42,21 @@ Maps major claims made in the dissertation report to their backing artifacts in 
 | Human evaluation on 20 queries | Section 4.8b | `eval/human_eval/README.md`, report Table 4.7b |
 | Bootstrapped confidence intervals | Section 4.8c | Report Table 4.7c |
 
+## Auditability and Evaluation Claims (added in Final Maximiser phase)
+
+| Claim | Report Section | Backing Artifact |
+|-------|---------------|------------------|
+| Risk audit table with 10 failure modes | Section 6.1 / Appendix | `docs/risk_audit_table.md` |
+| 8-category failure-mode taxonomy with per-baseline counts | Section 4.8 | `eval/analysis/error_taxonomy.md`, `scripts/classify_errors.py`, `results/tables/failure_taxonomy.csv` |
+| 5-axis auditability rubric (evidence relevance, citation faithfulness, abstention correctness, contradiction correctness, failure mode) | Section 4.1 | `eval/rubrics/auditability_rubric.md`, `scripts/compute_auditability_scores.py`, `results/tables/auditability_scores.csv` |
+| Ablation comparison with metric deltas | Section 4.6 | `scripts/compare_ablations.py`, `results/tables/ablation_comparison.csv` |
+| Token/cost reporting schema and pipeline | Section 4.8a | `schemas.py:TokenUsage`, `chat_orchestrator.py`, `run_eval.py` |
+| B1 dominant failure = missed retrieval, B2 = wrong claim-evidence link, B3 = abstention error | Section 4.8 | `results/tables/failure_taxonomy.csv` |
+
 ## Claims NOT Made (important for honesty)
 
 - No claim of multi-model evaluation (only OpenAI tested)
 - No claim of independent human raters (single rater acknowledged)
 - No claim of real-world corpus testing (synthetic corpus acknowledged)
 - No claim of deployment or user study
+- No claim of automated faithfulness scoring (e.g. RAGAS) — grounding approximated via support rate and citation metrics

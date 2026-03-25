@@ -33,6 +33,17 @@ Last updated: March 2026
 | Appendix A | 2 | Strubell et al. (environmental), Es et al. (RAGAS) |
 | Appendix B | 0 | External materials declaration — no citations expected |
 
+## Research Pack Alignment
+
+| Research pack file | Sources | Status |
+|-------------------|---------|--------|
+| `docs/research/literature_matrix.md` | 105 | Complete — 59 T1, 27 T2, 19 T3 |
+| `docs/research/comparator_matrix.md` | 10 systems | Complete |
+| `docs/research/search_strategy.md` | PRISMA flow documented | Complete |
+| `docs/research/gap_statement.md` | — | Complete |
+| `docs/research/taxonomy_of_related_work.md` | — | Complete |
+| `docs/research/dissertation_benchmark_report.md` | 13 comparators + 6 ref systems | Complete |
+
 ## Remaining Manual Checks
 
 - Verify all "Accessed:" dates on web sources are accurate

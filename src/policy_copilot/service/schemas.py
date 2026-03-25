@@ -25,6 +25,7 @@ class EvidenceItem(BaseModel):
     page: int = 0
     text: str = ""
     source_file: str = ""
+    doc_type: str = "policy document"
     score_retrieve: float = 0.0
     score_rerank: float = 0.0
     dense_rank: Optional[int] = None
@@ -100,6 +101,14 @@ class LatencyBreakdown(BaseModel):
     total_ms: float = 0.0
 
 
+class TokenUsage(BaseModel):
+    """Token consumption for cost/resource reporting."""
+    prompt_tokens: int = 0
+    completion_tokens: int = 0
+    total_tokens: int = 0
+    estimated_cost_usd: Optional[float] = None
+
+
 # ------------------------------------------------------------------ #
 #  QueryResult — the primary output of ChatOrchestrator                #
 # ------------------------------------------------------------------ #
@@ -125,6 +134,7 @@ class QueryResult(BaseModel):
 
     notes: List[str] = Field(default_factory=list)
     latency: LatencyBreakdown = Field(default_factory=LatencyBreakdown)
+    token_usage: Optional[TokenUsage] = None
 
     provider: str = ""
     model: str = ""

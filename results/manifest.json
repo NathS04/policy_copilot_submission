@@ -1,7 +1,7 @@
 {
   "source": "make_figures.py",
   "verified_by": "verify_artifacts.py",
-  "verified_at": "2026-03-22T18:45:52.837715+00:00",
+  "verified_at": "2026-04-13T21:29:42.841898+00:00",
   "strict": false,
   "allow_backend_mismatch": false,
   "runs": [
@@ -12,12 +12,23 @@
     "b2_test_extractive_bm25_20260322_182532",
     "b2_test_extractive_bm25_20260322_182544",
     "b2_test_extractive_bm25_20260322_184549",
+    "b2_test_extractive_bm25_20260322_233439",
+    "b2_test_extractive_bm25_20260413_221804",
+    "b2_test_extractive_bm25_20260413_221828",
+    "b2_test_extractive_bm25_20260413_221837",
+    "b2_test_extractive_bm25_20260413_222940",
     "b3_generative_bm25_fallback_final",
     "b3_test_extractive_bm25_20260322_173801",
     "b3_test_extractive_bm25_20260322_182521",
     "b3_test_extractive_bm25_20260322_182533",
     "b3_test_extractive_bm25_20260322_182545",
     "b3_test_extractive_bm25_20260322_184549",
+    "b3_test_extractive_bm25_20260322_233440",
+    "b3_test_extractive_bm25_20260413_221804",
+    "b3_test_extractive_bm25_20260413_221828",
+    "b3_test_extractive_bm25_20260413_221838",
+    "b3_test_extractive_bm25_20260413_222941",
+    "test_allow_no_key_generates_llm_disabled",
     "test_b2_extractive_bm25_integration"
   ],
   "run_hashes": {
@@ -84,6 +95,51 @@
       "backend_requested": "bm25",
       "backend_used": "bm25"
     },
+    "b2_test_extractive_bm25_20260322_233439": {
+      "run_config_sha256": "db618b6a786f123037482df44e776e22d78787f673b335afe326704d4e74d005",
+      "summary_sha256": "497b27203b536b32d234b81349d758f281436346e98e8d497de2384714ce0164",
+      "baseline": "b2",
+      "split": "test",
+      "mode": "extractive",
+      "backend_requested": "bm25",
+      "backend_used": "bm25"
+    },
+    "b2_test_extractive_bm25_20260413_221804": {
+      "run_config_sha256": "91de9afafa4c6d6e09e78cb9c1caaf42d95fd6548b6791fdf491b90c744cd167",
+      "summary_sha256": "497b27203b536b32d234b81349d758f281436346e98e8d497de2384714ce0164",
+      "baseline": "b2",
+      "split": "test",
+      "mode": "extractive",
+      "backend_requested": "bm25",
+      "backend_used": "bm25"
+    },
+    "b2_test_extractive_bm25_20260413_221828": {
+      "run_config_sha256": "535449ec1569525e9a19f820a500dbf3c5367b5614c39bd86ae65e1a370873aa",
+      "summary_sha256": "497b27203b536b32d234b81349d758f281436346e98e8d497de2384714ce0164",
+      "baseline": "b2",
+      "split": "test",
+      "mode": "extractive",
+      "backend_requested": "bm25",
+      "backend_used": "bm25"
+    },
+    "b2_test_extractive_bm25_20260413_221837": {
+      "run_config_sha256": "dbf43b8d3f75a2e97c1ae15c21fee811dec985c29a212bffee7f088f8a16a23a",
+      "summary_sha256": "497b27203b536b32d234b81349d758f281436346e98e8d497de2384714ce0164",
+      "baseline": "b2",
+      "split": "test",
+      "mode": "extractive",
+      "backend_requested": "bm25",
+      "backend_used": "bm25"
+    },
+    "b2_test_extractive_bm25_20260413_222940": {
+      "run_config_sha256": "28ada1bf1b5d922b97a7bddf479199881a5adf333dd595ea04abf5d22cea3eaf",
+      "summary_sha256": "497b27203b536b32d234b81349d758f281436346e98e8d497de2384714ce0164",
+      "baseline": "b2",
+      "split": "test",
+      "mode": "extractive",
+      "backend_requested": "bm25",
+      "backend_used": "bm25"
+    },
     "b3_generative_bm25_fallback_final": {
       "run_config_sha256": "4e52a17d879dbace9e48bf01f1b9b3aa6c162343bd54d5c6b044dac5bfe1dbcf",
       "summary_sha256": "b775d78d38fb8d272ada36e61c1b9e7b31975a41e20c0d69d818ffea198f82f1",
@@ -138,8 +194,62 @@
       "backend_requested": "bm25",
       "backend_used": "bm25"
     },
+    "b3_test_extractive_bm25_20260322_233440": {
+      "run_config_sha256": "66c8c260ba9d1221ce806488539123f9ba857d9827cb1b6e174b68c82c9c26a7",
+      "summary_sha256": "4084eee95aa7399f757323f4570a35d0bc269d2878d595d6c1e86f46ee23f362",
+      "baseline": "b3",
+      "split": "test",
+      "mode": "extractive",
+      "backend_requested": "bm25",
+      "backend_used": "bm25"
+    },
+    "b3_test_extractive_bm25_20260413_221804": {
+      "run_config_sha256": "24e3ea1649ed9debf9b730b8c6cfd03b700b040993a214c3fb2d0027c881b116",
+      "summary_sha256": "4084eee95aa7399f757323f4570a35d0bc269d2878d595d6c1e86f46ee23f362",
+      "baseline": "b3",
+      "split": "test",
+      "mode": "extractive",
+      "backend_requested": "bm25",
+      "backend_used": "bm25"
+    },
+    "b3_test_extractive_bm25_20260413_221828": {
+      "run_config_sha256": "ea6343a2ab4d6b5b63752cfbeb0968648e8ddd16f3c1bf266f6b178e133c6358",
+      "summary_sha256": "4084eee95aa7399f757323f4570a35d0bc269d2878d595d6c1e86f46ee23f362",
+      "baseline": "b3",
+      "split": "test",
+      "mode": "extractive",
+      "backend_requested": "bm25",
+      "backend_used": "bm25"
+    },
+    "b3_test_extractive_bm25_20260413_221838": {
+      "run_config_sha256": "de3af46e2067e15f114587d230dfe2bd59a79cbd76d08f3da779b7596ae71b59",
+      "summary_sha256": "4084eee95aa7399f757323f4570a35d0bc269d2878d595d6c1e86f46ee23f362",
+      "baseline": "b3",
+      "split": "test",
+      "mode": "extractive",
+      "backend_requested": "bm25",
+      "backend_used": "bm25"
+    },
+    "b3_test_extractive_bm25_20260413_222941": {
+      "run_config_sha256": "0b743b3349b611d3015974c89e34045c74dafba0a1448e8890e75fa85bf47119",
+      "summary_sha256": "4084eee95aa7399f757323f4570a35d0bc269d2878d595d6c1e86f46ee23f362",
+      "baseline": "b3",
+      "split": "test",
+      "mode": "extractive",
+      "backend_requested": "bm25",
+      "backend_used": "bm25"
+    },
+    "test_allow_no_key_generates_llm_disabled": {
+      "run_config_sha256": "d2e4301db936b9ce0e68b409192294b02790df2eeb05ffcedc5d4af0f6559d37",
+      "summary_sha256": "e1260349ddf96b834516efade4024eb5a86521992dce185fd6a53869b5474e1e",
+      "baseline": "b2",
+      "split": "test",
+      "mode": "generative",
+      "backend_requested": "bm25",
+      "backend_used": "bm25"
+    },
     "test_b2_extractive_bm25_integration": {
-      "run_config_sha256": "05e9e752c67d03a60b3aed783ac8e7e216ae45cdf3f5706f6372739e8ce19292",
+      "run_config_sha256": "8a88321549207ae49584128df15a3fc3e5dc49aeeb2f3f0430e8e1f351f3f53f",
       "summary_sha256": "497b27203b536b32d234b81349d758f281436346e98e8d497de2384714ce0164",
       "baseline": "b2",
       "split": "test",
@@ -155,6 +265,10 @@
     "fig_tradeoff.png"
   ],
   "tables": [
+    "ablation_comparison.csv",
+    "auditability_scores.csv",
+    "failure_taxonomy.csv",
+    "objective_slice_results.csv",
     "run_summary.csv"
   ]
 }

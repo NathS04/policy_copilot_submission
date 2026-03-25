@@ -1,0 +1,4 @@
+run,total_queries,clean_queries,missed_retrieval,chunk_boundary,wrong_claim_evidence_link,unsupported_generation,contradiction_ignored,abstention_error,format_error
+b1_generative_final,63,0,36,0,0,17,10,17,0
+b2_generative_bm25_fallback_final,63,13,36,0,30,4,10,10,0
+b3_generative_bm25_fallback_final,63,18,36,0,9,23,8,28,0
