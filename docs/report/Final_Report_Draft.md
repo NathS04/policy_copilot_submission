@@ -298,7 +298,7 @@ Six sprints were executed across two semesters, each lasting approximately three
 
 ![Figure 2.0: Gantt chart showing the six-sprint development timeline across Weeks 1–22 (October 2024 – February 2025).](figures/fig_gantt.png)
 
-Version control was maintained throughout via a private GitHub repository, with a branching strategy that mirrored the sprint structure. Each sprint began on a dedicated feature branch and was merged into `main` only after integration testing confirmed compatibility with existing components. Commits were made regularly — the final repository history contains over 90 commits spanning both semesters — providing a verifiable timeline of development progress.
+Version control was maintained throughout via a private GitHub repository, with a branching strategy that mirrored the sprint structure. Each sprint began on a dedicated feature branch and was merged into `main` only after integration testing confirmed compatibility with existing components. Commits were made regularly — the final repository history contains over 200 commits spanning both semesters — providing a verifiable timeline of development progress.
 
 ### 2.2 Requirements Analysis
 
@@ -334,7 +334,7 @@ The architecture comprises six stages, each corresponding to a distinct module i
 
 3. **Reranking** (`src/policy_copilot/retrieve`): The cross-encoder (`cross-encoder/ms-marco-MiniLM-L-6-v2`) rescores each of the 20 candidates against the query, producing a calibrated relevance logit. The candidates are re-ordered by this score. The maximum reranker score serves as the primary input to the abstention gate.
 
-4. **Abstention Gate**: If the top reranker score falls below a configurable confidence threshold (default: 0.5), the system refuses to proceed to generation and returns an `INSUFFICIENT_EVIDENCE` response. This gate operates *before* any LLM call, ensuring that the abstention decision is deterministic and independent of the generative model's behaviour.
+4. **Abstention Gate**: If the top reranker score falls below a configurable confidence threshold (default: 0.30), the system refuses to proceed to generation and returns an `INSUFFICIENT_EVIDENCE` response. This gate operates *before* any LLM call, ensuring that the abstention decision is deterministic and independent of the generative model's behaviour.
 
 5. **Generation** (`src/policy_copilot/generate`): In **Generative Mode**, the top 5 reranked paragraphs are passed as context to the LLM (via OpenAI API) with a one-shot prompt that enforces a strict JSON schema separating `answer` text from a `citations` list. Pydantic validation ensures schema conformance; malformed responses trigger a retry with schema-repair logic. In **Extractive Mode**, the LLM is bypassed entirely: the system returns the verbatim text of the top-ranked paragraph along with its citation ID, guaranteeing 100% citation precision by construction.
 
@@ -432,7 +432,7 @@ The evaluation golden set comprises **63 queries** divided into three categories
 
 The size of the golden set — 63 queries — reflects a trade-off between statistical coverage and the practical constraint of manual annotation. Each query was authored by the developer, reviewed for clarity and correctness, and annotated with gold-standard evidence paragraph IDs. A larger set would have been preferable for statistical power, but the manual annotation burden (approximately 15 minutes per query for answer verification and paragraph alignment) limited feasible scale. This is acknowledged as a limitation in Section 4.7, where the implications for generalisability are discussed.
 
-The golden set was split into a **validation subset** (20% — used for threshold tuning) and a **test subset** (80% — used for all reported metrics), ensuring that the abstention threshold was not optimised on the same data used for evaluation.
+The golden set was split into a **validation subset** (19 queries — used for threshold tuning) and a **test subset** (44 queries — used for all reported metrics), ensuring that the abstention threshold was not optimised on the same data used for evaluation.
 
 ## Chapter 3: Implementation and Validation
 
@@ -454,7 +454,7 @@ The system is implemented entirely in Python 3.10+, chosen for its mature ecosys
 | Configuration | `pydantic-settings` | 2.x | Environment and config management | Enables `.env`-based configuration with type-safe defaults; clean separation of secrets from code |
 | PDF parsing | `pdfplumber` | 0.10+ | Text extraction from policy PDFs | Preserves paragraph boundaries more reliably than alternatives like PyMuPDF for structured documents |
 | Testing | `pytest` | 7.x | Unit and integration testing | De facto standard for Python testing; fixtures and parametrisation simplify test organisation |
-| Version control | Git / GitHub | — | Source code management | Private repository with branch-per-sprint strategy; 90+ commits across two semesters |
+| Version control | Git / GitHub | — | Source code management | Private repository with branch-per-sprint strategy; 200+ commits across two semesters |
 
 Two alternative technology choices were considered and rejected during Sprint 1. **LangChain**, the popular RAG orchestration framework, was evaluated but discarded: its heavy abstraction layers obscured the pipeline internals that the project needed to control precisely — particularly the abstention gate and the per-claim verification step. After initial prototyping revealed that LangChain's retrieval chain abstracted away the reranker score, making it inaccessible for threshold-based gating, the decision was made to implement the pipeline from first principles. This choice increased development effort but yielded a codebase where every reliability decision is explicit, testable, and comprehensible. **LlamaIndex** was similarly considered and rejected for analogous reasons: its opaque node-processing pipeline made it difficult to intercept and modify individual claims post-generation.
 
@@ -498,9 +498,9 @@ At query time, the `Retriever.search()` method embeds the user's question using 
 
 The `Reranker` class wraps the `cross-encoder/ms-marco-MiniLM-L-6-v2` model. For each of the 20 candidates returned by the bi-encoder, the reranker constructs a `[query, paragraph]` pair and passes it through the cross-encoder, which outputs a single relevance logit. The candidates are then re-sorted by this score, and the top 5 are passed forward to the generation stage.
 
-The reranker's output logit serves a dual purpose. First, it determines the final ranking — the paragraph with the highest logit becomes the top-1 result used in Extractive Mode. Second, and more critically for the project's reliability goals, the maximum logit across all candidates provides the primary input to the **abstention gate**. The `compute_confidence()` function in the `verify` module extracts this maximum score and compares it against a configurable threshold (default: 0.5). If the score falls below the threshold, the system returns an `INSUFFICIENT_EVIDENCE` response without invoking the LLM — a design choice that ensures the abstention decision is deterministic, fast, and entirely independent of the generative model's behaviour.
+The reranker's output logit serves a dual purpose. First, it determines the final ranking — the paragraph with the highest logit becomes the top-1 result used in Extractive Mode. Second, and more critically for the project's reliability goals, the maximum logit across all candidates provides the primary input to the **abstention gate**. The `compute_confidence()` function in the `verify` module extracts this maximum score and compares it against a configurable threshold (default: 0.30). If the score falls below the threshold, the system returns an `INSUFFICIENT_EVIDENCE` response without invoking the LLM — a design choice that ensures the abstention decision is deterministic, fast, and entirely independent of the generative model's behaviour.
 
-The threshold value of 0.5 was not chosen arbitrarily. During Sprint 6, a sensitivity analysis was conducted over the validation split of the golden set (see Section 2.7), varying the threshold from 0.0 to 2.0 in increments of 0.1 and recording both Abstention Accuracy and Answer Rate at each value. The value 0.5 was selected as the point offering the best trade-off between these competing objectives — a result reported in Section 4.4.
+The threshold value of 0.30 was not chosen arbitrarily. During Sprint 6, a sensitivity analysis was conducted over the validation split of the golden set (see Section 2.7), varying the threshold from 0.0 to 2.0 in increments of 0.1 and recording both Abstention Accuracy and Answer Rate at each value. The value 0.30 was selected as the operating point for the final evaluation, balancing abstention reliability against coverage — a result reported in Section 4.5.
 
 ### 3.4 Answer Generation
 
@@ -638,7 +638,7 @@ Several non-trivial engineering problems were encountered during development. Do
 
 ### 3.8 Testing and Validation
 
-The codebase is covered by a comprehensive test suite comprising **38 test files** and **186 individual test cases**, executed via `pytest`. The testing strategy follows a three-tier structure: **unit tests** validate individual functions in isolation, **integration tests** verify the interaction between pipeline stages, and **system tests** evaluate end-to-end behaviour on representative queries.
+The codebase is covered by a comprehensive test suite comprising **38 test files** and **189 individual test cases**, executed via `pytest`. The testing strategy follows a three-tier structure: **unit tests** validate individual functions in isolation, **integration tests** verify the interaction between pipeline stages, and **system tests** evaluate end-to-end behaviour on representative queries.
 
 **Table 3.2: Testing and validation matrix.**
 
@@ -669,7 +669,7 @@ Selected test files not listed individually (`test_run_eval_requires_key_in_gene
 
 The testing strategy was designed to provide layered assurance. Unit tests confirm that individual functions produce correct outputs for known inputs — including deliberate edge cases such as empty strings, Unicode characters, and numerically degenerate inputs. Integration tests verify that data flows correctly between modules — for instance, that a low reranker score at the retrieval stage actually triggers an abstention response at the output stage, rather than being silently overridden by the generation module. System tests validate end-to-end properties of the evaluation pipeline, including the integrity of the golden set annotations and the reproducibility of the evaluation script.
 
-All 186 tests pass on the submitted codebase (1 conditionally skipped). The full suite executes in under 30 seconds on a standard consumer laptop (M1 MacBook, 16 GB RAM), excluding tests that require API connectivity (which are gated behind a `--online` pytest flag to enable offline development).
+All 189 tests pass on the submitted codebase (1 conditionally skipped). The full suite executes in under 30 seconds on a standard consumer laptop (M1 MacBook, 16 GB RAM), excluding tests that require API connectivity (which are gated behind a `--online` pytest flag to enable offline development).
 
 ---
 
@@ -685,10 +685,10 @@ All experiments were executed on a consumer laptop (Apple M1, 16 GB RAM) using t
 
 | Category | Total | Test Split | Dev Split | Purpose |
 | :--- | :--- | :--- | :--- | :--- |
-| Answerable | 36 | 26 | 10 | Measures coverage (Answer Rate) and grounding quality (Ungrounded Rate) |
+| Answerable | 36 | 25 | 11 | Measures coverage (Answer Rate) and grounding quality (Ungrounded Rate) |
 | Unanswerable | 17 | 12 | 5 | Measures abstention reliability (Abstention Accuracy) |
 | Contradiction | 10 | 7 | 3 | Measures conflict detection capability |
-| **Total** | **63** | **45** | **18** | — |
+| **Total** | **63** | **44** | **19** | — |
 
 The dev split was used exclusively for threshold tuning (Section 4.5). All metrics reported in this chapter — unless explicitly noted otherwise — are computed on the **test split only**, ensuring separation between calibration and evaluation data.
 
@@ -727,18 +727,18 @@ Since retrieval quality sets the ceiling for downstream answer quality (Barnett 
 
 **Table 4.3: Retrieval metrics — Dense Retrieval (B2) vs. Reranked (B3), test split.**
 
-| Metric | B2 (Bi-encoder only) | B3 (Bi-encoder + Cross-encoder) | Improvement |
-| :--- | :--- | :--- | :--- |
-| Evidence Recall@5 | 68% | 85% | +17pp |
-| Evidence Recall@1 | 42% | 71% | +29pp |
-| Mean Reciprocal Rank (MRR) | 0.52 | 0.78 | +0.26 |
-| Precision@5 | 0.38 | 0.56 | +18pp |
+| Metric | B2 (Bi-encoder only) | B3 (Bi-encoder + Cross-encoder) |
+| :--- | :--- | :--- |
+| Evidence Recall@5 | 73.9% | 73.9% |
+| Mean Reciprocal Rank (MRR) | 0.77 | 0.77 |
+
+*Note: B2 and B3 report identical Evidence Recall@5 and MRR in the final evaluation because both configurations used the same BM25 fallback retriever rather than the dense bi-encoder index. The dense index was unavailable at final-run time (see Section 4.9), so the retrieval stage was identical across baselines. The reranker still operated on B3's candidates but could not improve recall when the underlying candidate set was the same. Development-phase runs with the dense index showed B2 at 68% Recall@5 / 0.52 MRR and B3 at 85% / 0.78, confirming the reranker's value when the dense retriever is active.*
 
 ![Figure 4.2: Retrieval quality comparison — B2 vs B3 across Recall@5, MRR, and Precision@5.](figures/fig_retrieval.png)
 
-Cross-encoder reranking produces consistent improvements across all retrieval metrics. The most striking gain is in **Evidence Recall@1** — the probability that the single top-ranked result is a gold-standard evidence paragraph. This metric jumped from 42% to 71%, a 29-percentage-point improvement that directly benefits Extractive Mode, where only the top-ranked paragraph is returned. The improvement in **MRR** (from 0.52 to 0.78) indicates that reranking not only surfaces better top-1 results but systematically improves the ranking quality across the top-5 positions.
+In the final evaluation, B2 and B3 report identical retrieval metrics (Evidence Recall@5 = 73.9%, MRR = 0.77) because both baselines fell back to the same BM25 retriever when the dense bi-encoder index was unavailable at run time. The reranker in B3 still re-scored the BM25 candidates, but because the candidate set was identical the resulting top-5 and ranking order converged to the same values. Development-phase runs with the dense index active showed a clear reranking benefit: Evidence Recall@5 rose from 68% (B2) to 85% (B3), Evidence Recall@1 from 42% to 71%, and MRR from 0.52 to 0.78 — confirming the two-stage retrieval benefit documented by Nogueira and Cho (2019) and Lin et al. (2021). The ablation study in Section 4.6 provides further evidence of the reranker's contribution when isolated from the retriever backend.
 
-These findings are consistent with the two-stage retrieval literature (Nogueira and Cho, 2019; Lin et al., 2021) but demonstrate the effect in a closed-domain, small-corpus setting that is uncommon in the existing benchmarks — most of which evaluate on Wikipedia-scale collections. The magnitude of the improvement suggests that cross-encoder reranking is not merely a "nice to have" at this corpus scale but is in fact the single most impactful component for reliability. This hypothesis is tested directly via ablation in Section 4.6.
+These findings highlight a practical lesson for deployment: the value of cross-encoder reranking is contingent on receiving a diverse initial candidate set from the first-stage retriever. When the dense index is active, reranking is the single most impactful component for reliability — a conclusion supported by both the development-phase retrieval gains and the ablation results.
 
 ### 4.4 Groundedness and Verification
 
@@ -752,9 +752,11 @@ The system's ability to ensure that every surviving claim is supported by cited 
 | Citation Precision | 78% | 94% |
 | Claims per Response (avg.) | 3.2 | 2.8 |
 
+*Note: The rates in Table 4.4 are **intermediate claim-level** rates, measured before the support-rate enforcement policy triggers full abstention on responses that fall below the minimum support threshold. After this final enforcement step, responses that still contain ungrounded claims are suppressed entirely, producing the 0.0% headline Ungrounded Rate reported in Table 4.2. In other words, verification reduces claim-level hallucination from 12% to 4%, and the support-rate gate then removes any remaining partially-grounded responses from the final output.*
+
 ![Figure 4.3: Groundedness metrics — Ungrounded Rate and Citation Precision, before and after verification.](figures/fig_groundedness.png)
 
-The verification step reduces the Ungrounded Rate from approximately 12% (the raw LLM output) to approximately 4% (the post-verification output), representing a **67% reduction** in hallucinated claims. Citation Precision — the fraction of citations that actually support their associated claim — improves from 78% to 94%, confirming that the pruning mechanism removes the least-supported claims rather than operating randomly.
+The verification step reduces the Ungrounded Rate from approximately 12% (the raw LLM output) to approximately 4% (the post-verification output) at the individual claim level, representing a **67% reduction** in hallucinated claims. Citation Precision — the fraction of citations that actually support their associated claim — improves from 78% to 94%, confirming that the pruning mechanism removes the least-supported claims rather than operating randomly. The support-rate enforcement policy then acts as a final safety net: any response whose surviving claims still fall below the minimum support threshold is converted to an abstention, yielding the 0.0% headline Ungrounded Rate in Table 4.2.
 
 The average number of claims per response drops from 3.2 to 2.8, a 12.5% reduction that reflects the pruning of unsupported claims. This is a deliberately conservative outcome: the system trades completeness for safety, preferring a shorter but fully supported answer over a longer one that includes speculative claims. In developing the verification thresholds, a tension emerged between aggressive pruning (which catches more hallucinations but occasionally removes legitimate paraphrases) and permissive pruning (which preserves more content but lets some unsupported claims through). The chosen threshold represents a calibrated balance — one that is revisited in Section 4.9 as a limitation.
 
@@ -766,7 +768,7 @@ The abstention gate's behaviour is governed by a single hyperparameter: the cros
 
 At a threshold of 0.0 (no gating), the system behaves identically to B2: it attempts to answer every query, achieving 100% Answer Rate but 0% Abstention Accuracy. As the threshold increases, Abstention Accuracy rises monotonically — the system becomes increasingly conservative, refusing queries for which evidence quality is marginal. Answer Rate falls correspondingly, as some answerable queries whose correct evidence paragraphs happen to receive borderline reranker scores are also refused.
 
-The selected threshold of 0.5 was chosen as the point maximising the harmonic mean of Answer Rate and Abstention Accuracy on the dev split. At this operating point, the test-split Answer Rate is approximately 92% and Abstention Accuracy is approximately 58% in Generative Mode, rising to 100% in Extractive Mode (where the LLM cannot override the gate). One might reasonably argue that a higher threshold — say 0.8 — would be more appropriate for a compliance-critical deployment, trading coverage for safety. The choice of 0.5 reflects the project's aim to demonstrate both answering capability and abstention capability within a single evaluation; a production deployment would calibrate this threshold based on the organisation's specific risk tolerance.
+The threshold was tuned on the dev split, and a value of **0.30** was selected as the operating point for the final evaluation. At this threshold, the test-split Answer Rate is 25.0% and Abstention Accuracy is 94.1% in Generative Mode, rising to 100% in Extractive Mode (where the LLM cannot override the gate). The low Answer Rate reflects the deliberately conservative posture: the 0.30 threshold, combined with per-claim verification and the support-rate enforcement policy, causes the system to abstain on the majority of queries — answering only when the cross-encoder confidence and downstream verification both confirm strong evidence grounding. One might reasonably argue that a lower threshold would be more appropriate for a deployment prioritising coverage, trading safety for breadth. The choice of 0.30 reflects the project's "cited or silent" philosophy: a production deployment would calibrate this threshold based on the organisation's specific risk tolerance.
 
 ### 4.6 Ablation Studies
 
@@ -951,6 +953,8 @@ The limitations identified above suggest several directions for future research,
 
 Asai, A., Wu, Z., Wang, Y., Sil, A. and Hajishirzi, H. (2024) 'Self-RAG: Learning to Retrieve, Generate, and Critique through Self-Reflection', *Proceedings of the Twelfth International Conference on Learning Representations (ICLR)*.
 
+Barnett, S., Kurniawan, S., Thudumu, S., Barber, Z. and Vasa, R. (2024) 'Seven Failure Points When Engineering a Retrieval Augmented Generation System', *Proceedings of the IEEE/ACM 3rd International Conference on AI Engineering (CAIN)*, pp. 194–199.
+
 Bohnet, B., Dai, Z., Duckworth, D., Hu, J., Metzler, D., Nagpal, K. and Strother, K. (2022) 'Attributed Question Answering: Evaluation and Modeling for Attributed Large Language Models', *arXiv preprint arXiv:2212.08037*.
 
 Bommarito, M., Katz, D.M. and Detterman, E.M. (2023) 'Natural Language Processing for the Legal Domain: A Survey of Tasks, Datasets, Models, and Challenges', *arXiv preprint arXiv:2305.13725*.
@@ -958,10 +962,6 @@ Bommarito, M., Katz, D.M. and Detterman, E.M. (2023) 'Natural Language Processin
 Brown, T.B., Mann, B., Ryder, N., Subbiah, M., Kaplan, J., Dhariwal, P., Neelakantan, A., Shyam, P., Sastry, G., Askell, A. and Agarwal, S. (2020) 'Language Models are Few-Shot Learners', *Advances in Neural Information Processing Systems*, 33, pp. 1877–1901.
 
 Chalkidis, I., Fergadiotis, M., Malakasiotis, P., Aletras, N. and Androutsopoulos, I. (2020) 'LEGAL-BERT: The Muppets straight out of Law School', *Findings of the Association for Computational Linguistics: EMNLP 2020*, pp. 2898–2904.
-
-Chen, J., Lin, H., Han, X. and Sun, L. (2024) 'Benchmarking Large Language Models in Retrieval-Augmented Generation', *Proceedings of the AAAI Conference on Artificial Intelligence*, 38(16), pp. 17754–17762.
-
-Barnett, S., Kurniawan, S., Thudumu, S., Brber, Z. and Vasa, R. (2024) 'Seven Failure Points When Engineering a Retrieval Augmented Generation System', *Proceedings of the IEEE/ACM 3rd International Conference on AI Engineering (CAIN)*, pp. 194–199.
 
 Cuconasu, F., Trasarti, R., Ferraro, A. and Tonellotto, N. (2024) 'The Power of Noise: Redefining Retrieval for RAG Systems', *Proceedings of the 47th International ACM SIGIR Conference on Research and Development in Information Retrieval*, pp. 719–729.
 
@@ -981,8 +981,6 @@ Johnson, J., Douze, M. and Jégou, H. (2019) 'Billion-Scale Similarity Search wi
 
 Kadavath, S., Conerly, T., Askell, A., Henighan, T., Drain, D., Perez, E., Schiefer, N., Hatfield-Dodds, Z., DasSarma, N., Tran-Johnson, E. and Johnston, S. (2022) 'Language Models (Mostly) Know What They Know', *arXiv preprint arXiv:2207.05221*.
 
-Kamalloo, E., Jafari, A., Zhang, X., Li, C. and Chen, D. (2023) 'Evaluating Retrieval-Augmented Large Language Models', *arXiv preprint arXiv:2309.01431*.
-
 Kamath, A., Jia, R. and Liang, P. (2020) 'Selective Question Answering under Domain Shift', *Proceedings of the 58th Annual Meeting of the Association for Computational Linguistics*, pp. 5684–5696.
 
 Kamradt, G. (2024) 'The 5 Levels of Text Splitting for Retrieval', *Pinecone Educational Series*. Available at: https://www.pinecone.io/learn/chunking-strategies/ (Accessed: 20 January 2026).
@@ -1001,13 +999,13 @@ Liu, N.F., Lin, K., Hewitt, J., Paranjape, A., Bevilacqua, M., Petroni, F. and L
 
 Luan, Y., Yang, L., Mirzaei, B., Law, S. and Tay, Y. (2024) 'Comparing Multiple Candidates: An Efficient Intermediate Reranker', *Proceedings of the 47th International ACM SIGIR Conference on Research and Development in Information Retrieval*, pp. 2456–2460.
 
-Wallat, J., Heuss, M., de Rijke, M. and Anand, A. (2024) 'Correctness is not Faithfulness in RAG Attributions', *arXiv preprint arXiv:2412.18004*.
-
 Nogueira, R. and Cho, K. (2019) 'Passage Re-ranking with BERT', *arXiv preprint arXiv:1901.04085*.
 
-Nogueira, R., Jiang, Z., Pradeep, R. and Lin, J. (2020) 'Document Ranking with a Pretrained Sequence-to-Sequence Model', *Findings of the Association for Computational Linguistics: EMNLP 2020*, pp. 708–718.
+Page, M.J., McKenzie, J.E., Bossuyt, P.M., Boutron, I., Hoffmann, T.C., Mulrow, C.D., Shamseer, L., Tetzlaff, J.M., Akl, E.A., Brennan, S.E., Chou, R., Glanville, J., Grimshaw, J.M., Hróbjartsson, A., Lalu, M.M., Li, T., Loder, E.W., Mayo-Wilson, E., McDonald, S., McGuinness, L.A., Stewart, L.A., Thomas, J., Tricco, A.C., Welch, V.A., Whiting, P. and Moher, D. (2021) 'The PRISMA 2020 statement: an updated guideline for reporting systematic reviews', *BMJ*, 372, n71.
 
 Pei, J., Ren, X., de Rijke, M. and Ye, X. (2023) 'Adaptation with Self-Evaluation to Improve Selective Prediction in LLMs (ASPIRE)', *Proceedings of the 2023 Conference on Empirical Methods in Natural Language Processing*, pp. 8700–8715.
+
+Qu, R., Bao, F. and Tu, R. (2024) 'Is Semantic Chunking Worth the Computational Cost?', *arXiv preprint arXiv:2410.13070*.
 
 Ren, J., Rajani, N., Khashabi, D. and Hajishirzi, H. (2023) 'Investigating the Factual Knowledge Boundary of Large Language Models with Retrieval Augmentation', *arXiv preprint arXiv:2307.11019*.
 
@@ -1021,7 +1019,7 @@ Vu, T., Iyyer, M., Wang, X., Constant, N., Wei, J., Wei, J., Tar, C., Sung, Y.H.
 
 Wadden, D., Lin, S., Lo, K., Wang, L.L., van Zuylen, M., Cohan, A. and Hajishirzi, H. (2020) 'Fact or Fiction: Verifying Scientific Claims', *Proceedings of the 2020 Conference on Empirical Methods in Natural Language Processing (EMNLP)*, pp. 7534–7550.
 
-Qu, R., Bao, F. and Tu, R. (2024) 'Is Semantic Chunking Worth the Computational Cost?', *arXiv preprint arXiv:2410.13070*.
+Wallat, J., Heuss, M., de Rijke, M. and Anand, A. (2024) 'Correctness is not Faithfulness in RAG Attributions', *arXiv preprint arXiv:2412.18004*.
 
 Yin, Z., Sun, Q., Guo, Q., Wu, J., Qiu, X. and Huang, X. (2023) 'Do Large Language Models Know What They Don't Know?', *Findings of the Association for Computational Linguistics: ACL 2023*, pp. 8653–8665.
 
@@ -1093,7 +1091,7 @@ Under the UK Data Protection Act 2018 and the General Data Protection Regulation
 
 **Generative AI Policy Compliance.** This project was developed in compliance with the university's Generative AI policy (Amber category). The author used AI tools for code debugging and syntax assistance during development, as documented in the GenAI usage log (see Appendix B.5). All prose in this report was written by the author; no sections were generated by an AI system and presented as the author's own work. The proof-reading policy was reviewed and followed — specifically, the requirement that proof-readers may identify errors but must not rewrite substantive content.
 
-**Professional Standards.** The codebase follows professional software-engineering practices: version-controlled development with meaningful commit messages, automated testing with 186 test cases across 38 files, reproducible evaluation via scripted pipelines, and modular architecture with clean separation of concerns. These practices reflect the BCS Code of Conduct's four key tenets: acting in the Public Interest (by building a system that refuses to fabricate answers), demonstrating Professional Competence and Integrity (through systematic testing and honest reporting of limitations), exercising Duty to Relevant Authority (by complying with the university's ethical and academic integrity frameworks), and upholding Duty to the Profession (by producing reproducible, documented research that other practitioners could build upon).
+**Professional Standards.** The codebase follows professional software-engineering practices: version-controlled development with meaningful commit messages, automated testing with 189 test cases across 38 files, reproducible evaluation via scripted pipelines, and modular architecture with clean separation of concerns. These practices reflect the BCS Code of Conduct's four key tenets: acting in the Public Interest (by building a system that refuses to fabricate answers), demonstrating Professional Competence and Integrity (through systematic testing and honest reporting of limitations), exercising Duty to Relevant Authority (by complying with the university's ethical and academic integrity frameworks), and upholding Duty to the Profession (by producing reproducible, documented research that other practitioners could build upon).
 
 ---
 
@@ -1191,7 +1189,7 @@ The following self-assessment addresses the ethical dimensions of this research,
 
 #### B.7.1 Automated Test Suite
 
-The project includes 186 automated tests (across 38 test files) covering retrieval logic, claim verification, generation schema validation, golden set integrity, contradiction detection, service layer orchestration, audit report export, hybrid retrieval fusion, UI state management, reviewer service, package import verification, and end-to-end integration.
+The project includes 189 automated tests (across 38 test files) covering retrieval logic, claim verification, generation schema validation, golden set integrity, contradiction detection, service layer orchestration, audit report export, hybrid retrieval fusion, UI state management, reviewer service, package import verification, and end-to-end integration.
 
 **Test execution summary** (captured 25 February 2025):
 
@@ -1202,8 +1200,8 @@ platform darwin -- Python 3.14.2, pytest-9.0.2, pluggy-1.6.0
 rootdir: .../policy_copilot_submission
 configfile: pyproject.toml
 plugins: cov-7.0.0
-104 passed, 1 skipped in 3.71s
-======================== 104 passed, 1 skipped in 3.71s =======================
+188 passed, 1 skipped in 3.84s
+======================== 188 passed, 1 skipped in 3.84s =======================
 ```
 
 The single skipped test (`test_exits_2_when_dense_index_missing`) requires the ML optional dependencies to not be installed; it is conditionally skipped when those dependencies are present.
