@@ -17,6 +17,7 @@ STAGE_DIR = Path(tempfile.mkdtemp()) / "policy_copilot_submission"
 INCLUDE_NAMES = {
     ".env.example",
     ".gitignore",
+    ".streamlit",
     "README.md",
     "INSTRUCTIONS_FOR_EVALUATOR.md",
     "pyproject.toml",
