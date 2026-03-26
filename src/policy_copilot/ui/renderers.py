@@ -768,3 +768,110 @@ def _render_review_summary(session: Any, reviewer: Any) -> None:
         mime="text/csv",
         use_container_width=True,
     )
+
+
+# ================================================================== #
+#  Help & Guide view                                                   #
+# ================================================================== #
+
+def render_help_view() -> None:
+    """Comprehensive help page for novice users."""
+    render_view_header(
+        "Help & Guide",
+        "Learn how to use Policy Copilot — no technical knowledge required",
+    )
+
+    # Getting Started
+    with st.expander("Getting Started", expanded=True):
+        st.markdown("""
+**Welcome to Policy Copilot!** This system helps you find answers in policy documents with full evidence and transparency.
+
+**Step 1: Ask a question.** Go to the **Ask** tab and type a question about your policy documents in the chat box at the bottom. For example: *"What is the minimum password length?"*
+
+**Step 2: Read the answer.** The system will show you an answer with blue citation pills below it. Each citation links to a specific paragraph in the policy documents.
+
+**Step 3: Check the evidence.** Click **Audit Trace** in the sidebar to see exactly which paragraphs were used, how confident the system is, and whether each claim is supported.
+
+**Step 4: Understand warnings.** If you see a **yellow warning**, the system could not find enough evidence to answer confidently. This is a safety feature — it refuses to guess rather than risk giving you wrong information.
+
+**Step 5: Export for records.** Click any download button to save a full audit report of the question, answer, evidence, and system confidence. You can choose JSON, HTML, Markdown, or a complete ZIP packet.
+""")
+
+    # Mode-by-Mode Guide
+    with st.expander("Mode-by-Mode Guide"):
+        st.markdown(f"""
+**{ICONS['search']} Ask** — The main chat interface. Type a question and get an evidence-grounded answer with citations. The system retrieves relevant paragraphs, ranks them by relevance, and generates a response citing specific evidence. If it cannot find enough evidence, it will abstain rather than make up an answer.
+
+**{ICONS['document']} Audit Trace** — After getting an answer, switch here to see the full breakdown: which claims were made, which paragraphs support each claim, whether any claims are unsupported, and detailed confidence scores. This is where you verify the answer's integrity.
+
+**{ICONS['shield']} Critic Lens** — Paste or select a policy passage to analyse its language. The system flags potential issues: vague quantifiers ("appropriate"), normative language ("shall"), subjective modifiers, unsupported claims, logical gaps, and ambiguous pronouns. Each flag links to the specific text that triggered it.
+
+**{ICONS['chart']} Experiment Explorer** — Browse the evaluation runs that tested the system. Compare different baselines (B1 = no retrieval, B2 = basic retrieval, B3 = full system) to see how each component contributes. View per-query outcomes, metric comparisons, and configuration details.
+
+**{ICONS['pencil']} Reviewer Mode** — A structured human evaluation interface. Select an evaluation run, browse its outputs one by one, and score each on groundedness (1-5), usefulness (1-5), and citation correctness (1-5). Export your ratings as JSON or CSV for analysis.
+
+**{ICONS['copy']} Help & Guide** — You are here! This page explains everything about the system.
+""")
+
+    # Glossary
+    with st.expander("Glossary of Terms"):
+        _terms = [
+            ("Citation", "A reference to a specific paragraph in a policy document that supports a claim in the answer. Shown as blue pills below the answer."),
+            ("Evidence", "The actual text paragraphs retrieved from policy documents. Shown in the evidence rail with scores indicating how relevant they are."),
+            ("Abstention", "When the system refuses to answer because it cannot find enough supporting evidence. This is a safety feature, not an error."),
+            ("Contradiction", "When two policy documents or sections disagree with each other. The system detects this and warns you rather than choosing one side."),
+            ("Confidence Score", "A number (0 to 1) indicating how relevant the retrieved evidence is to your question. Higher is better."),
+            ("Reranking", "A second-pass scoring that re-orders retrieved paragraphs by relevance using a cross-encoder model. Improves precision."),
+            ("Paragraph ID", "A unique identifier for each paragraph in the corpus, used for traceability. Format: document_name::section::index::hash."),
+            ("Baseline", "A version of the system with different features enabled. B1 = no retrieval, B2 = basic retrieval, B3 = full system with all safety features."),
+            ("Golden Set", "A curated set of 63 test questions with known correct answers, used to evaluate system performance."),
+            ("Audit Export", "A downloadable report containing the question, answer, evidence, confidence scores, and system configuration — for accountability."),
+            ("Critic Mode", "An analysis tool that examines policy text for language issues like vague terms, unsupported claims, or logical gaps."),
+            ("Support Rate", "The percentage of claims in an answer that are backed by cited evidence. 100% means every claim has a citation."),
+        ]
+        for term, definition in _terms:
+            st.markdown(
+                f'<span class="pc-glossary-term">{term}:</span> '
+                f'<span class="pc-glossary-def">{definition}</span>',
+                unsafe_allow_html=True,
+            )
+            st.markdown("")
+
+    # Troubleshooting FAQ
+    with st.expander("Troubleshooting FAQ"):
+        _faqs = [
+            ("Why did the system refuse to answer my question?",
+             "The system abstained because it could not find evidence above the confidence threshold. This means either the topic is not covered in the indexed policy documents, or the question wording does not match the terminology used in the documents. Try rephrasing with more specific terms."),
+            ("What does the yellow warning banner mean?",
+             "A yellow warning indicates the system abstained (refused to answer) due to insufficient evidence. This is a deliberate safety feature — the system would rather say 'I don't know' than risk giving you unsupported information."),
+            ("What do the scores next to evidence paragraphs mean?",
+             "The 'retrieve' score shows how well the paragraph matched your question in the initial search. The 'rerank' score shows how a more precise model rated it. Higher scores mean more relevant evidence."),
+            ("How do I export an audit report?",
+             "After any answer, you will see download buttons for JSON, HTML, Markdown, and a full ZIP packet. Click any of them to download a complete audit trail of the question, answer, evidence, and system decisions."),
+            ("Can I trust this answer?",
+             "Policy Copilot is designed for transparency, not blind trust. Always check the cited evidence, verify that the citations actually support the claims, and use the Audit Trace view to inspect the full evidence chain. The system is a research tool, not a replacement for professional policy advice."),
+            ("Why are some claims marked as 'unsupported'?",
+             "The verification layer checks whether each claim in the answer is backed by cited evidence. If the overlap between a claim and its cited paragraph is too low, it is flagged as unsupported. This helps you identify parts of the answer that need manual verification."),
+            ("What is the difference between B1, B2, and B3?",
+             "B1 (Prompt Only) sends your question directly to the language model with no evidence — this shows what happens without retrieval. B2 (Naive RAG) retrieves evidence but does not verify or abstain. B3 (Full System) adds reranking, confidence-gated abstention, claim verification, and contradiction detection."),
+            ("How do I add new policy documents?",
+             "Use the 'Add Documents' section in the sidebar. Upload PDF files, then click 'Process & Index'. The system will extract text, split it into paragraphs, and add them to the searchable corpus."),
+        ]
+        for q, a in _faqs:
+            st.markdown(f"**Q: {q}**")
+            st.markdown(a)
+            st.markdown("---")
+
+    # Accessibility
+    with st.expander("Accessibility & Navigation"):
+        st.markdown("""
+**Keyboard Navigation:** All interactive elements (buttons, sliders, inputs, expanders) are accessible via Tab key. Use Enter or Space to activate buttons.
+
+**Theme:** Policy Copilot supports both light and dark modes. Switch themes via the Streamlit settings menu (top-right hamburger menu > Settings > Theme).
+
+**Screen Readers:** The interface uses standard HTML elements with semantic structure. Evidence cards, badges, and banners use descriptive text content.
+
+**Text Size:** Use your browser's built-in zoom (Ctrl/Cmd + Plus) to increase text size. The layout is responsive and adjusts to different zoom levels.
+
+**Colour:** Status indicators use both colour AND text labels (e.g., "Supported" in green, "Abstained" in yellow) so information is not conveyed by colour alone.
+""")

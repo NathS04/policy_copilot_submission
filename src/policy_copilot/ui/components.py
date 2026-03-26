@@ -56,18 +56,22 @@ def render_sample_prompts() -> Optional[str]:
 
 
 def render_chat_empty_state() -> Optional[str]:
-    """Branded welcome screen with tagline and sample prompts."""
+    """Branded welcome hero with capabilities and sample prompts."""
     st.markdown(
-        '<div class="pc-card pc-card--welcome">'
-        '<h2 style="margin:0 0 0.3rem 0;color:#1e293b;font-size:1.4rem;">Policy Copilot</h2>'
-        '<p style="color:#64748b;font-size:0.92rem;margin:0 0 0.15rem 0;">'
-        "Audit-ready answers grounded in policy evidence</p>"
-        '<p style="color:#94a3b8;font-size:0.8rem;margin:0;">'
-        "Ask a question below, or choose a starter prompt</p>"
+        '<div class="pc-hero">'
+        "<h2>Policy Copilot</h2>"
+        '<p class="pc-hero-tagline">'
+        "Audit-ready answers grounded in policy evidence. "
+        "Every answer comes with its receipts.</p>"
+        '<div class="pc-hero-capabilities">'
+        f'<div class="pc-hero-cap-item"><span class="pc-hero-cap-icon">{ICONS["check"]}</span> Evidence-grounded answers with paragraph-level citations</div>'
+        f'<div class="pc-hero-cap-item"><span class="pc-hero-cap-icon">{ICONS["warning"]}</span> Abstains when evidence is insufficient</div>'
+        f'<div class="pc-hero-cap-item"><span class="pc-hero-cap-icon">{ICONS["shield"]}</span> Detects contradictions between policy sources</div>'
+        f'<div class="pc-hero-cap-item"><span class="pc-hero-cap-icon">{ICONS["export"]}</span> Exportable audit reports in JSON, HTML, and Markdown</div>'
+        "</div>"
         "</div>",
         unsafe_allow_html=True,
     )
-    st.markdown("")
     section_header("Try a question")
     return render_sample_prompts()
 
@@ -91,8 +95,13 @@ def render_evidence_card(
         score_parts.append(f"fused={ev.fused_score:.6f}")
     score_str = "  ".join(score_parts)
 
-    doc_label = f" [{ev.doc_type}]" if ev.doc_type and ev.doc_type != "policy document" else ""
-    label = f"**{index}.** `{ev.paragraph_id}` — {ev.source_file} p.{ev.page}{doc_label}"
+    doc_type_pill = ""
+    if ev.doc_type and ev.doc_type != "policy document":
+        doc_type_pill = f" [{ev.doc_type}]"
+    cited_badge = ""
+    if is_highlight:
+        cited_badge = f' <span class="pc-badge" style="background:#dcfce7;color:#166534;font-size:0.7rem;">Cited</span>'
+    label = f"**{index}.** `{ev.paragraph_id}` — {ev.source_file} p.{ev.page}{doc_type_pill}{cited_badge}"
 
     with st.expander(label, expanded=expanded):
         meta_parts = [f'<span class="pc-evidence-score">{score_str}</span>']
@@ -161,17 +170,23 @@ def render_confidence_badge(result: QueryResult) -> None:
 
 
 def render_abstention_banner(result: QueryResult) -> None:
-    """Warning banner when the system abstains."""
+    """Structured warning panel when the system abstains."""
     reason = result.abstention_reason or "Insufficient evidence confidence"
     st.markdown(
-        f'<div class="pc-banner pc-banner--abstained">'
-        f'<strong>{ICONS["warning"]} System Abstained</strong><br>'
-        f'<strong>Reason:</strong> {reason}<br>'
-        f'<span style="font-size:0.84rem;">'
-        f'Max rerank score: {result.confidence_max_rerank:.4f} '
-        f'(threshold: {result.abstain_threshold:.2f}). '
-        f'The corpus may not contain relevant information, or retrieved '
-        f'paragraphs did not meet the confidence threshold.</span>'
+        f'<div class="pc-abstention-panel">'
+        f'<h4>{ICONS["warning"]} Insufficient Evidence — System Abstained</h4>'
+        f'<div class="pc-abstention-details">'
+        f'<strong>Why:</strong> {reason}<br>'
+        f'<strong>Confidence:</strong> Max rerank score = {result.confidence_max_rerank:.4f} '
+        f'(threshold = {result.abstain_threshold:.2f})'
+        f'</div>'
+        f'<div class="pc-abstention-guidance">'
+        f'<strong>What would help?</strong> '
+        f'Try rephrasing your question with more specific terms from the policy documents, '
+        f'or check whether the topic is covered in the indexed corpus. '
+        f'The evidence rail below shows what was retrieved — review it to '
+        f'see if relevant content was found but scored below threshold.'
+        f'</div>'
         f'</div>',
         unsafe_allow_html=True,
     )

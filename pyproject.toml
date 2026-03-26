@@ -9,6 +9,7 @@ authors = [
   { name="Nathan S", email="sc21ns@leeds.ac.uk" },
 ]
 description = "Audit-Ready Policy Copilot Dissertation Project"
+license = {text = "MIT"}
 readme = "README.md"
 requires-python = ">=3.10"
 classifiers = [

@@ -601,4 +601,201 @@ div[data-testid="stChatMessage"] {
         max-width: 820px;
     }
 }
+
+/* --- Chat input professional styling ----------------------- */
+[data-testid="stChatInput"] {
+    border: 1px solid #cbd5e1;
+    border-radius: 12px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+[data-testid="stChatInput"]:focus-within {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+
+/* --- Smooth transitions on interactive elements ------------ */
+.pc-card, .pc-badge, .pc-citation-pill, .pc-prompt-chip,
+.pc-claim-card, .pc-critic-card, .pc-contra-side {
+    transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+}
+.pc-card:hover {
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+/* --- Better expander styling ------------------------------- */
+div[data-testid="stExpander"] {
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 0.5rem;
+    transition: border-color 0.2s;
+}
+div[data-testid="stExpander"]:hover {
+    border-color: #cbd5e1;
+}
+div[data-testid="stExpander"] summary {
+    font-weight: 550;
+}
+
+/* --- Download button polish -------------------------------- */
+div[data-testid="stDownloadButton"] button {
+    border-radius: 8px;
+    font-weight: 550;
+    transition: background 0.15s, transform 0.1s;
+}
+div[data-testid="stDownloadButton"] button:hover {
+    transform: translateY(-1px);
+}
+
+/* --- Entry animation for cards ----------------------------- */
+@keyframes pc-fadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+.pc-card, .pc-banner, .pc-claim-card, .pc-critic-card {
+    animation: pc-fadeIn 0.25s ease-out;
+}
+
+/* --- Skeleton pulse for loading states --------------------- */
+@keyframes pc-pulse {
+    0%, 100% { opacity: 0.4; }
+    50%      { opacity: 0.8; }
+}
+.pc-skeleton {
+    background: linear-gradient(90deg, #e2e8f0 25%, #f1f5f9 50%, #e2e8f0 75%);
+    background-size: 200% 100%;
+    animation: pc-pulse 1.5s ease-in-out infinite;
+    border-radius: 8px;
+    height: 1rem;
+    margin: 0.4rem 0;
+}
+
+/* --- Hero welcome card ------------------------------------- */
+.pc-hero {
+    background: linear-gradient(135deg, #f8fafc 0%, #eef2ff 50%, #dbeafe 100%);
+    border: 1px solid #c7d2fe;
+    border-radius: 16px;
+    text-align: center;
+    padding: 2.5rem 2rem 1.5rem 2rem;
+    margin-bottom: 1.2rem;
+}
+.pc-hero h2 {
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: #1e293b;
+    margin: 0 0 0.3rem 0;
+    letter-spacing: -0.02em;
+}
+.pc-hero .pc-hero-tagline {
+    color: #475569;
+    font-size: 0.95rem;
+    margin: 0 0 1.2rem 0;
+    line-height: 1.5;
+}
+.pc-hero-capabilities {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.6rem;
+    margin: 0.8rem auto;
+    max-width: 520px;
+    text-align: left;
+}
+.pc-hero-cap-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.84rem;
+    color: #334155;
+    padding: 0.5rem 0.75rem;
+    background: rgba(255,255,255,0.7);
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+}
+.pc-hero-cap-icon {
+    font-size: 1rem;
+    color: #2563eb;
+    flex-shrink: 0;
+}
+
+/* --- Sidebar mode descriptions ----------------------------- */
+.pc-mode-desc {
+    font-size: 0.72rem;
+    color: #94a3b8;
+    margin: -0.3rem 0 0.4rem 1.6rem;
+    line-height: 1.35;
+}
+
+/* --- Quick Help sidebar panel ------------------------------ */
+.pc-quick-help {
+    background: #f1f5f9;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 0.6rem 0.8rem;
+    font-size: 0.78rem;
+    color: #475569;
+    line-height: 1.5;
+}
+.pc-quick-help strong {
+    color: #334155;
+}
+
+/* --- Footer ------------------------------------------------ */
+.pc-footer {
+    text-align: center;
+    padding: 1.5rem 0 0.75rem 0;
+    margin-top: 2rem;
+    border-top: 1px solid #e2e8f0;
+    font-size: 0.75rem;
+    color: #94a3b8;
+    letter-spacing: 0.01em;
+}
+.pc-footer strong {
+    color: #64748b;
+    font-weight: 600;
+}
+
+/* --- Abstention panel (upgraded) --------------------------- */
+.pc-abstention-panel {
+    background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+    border: 1px solid #fde68a;
+    border-left: 4px solid #d97706;
+    border-radius: 10px;
+    padding: 1rem 1.2rem;
+    margin-bottom: 0.75rem;
+}
+.pc-abstention-panel h4 {
+    margin: 0 0 0.4rem 0;
+    color: #92400e;
+    font-size: 0.95rem;
+    font-weight: 700;
+}
+.pc-abstention-details {
+    font-size: 0.84rem;
+    color: #78350f;
+    line-height: 1.55;
+    margin: 0.3rem 0;
+}
+.pc-abstention-guidance {
+    font-size: 0.82rem;
+    color: #92400e;
+    background: rgba(255,255,255,0.5);
+    border-radius: 6px;
+    padding: 0.5rem 0.75rem;
+    margin-top: 0.5rem;
+    border: 1px solid #fde68a;
+}
+
+/* --- Help page --------------------------------------------- */
+.pc-help-section {
+    margin-bottom: 1.5rem;
+}
+.pc-glossary-term {
+    font-weight: 700;
+    color: #1e40af;
+}
+.pc-glossary-def {
+    color: #475569;
+    font-size: 0.9rem;
+    margin-left: 0.5rem;
+}
 </style>"""
