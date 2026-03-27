@@ -31,7 +31,7 @@ This register lists every figure and table embedded or defined in `docs/report/F
 | Table 2.1 | Functional and non-functional requirements with acceptance criteria | Ch. 2 — §2.2 Requirements Analysis | Objectives and scope (§1.2, §1.11); manual specification | Yes (also cited from Table 2.2) | Testable contracts for FR/NFR and traceability to objectives; underpins scope control (e.g. NFR3 deferral). |
 | Table 2.2 | Risk register | Ch. 2 — §2.5 Risk Assessment | Project risk review (manual) | Yes | Documents likelihood, impact, and mitigations for API, verification, corpus, scope, threshold calibration, and integrity risks. |
 | Table 3.1 | Technology stack and component justification | Ch. 3 — §3.1 Technology Stack | `pyproject.toml` / dependency choices; manual justification text | Yes | Justifies major libraries (embeddings, FAISS, reranker, OpenAI SDK, Pydantic, pdfplumber, pytest, Git). |
-| Table 3.2 | Testing and validation matrix | Ch. 3 — §3.8 Testing and Validation | Codebase test layout (`tests/`); manual summary | No | Maps representative test files to tier, component, and validation intent (189 tests). |
+| Table 3.2 | Testing and validation matrix | Ch. 3 — §3.8 Testing and Validation | Codebase test layout (`tests/`); manual summary | No | Maps representative test files to tier, component, and validation intent (186 tests, 1 conditionally skipped). |
 | Table 4.1 | Golden set composition and evaluation splits | Ch. 4 — §4.1 Experimental Setup | `eval/golden_set/golden_set.csv` (and frozen split definition); counts manual/annotated | No | Defines answerable / unanswerable / contradiction counts and train–test/dev split policy. |
 | Table 4.2 | Baseline comparison across primary metrics (test split) | Ch. 4 — §4.2 Headline Results: Baseline Comparison | `scripts/run_eval.py` outputs; `results/runs/*/summary.json` (aggregated for report) | Yes | Headline B1 / B2 / B3 Generative vs Extractive metrics: coverage, abstention, grounding, recall. |
 | Table 4.3 | Retrieval metrics — Dense Retrieval (B2) vs. Reranked (B3), test split | Ch. 4 — §4.3 Retrieval Performance | Evaluation JSONL / retrieval logs; summary aggregation | No | Quantifies reranker gains on Recall@*k*, MRR, and Precision@5. |
@@ -55,6 +55,8 @@ This register lists every figure and table embedded or defined in `docs/report/F
 | — | Failure-mode taxonomy counts per baseline | `results/tables/failure_taxonomy.csv` | Error Analysis (§4.8) — diagnostic breakdown |
 | — | Auditability rubric scores per baseline | `results/tables/auditability_scores.csv` | Evaluation protocol (§4) — 5-axis auditability profile |
 | — | Ablation comparison delta table | `results/tables/ablation_comparison.csv` | Ablation Studies (§4.6) — side-by-side metric deltas |
+| — | Objective slice evaluation results | `results/tables/objective_slice_results.csv` | Objective task slice (§4) — deterministic query subset |
+| — | Cross-run summary with all metrics | `results/tables/run_summary.csv` | Baseline comparison (§4.2) — aggregated from make_figures.py |
 
 ## Missing figures (require manual capture or generation)
 
