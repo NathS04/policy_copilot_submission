@@ -9,21 +9,31 @@ Follow these steps to verify the "Codebase 100/100" status.
 
 ## 2. Installation (Choose One)
 
-### Option A: Lightweight / Offline (Reference Environment)
-Core dependencies only. No PyTorch, no heavy ML models.
+**Important:** Always create a fresh virtual environment first. Use a single `pip install` command to install both core and the desired extras together.
+
+### Option A: Lightweight / Offline + Dev Testing (Reference Environment)
+Core dependencies plus dev tools (pytest, ruff, mypy). No PyTorch, no heavy ML models.
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
-pip install -e .
+pip install -e ".[dev]"
 ```
+Verify: `which pytest` should show `.venv/bin/pytest`, not a system path.
 
 ### Option B: Full Machine Learning (Production Environment)
 Includes PyTorch, SentenceTransformers, FAISS. Required for dense retrieval and online reproduction.
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
-pip install -e ".[ml]"
+pip install -e ".[ml,dev]"
 ```
+
+### Running Tests
+After installation (Option A or B), run:
+```bash
+pytest -q --ignore=tests/test_run_eval_requires_key_in_generative.py
+```
+Expected: **186 passed, 1 skipped**. The ignored tests require API keys and are not part of the core test contract.
 
 ## 3. Verification Steps
 

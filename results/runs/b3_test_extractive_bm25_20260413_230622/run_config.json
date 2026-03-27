@@ -7,7 +7,7 @@
   "seed": 42,
   "enable_llm": false,
   "embedding_model": "sentence-transformers/all-MiniLM-L6-v2",
-  "run_name": "20260413_220625",
+  "run_name": "20260413_220622",
   "retrieve_k_candidates": 50,
   "rerank_k_final": 5,
   "rerank_model": "cross-encoder/ms-marco-MiniLM-L-6-v2",
@@ -16,10 +16,13 @@
   "enable_llm_verify": false,
   "enable_llm_contradictions": false,
   "contradiction_policy": "surface",
-  "baseline": "b2",
+  "baseline": "b3",
   "ablations": {
     "backend": "bm25",
-    "allow_fallback": true
+    "allow_fallback": true,
+    "no_rerank": false,
+    "no_verify": false,
+    "no_contradictions": false
   },
   "split": "test",
   "mode": "extractive",
@@ -28,8 +31,8 @@
   "backend_used": "bm25",
   "allow_fallback": true,
   "cli_args": {
-    "baseline": "b2",
-    "run_name": "test_b2_extractive_bm25_integration",
+    "baseline": "b3",
+    "run_name": null,
     "golden_set": "eval/golden_set/golden_set.csv",
     "split": "test",
     "config": null,
