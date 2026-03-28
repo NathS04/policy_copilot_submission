@@ -1,11 +1,11 @@
-# Run: test_b2_extractive_bm25_integration
+# Run: b2_test_extractive_bm25_20260413_230918
 
 - **Baseline**: b2
 - **Queries processed**: 44
 - **Duration**: 0.0s
 - **Provider**: openai
 - **Model**: gpt-4o-mini
-- **Created**: 2026-04-13T22:09:17.041256+00:00
+- **Created**: 2026-04-13T22:09:18.863508+00:00
 
 ## Locked Targets (placeholders)
 - (T1) ≥30% reduction in ungrounded-claim rate vs B2

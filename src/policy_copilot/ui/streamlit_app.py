@@ -144,7 +144,8 @@ def _export_audit_report(result):
         use_container_width=True,
     )
 
-    import io, zipfile as _zf
+    import io
+    import zipfile as _zf
     buf = io.BytesIO()
     with _zf.ZipFile(buf, "w", _zf.ZIP_DEFLATED) as zf:
         zf.writestr(f"audit_report_{result.query_id}.json",

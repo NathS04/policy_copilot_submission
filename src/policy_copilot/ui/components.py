@@ -100,7 +100,7 @@ def render_evidence_card(
         doc_type_pill = f" [{ev.doc_type}]"
     cited_badge = ""
     if is_highlight:
-        cited_badge = f' <span class="pc-badge" style="background:#dcfce7;color:#166534;font-size:0.7rem;">Cited</span>'
+        cited_badge = ' <span class="pc-badge" style="background:#dcfce7;color:#166534;font-size:0.7rem;">Cited</span>'
     label = f"**{index}.** `{ev.paragraph_id}` — {ev.source_file} p.{ev.page}{doc_type_pill}{cited_badge}"
 
     with st.expander(label, expanded=expanded):
