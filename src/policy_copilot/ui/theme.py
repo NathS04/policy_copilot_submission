@@ -202,7 +202,7 @@ _GLOBAL_CSS = """<style>
 }
 .pc-sidebar-divider {
     border: none;
-    border-top: 1px solid #cbd5e1;
+    border-top: 1px solid rgba(128,128,128,0.25);
     margin: 0.7rem 0;
 }
 
@@ -228,9 +228,7 @@ _GLOBAL_CSS = """<style>
     color: inherit;
     margin: 1.4rem 0 0.35rem 0;
     padding-bottom: 0.3rem;
-    border-bottom: 2px solid currentColor;
-    border-bottom-color: inherit;
-    opacity: 0.85;
+    border-bottom: 2px solid rgba(128,128,128,0.25);
 }
 
 /* --- Cards -------------------------------------------------- */
@@ -254,19 +252,19 @@ _GLOBAL_CSS = """<style>
 }
 .pc-card--contradiction {
     border-left: 3px solid #dc2626;
-    background: #fef2f2;
+    background: rgba(220,38,38,0.06);
 }
 .pc-card--abstention {
     border-left: 3px solid #d97706;
-    background: #fffbeb;
+    background: rgba(217,119,6,0.06);
 }
 .pc-card--fallback {
     border-left: 3px solid #d97706;
-    background: #fef3c7;
+    background: rgba(217,119,6,0.08);
 }
 .pc-card--welcome {
-    background: linear-gradient(135deg, #f8fafc 0%, #eef2ff 100%);
-    border: 1px solid #c7d2fe;
+    background: linear-gradient(135deg, rgba(128,128,128,0.05) 0%, rgba(37,99,235,0.08) 100%);
+    border: 1px solid rgba(37,99,235,0.2);
     text-align: center;
     padding: 2rem 1.5rem;
 }
@@ -311,8 +309,8 @@ _GLOBAL_CSS = """<style>
     padding: 1px 9px;
     margin: 2px 2px;
     border-radius: 10px;
-    background: #dbeafe;
-    color: #1e40af;
+    background: rgba(37,99,235,0.15);
+    color: #60a5fa;
     font-size: 0.76rem;
     font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
     font-weight: 500;
@@ -324,12 +322,13 @@ _GLOBAL_CSS = """<style>
 .pc-evidence-header {
     font-size: 0.95rem;
     font-weight: 650;
-    color: #334155;
+    color: inherit;
     margin: 0 0 0.6rem 0;
 }
 .pc-evidence-score {
     font-size: 0.75rem;
-    color: #64748b;
+    color: inherit;
+    opacity: 0.6;
     font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
 }
 .pc-evidence-text {
@@ -343,11 +342,12 @@ _GLOBAL_CSS = """<style>
     font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
     font-size: 0.78rem;
     font-weight: 600;
-    color: #1e40af;
+    color: #60a5fa;
 }
 .pc-evidence-meta {
     font-size: 0.75rem;
-    color: #94a3b8;
+    color: inherit;
+    opacity: 0.5;
 }
 
 /* --- Status banners ----------------------------------------- */
@@ -359,29 +359,29 @@ _GLOBAL_CSS = """<style>
     line-height: 1.5;
 }
 .pc-banner--supported {
-    background: #dcfce7;
-    color: #166534;
-    border: 1px solid #bbf7d0;
+    background: rgba(22,163,74,0.1);
+    color: #4ade80;
+    border: 1px solid rgba(22,163,74,0.3);
 }
 .pc-banner--abstained {
-    background: #fef3c7;
-    color: #92400e;
-    border: 1px solid #fde68a;
+    background: rgba(217,119,6,0.1);
+    color: #fbbf24;
+    border: 1px solid rgba(217,119,6,0.3);
 }
 .pc-banner--contradiction {
-    background: #fef2f2;
-    color: #991b1b;
-    border: 1px solid #fecaca;
+    background: rgba(220,38,38,0.1);
+    color: #f87171;
+    border: 1px solid rgba(220,38,38,0.3);
 }
 .pc-banner--fallback {
-    background: #fef3c7;
-    color: #92400e;
-    border: 1px solid #fde68a;
+    background: rgba(217,119,6,0.1);
+    color: #fbbf24;
+    border: 1px solid rgba(217,119,6,0.3);
 }
 .pc-banner--error {
-    background: #fef2f2;
-    color: #991b1b;
-    border: 1px solid #fecaca;
+    background: rgba(220,38,38,0.1);
+    color: #f87171;
+    border: 1px solid rgba(220,38,38,0.3);
 }
 
 /* --- Action bar --------------------------------------------- */
@@ -397,8 +397,8 @@ _GLOBAL_CSS = """<style>
     padding: 0.8rem 1rem;
     margin: 0.4rem 0;
     border-radius: 8px;
-    border: 1px solid #e2e8f0;
-    background: #ffffff;
+    border: 1px solid rgba(128,128,128,0.15);
+    background: rgba(128,128,128,0.04);
 }
 .pc-claim-card--supported {
     border-left: 3px solid #16a34a;
@@ -423,7 +423,7 @@ _GLOBAL_CSS = """<style>
     padding: 0.7rem 1rem;
     margin: 0.35rem 0;
     border-radius: 8px;
-    border: 1px solid #e2e8f0;
+    border: 1px solid rgba(128,128,128,0.15);
 }
 .pc-critic-label {
     font-weight: 700;
@@ -431,12 +431,14 @@ _GLOBAL_CSS = """<style>
 }
 .pc-critic-triggers {
     font-size: 0.82rem;
-    color: #475569;
+    color: inherit;
+    opacity: 0.8;
     margin-top: 0.2rem;
 }
 .pc-critic-excerpt {
     font-size: 0.8rem;
-    color: #94a3b8;
+    color: inherit;
+    opacity: 0.55;
     font-style: italic;
     margin-top: 0.25rem;
     line-height: 1.45;
@@ -444,7 +446,7 @@ _GLOBAL_CSS = """<style>
 
 /* --- Progress bar ------------------------------------------- */
 .pc-progress-container {
-    background: #e2e8f0;
+    background: rgba(128,128,128,0.2);
     border-radius: 6px;
     height: 10px;
     width: 100%;
@@ -463,11 +465,22 @@ _GLOBAL_CSS = """<style>
 
 /* --- Metric cards (Streamlit native override) --------------- */
 div[data-testid="stMetric"] {
-    background: #ffffff;
+    background: rgba(128,128,128,0.06);
     padding: 14px 16px;
     border-radius: 10px;
-    border: 1px solid #e2e8f0;
+    border: 1px solid rgba(128,128,128,0.15);
     box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+    color: inherit;
+}
+div[data-testid="stMetric"] label {
+    color: inherit !important;
+    opacity: 0.7;
+}
+div[data-testid="stMetric"] [data-testid="stMetricValue"] {
+    color: inherit !important;
+}
+div[data-testid="stMetric"] [data-testid="stMetricDelta"] {
+    color: inherit !important;
 }
 
 /* --- Chat messages ------------------------------------------ */
@@ -482,7 +495,8 @@ div[data-testid="stChatMessage"] {
 .pc-empty-state {
     text-align: center;
     padding: 2.5rem 1rem;
-    color: #94a3b8;
+    color: inherit;
+    opacity: 0.6;
 }
 .pc-empty-icon {
     font-size: 2.5rem;
@@ -492,12 +506,13 @@ div[data-testid="stChatMessage"] {
 .pc-empty-title {
     font-size: 1rem;
     font-weight: 600;
-    color: #64748b;
+    color: inherit;
     margin-bottom: 0.25rem;
 }
 .pc-empty-desc {
     font-size: 0.85rem;
-    color: #94a3b8;
+    color: inherit;
+    opacity: 0.7;
 }
 
 /* --- Sample prompt chips ------------------------------------ */
@@ -532,7 +547,8 @@ div[data-testid="stChatMessage"] {
 }
 .pc-latency-label {
     font-size: 0.82rem;
-    color: #475569;
+    color: inherit;
+    opacity: 0.75;
     min-width: 110px;
 }
 .pc-latency-bar {
@@ -543,7 +559,8 @@ div[data-testid="stChatMessage"] {
 }
 .pc-latency-value {
     font-size: 0.78rem;
-    color: #64748b;
+    color: inherit;
+    opacity: 0.6;
     font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
     min-width: 60px;
 }
@@ -588,11 +605,11 @@ div[data-testid="stChatMessage"] {
 }
 .pc-contra-side {
     padding: 0.75rem;
-    border: 1px solid #fecaca;
+    border: 1px solid rgba(220,38,38,0.3);
     border-radius: 8px;
-    background: #ffffff;
+    background: rgba(128,128,128,0.04);
     font-size: 0.84rem;
-    color: #475569;
+    color: inherit;
     line-height: 1.5;
 }
 .pc-contra-pid {
@@ -612,7 +629,7 @@ div[data-testid="stChatMessage"] {
 
 /* --- Chat input professional styling ----------------------- */
 [data-testid="stChatInput"] {
-    border: 1px solid #cbd5e1;
+    border: 1px solid rgba(128,128,128,0.25);
     border-radius: 12px;
     transition: border-color 0.2s, box-shadow 0.2s;
 }
@@ -632,14 +649,14 @@ div[data-testid="stChatMessage"] {
 
 /* --- Better expander styling ------------------------------- */
 div[data-testid="stExpander"] {
-    border: 1px solid #e2e8f0;
+    border: 1px solid rgba(128,128,128,0.15);
     border-radius: 10px;
     overflow: hidden;
     margin-bottom: 0.5rem;
     transition: border-color 0.2s;
 }
 div[data-testid="stExpander"]:hover {
-    border-color: #cbd5e1;
+    border-color: rgba(128,128,128,0.3);
 }
 div[data-testid="stExpander"] summary {
     font-weight: 550;
@@ -767,8 +784,8 @@ div[data-testid="stDownloadButton"] button:hover {
 
 /* --- Abstention panel (upgraded) --------------------------- */
 .pc-abstention-panel {
-    background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
-    border: 1px solid #fde68a;
+    background: rgba(217,119,6,0.08);
+    border: 1px solid rgba(217,119,6,0.25);
     border-left: 4px solid #d97706;
     border-radius: 10px;
     padding: 1rem 1.2rem;
@@ -776,24 +793,26 @@ div[data-testid="stDownloadButton"] button:hover {
 }
 .pc-abstention-panel h4 {
     margin: 0 0 0.4rem 0;
-    color: #92400e;
+    color: #fbbf24;
     font-size: 0.95rem;
     font-weight: 700;
 }
 .pc-abstention-details {
     font-size: 0.84rem;
-    color: #78350f;
+    color: inherit;
+    opacity: 0.85;
     line-height: 1.55;
     margin: 0.3rem 0;
 }
 .pc-abstention-guidance {
     font-size: 0.82rem;
-    color: #92400e;
-    background: rgba(255,255,255,0.5);
+    color: inherit;
+    opacity: 0.75;
+    background: rgba(128,128,128,0.08);
     border-radius: 6px;
     padding: 0.5rem 0.75rem;
     margin-top: 0.5rem;
-    border: 1px solid #fde68a;
+    border: 1px solid rgba(217,119,6,0.2);
 }
 
 /* --- Help page --------------------------------------------- */
