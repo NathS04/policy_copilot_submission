@@ -178,7 +178,6 @@ _GLOBAL_CSS = """<style>
 [data-testid="stSidebar"] {
     min-width: 270px;
     max-width: 310px;
-    background: #f1f5f9;
 }
 [data-testid="stSidebar"] [data-testid="stMarkdownContainer"] p {
     font-size: 0.92rem;
@@ -192,12 +191,13 @@ _GLOBAL_CSS = """<style>
     font-size: 1.25rem;
     font-weight: 700;
     margin: 0 0 0.1rem 0;
-    color: #1e293b;
+    color: inherit;
     letter-spacing: -0.01em;
 }
 .pc-sidebar-brand p {
     font-size: 0.8rem;
-    color: #64748b;
+    color: inherit;
+    opacity: 0.7;
     margin: 0;
 }
 .pc-sidebar-divider {
@@ -210,13 +210,14 @@ _GLOBAL_CSS = """<style>
 .pc-view-header {
     font-size: 1.45rem;
     font-weight: 700;
-    color: #1e293b;
+    color: inherit;
     margin: 0 0 0.15rem 0;
     letter-spacing: -0.01em;
 }
 .pc-view-subtitle {
     font-size: 0.88rem;
-    color: #64748b;
+    color: inherit;
+    opacity: 0.65;
     margin: 0 0 1rem 0;
 }
 
@@ -224,20 +225,23 @@ _GLOBAL_CSS = """<style>
 .pc-section-header {
     font-size: 1.05rem;
     font-weight: 650;
-    color: #334155;
+    color: inherit;
     margin: 1.4rem 0 0.35rem 0;
     padding-bottom: 0.3rem;
-    border-bottom: 2px solid #e2e8f0;
+    border-bottom: 2px solid currentColor;
+    border-bottom-color: inherit;
+    opacity: 0.85;
 }
 
 /* --- Cards -------------------------------------------------- */
 .pc-card {
-    background: #ffffff;
-    border: 1px solid #e2e8f0;
+    background: rgba(128,128,128,0.05);
+    border: 1px solid rgba(128,128,128,0.15);
     border-radius: 10px;
     padding: 1rem 1.15rem;
     margin-bottom: 0.75rem;
     line-height: 1.55;
+    color: inherit;
 }
 .pc-card--evidence {
     border-left: 3px solid #2563eb;
@@ -273,12 +277,13 @@ _GLOBAL_CSS = """<style>
 .pc-card--metric .pc-metric-value {
     font-size: 1.5rem;
     font-weight: 700;
-    color: #1e293b;
+    color: inherit;
     margin: 0.2rem 0;
 }
 .pc-card--metric .pc-metric-label {
     font-size: 0.78rem;
-    color: #64748b;
+    color: inherit;
+    opacity: 0.6;
     text-transform: uppercase;
     letter-spacing: 0.04em;
 }
@@ -329,7 +334,8 @@ _GLOBAL_CSS = """<style>
 }
 .pc-evidence-text {
     font-size: 0.84rem;
-    color: #475569;
+    color: inherit;
+    opacity: 0.85;
     line-height: 1.55;
     margin-top: 0.35rem;
 }
@@ -402,12 +408,13 @@ _GLOBAL_CSS = """<style>
 }
 .pc-claim-text {
     font-size: 0.9rem;
-    color: #334155;
+    color: inherit;
     line-height: 1.5;
 }
 .pc-claim-meta {
     font-size: 0.8rem;
-    color: #64748b;
+    color: inherit;
+    opacity: 0.65;
     margin-top: 0.3rem;
 }
 
@@ -501,12 +508,12 @@ div[data-testid="stChatMessage"] {
     margin: 1rem 0;
 }
 .pc-prompt-chip {
-    background: #ffffff;
-    border: 1px solid #e2e8f0;
+    background: rgba(128,128,128,0.08);
+    border: 1px solid rgba(128,128,128,0.2);
     border-radius: 10px;
     padding: 0.75rem 1rem;
     font-size: 0.87rem;
-    color: #334155;
+    color: inherit;
     line-height: 1.45;
     cursor: pointer;
     transition: border-color 0.15s, box-shadow 0.15s;
@@ -549,20 +556,21 @@ div[data-testid="stChatMessage"] {
 }
 .pc-meta-item {
     padding: 0.6rem 0.75rem;
-    background: #f8fafc;
-    border: 1px solid #e2e8f0;
+    background: rgba(128,128,128,0.06);
+    border: 1px solid rgba(128,128,128,0.15);
     border-radius: 8px;
 }
 .pc-meta-key {
     font-size: 0.72rem;
-    color: #94a3b8;
+    color: inherit;
+    opacity: 0.55;
     text-transform: uppercase;
     letter-spacing: 0.04em;
     margin-bottom: 0.15rem;
 }
 .pc-meta-value {
     font-size: 0.88rem;
-    color: #1e293b;
+    color: inherit;
     font-weight: 500;
 }
 
@@ -672,8 +680,8 @@ div[data-testid="stDownloadButton"] button:hover {
 
 /* --- Hero welcome card ------------------------------------- */
 .pc-hero {
-    background: linear-gradient(135deg, #f8fafc 0%, #eef2ff 50%, #dbeafe 100%);
-    border: 1px solid #c7d2fe;
+    background: linear-gradient(135deg, rgba(128,128,128,0.05) 0%, rgba(37,99,235,0.08) 50%, rgba(37,99,235,0.12) 100%);
+    border: 1px solid rgba(37,99,235,0.2);
     border-radius: 16px;
     text-align: center;
     padding: 2.5rem 2rem 1.5rem 2rem;
@@ -682,12 +690,13 @@ div[data-testid="stDownloadButton"] button:hover {
 .pc-hero h2 {
     font-size: 1.6rem;
     font-weight: 800;
-    color: #1e293b;
+    color: inherit;
     margin: 0 0 0.3rem 0;
     letter-spacing: -0.02em;
 }
 .pc-hero .pc-hero-tagline {
-    color: #475569;
+    color: inherit;
+    opacity: 0.7;
     font-size: 0.95rem;
     margin: 0 0 1.2rem 0;
     line-height: 1.5;
@@ -705,11 +714,11 @@ div[data-testid="stDownloadButton"] button:hover {
     align-items: center;
     gap: 0.5rem;
     font-size: 0.84rem;
-    color: #334155;
+    color: inherit;
     padding: 0.5rem 0.75rem;
-    background: rgba(255,255,255,0.7);
+    background: rgba(128,128,128,0.1);
     border-radius: 8px;
-    border: 1px solid #e2e8f0;
+    border: 1px solid rgba(128,128,128,0.2);
 }
 .pc-hero-cap-icon {
     font-size: 1rem;
@@ -720,23 +729,24 @@ div[data-testid="stDownloadButton"] button:hover {
 /* --- Sidebar mode descriptions ----------------------------- */
 .pc-mode-desc {
     font-size: 0.72rem;
-    color: #94a3b8;
+    color: inherit;
+    opacity: 0.6;
     margin: -0.3rem 0 0.4rem 1.6rem;
     line-height: 1.35;
 }
 
 /* --- Quick Help sidebar panel ------------------------------ */
 .pc-quick-help {
-    background: #f1f5f9;
-    border: 1px solid #e2e8f0;
+    background: rgba(128,128,128,0.08);
+    border: 1px solid rgba(128,128,128,0.15);
     border-radius: 8px;
     padding: 0.6rem 0.8rem;
     font-size: 0.78rem;
-    color: #475569;
+    color: inherit;
     line-height: 1.5;
 }
 .pc-quick-help strong {
-    color: #334155;
+    color: inherit;
 }
 
 /* --- Footer ------------------------------------------------ */
@@ -744,13 +754,14 @@ div[data-testid="stDownloadButton"] button:hover {
     text-align: center;
     padding: 1.5rem 0 0.75rem 0;
     margin-top: 2rem;
-    border-top: 1px solid #e2e8f0;
+    border-top: 1px solid rgba(128,128,128,0.2);
     font-size: 0.75rem;
-    color: #94a3b8;
+    color: inherit;
+    opacity: 0.5;
     letter-spacing: 0.01em;
 }
 .pc-footer strong {
-    color: #64748b;
+    color: inherit;
     font-weight: 600;
 }
 
@@ -791,10 +802,11 @@ div[data-testid="stDownloadButton"] button:hover {
 }
 .pc-glossary-term {
     font-weight: 700;
-    color: #1e40af;
+    color: #60a5fa;
 }
 .pc-glossary-def {
-    color: #475569;
+    color: inherit;
+    opacity: 0.8;
     font-size: 0.9rem;
     margin-left: 0.5rem;
 }
