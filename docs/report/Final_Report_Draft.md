@@ -16,13 +16,13 @@ Organisations depend on internal policy documents — handbooks, security addend
 
 This project presents **Policy Copilot**, a Retrieval-Augmented Generation (RAG) system engineered for high-stakes environments. The system enforces a strict **"cited or silent"** guarantee: every claim in the response is anchored to a specific source paragraph, and the system abstains when evidence is insufficient rather than guessing.
 
-The architecture introduces three layers of reliability control absent from naïve RAG:
-1.  **Cross-encoder reranking** to improve retrieval precision and provide a calibrated confidence signal.
+The architecture introduces four layers of reliability control absent from naïve RAG:
+1.  **Cross-encoder reranking** to improve retrieval precision and provide a calibrated confidence signal for abstention decisions.
 2.  **Per-claim citation verification** using deterministic heuristics to prune unsupported statements.
 3.  **Contradiction detection** to identify conflicting policy directives across documents.
-4.  An explicit **Extractive Fallback Mode** that ensures functionality even when the LLM is unavailable, returning top-ranked evidence directly.
+4.  An **Extractive Fallback Mode** that ensures functionality even when the LLM is unavailable, returning top-ranked evidence directly.
 
-Evaluation on a 63-query golden set demonstrates that the full system (B3) achieves a **0.0% ungrounded rate** and **94.1% abstention accuracy** on unanswerable queries in generative mode — exceeding its 80% target — while maintaining a deliberately conservative 25% answer rate that reflects the system's strict refusal to speculate beyond its evidence. In extractive mode, where the LLM is bypassed entirely, the system achieves an **89% answer rate** with **100% citation precision** and **100% abstention accuracy**, confirming that the reliability architecture functions independently of the generative model. Ablation studies confirm that cross-encoder reranking is the single most impactful reliability component. Additionally, a heuristic **Critic Mode** achieves 93.7% macro precision in auditing policy text for vague or contradictory language.
+Evaluation on a 63-query synthetic golden set (36 answerable, 17 unanswerable, 10 contradiction) demonstrates that the full system (B3) achieves a **0.0% ungrounded rate** (all claims verified against cited evidence) and **94.1% abstention accuracy** on unanswerable queries in generative mode — exceeding its 80% target — while maintaining a deliberately conservative 25% answer rate that reflects the system's strict refusal to speculate beyond its evidence. In extractive mode, where the LLM is bypassed entirely, the system achieves an **89% answer rate** with **100% citation precision** (by construction, since extractive answers are verbatim evidence) and **100% abstention accuracy**, confirming that the reliability architecture functions independently of the generative model. These results are specific to the bounded synthetic corpus; generalisability to larger, noisier real-world corpora remains an open question (see Section 4.12.3). Ablation studies confirm that cross-encoder reranking is the single most impactful reliability component. Additionally, a heuristic **Critic Mode** achieves 93.7% macro precision in auditing policy text for vague or contradictory language.
 
 The project concludes that lightweight, deterministic reliability controls — particularly the combination of confidence-gated abstention and per-claim verification — can render RAG viable for policy compliance, albeit with a coverage–precision trade-off that future work should address through threshold tuning and retrieval improvements.
 
@@ -50,34 +50,38 @@ I would like to thank my supervisor for their guidance and feedback throughout t
   - [1.7 NLP in Legal and Policy Domains](#nlp-in-legal-and-policy-domains)
   - [1.8 Selective Prediction and Abstention](#selective-prediction-and-abstention)
   - [1.9 Evaluation Frameworks for RAG](#evaluation-frameworks-for-retrieval-augmented-generation)
-  - [1.10 Comparative Analysis](#comparative-analysis-of-existing-systems)
-  - [1.11 Gap Analysis and Research Questions](#gap-analysis-and-project-rationale)
+  - [1.10 Comparative Analysis of Existing Systems](#comparative-analysis-of-existing-systems)
+  - [1.11 Gap Analysis and Project Rationale](#gap-analysis-and-project-rationale)
 - [Chapter 2: Methodology](#chapter-2-methodology)
-  - [2.1 Sprint Timeline](#development-process)
+  - [2.1 Development Process](#development-process)
   - [2.2 Requirements Analysis](#requirements-analysis)
   - [2.3 System Architecture](#system-architecture)
-  - [2.4 Evaluation Design](#evaluation-methodology)
+  - [2.4 Design Decisions and Alternatives Considered](#design-decisions-and-alternatives-considered)
+  - [2.5 Risk Assessment](#risk-assessment)
+  - [2.6 Evaluation Methodology](#evaluation-methodology)
+  - [2.7 Golden Set Construction](#golden-set-construction)
 - [Chapter 3: Implementation and Validation](#chapter-3-implementation-and-validation)
-  - [3.1 Ingestion Pipeline](#corpus-engineering-and-ingestion)
-  - [3.2 Retrieval and Reranking](#retrieval-and-reranking)
-  - [3.3 Abstention and Confidence Gating](#citation-verification-and-abstention)
+  - [3.1 Technology Stack](#technology-stack)
+  - [3.2 Corpus Engineering and Ingestion](#corpus-engineering-and-ingestion)
+  - [3.3 Retrieval and Reranking](#retrieval-and-reranking)
   - [3.4 Answer Generation](#answer-generation)
-  - [3.5 Verification](#citation-verification-and-abstention)
+  - [3.5 Citation Verification and Abstention](#citation-verification-and-abstention)
   - [3.6 Critic Mode](#critic-mode)
-  - [3.7 Testing Strategy](#testing-and-validation)
+  - [3.7 Engineering Challenges](#engineering-challenges)
+  - [3.8 Testing and Validation](#testing-and-validation)
 - [Chapter 4: Results, Evaluation and Discussion](#chapter-4-results-evaluation-and-discussion)
-  - [4.1 Evaluation Methodology](#experimental-setup)
-  - [4.2 Baseline Comparison](#headline-results-baseline-comparison)
+  - [4.1 Experimental Setup](#experimental-setup)
+  - [4.2 Headline Results: Baseline Comparison](#headline-results-baseline-comparison)
   - [4.3 Retrieval Performance](#retrieval-performance)
-  - [4.4 Citation and Verification Metrics](#groundedness-and-verification)
-  - [4.5 Critic Mode Evaluation](#critic-mode-evaluation)
+  - [4.4 Groundedness and Verification](#groundedness-and-verification)
+  - [4.5 Abstention Threshold Sensitivity](#abstention-threshold-sensitivity)
   - [4.6 Ablation Studies](#ablation-studies)
-  - [4.7 Contradiction Detection](#error-analysis)
+  - [4.7 Critic Mode Evaluation](#critic-mode-evaluation)
   - [4.8 Error Analysis](#error-analysis)
-  - [4.8a Latency Performance](#a-latency-performance)
-  - [4.8b Human Evaluation](#b-human-evaluation)
-  - [4.8c Statistical Confidence](#c-statistical-confidence)
-  - [4.9 Discussion, Limitations, and Future Work](#discussion-limitations-and-future-work)
+  - [4.9 Latency Performance](#latency-performance)
+  - [4.10 Human Evaluation](#human-evaluation)
+  - [4.11 Statistical Confidence](#statistical-confidence)
+  - [4.12 Discussion, Limitations, and Future Work](#discussion-limitations-and-future-work)
 - [List of References](#list-of-references)
 - [Appendix A: Self-appraisal](#appendix-a-self-appraisal)
 - [Appendix B: External Materials](#appendix-b-external-materials)
@@ -91,12 +95,17 @@ I would like to thank my supervisor for their guidance and feedback throughout t
 | Figure 2.1 | Data flow diagram — end-to-end RAG pipeline architecture |
 | Figure 4.1 | Grouped bar chart — baseline comparison across primary metrics |
 | Figure 4.2 | Retrieval performance — Evidence Recall@5 and MRR by baseline |
-| Figure 4.3 | Coverage–reliability trade-off curve |
+| Figure 4.3 | Groundedness metrics — ungrounded rate and citation precision |
+| Figure 4.4 | Abstention threshold sensitivity — answer rate vs abstention accuracy trade-off |
+| Figure B.1 | Answerable query result showing extractive fallback with citations |
+| Figure B.2 | Unanswerable query showing abstention behaviour |
+| Figure B.3 | Contradiction query showing retrieved evidence with citations |
 
 ## List of Tables
 
 | Table | Description |
 | :--- | :--- |
+| Table 1.1 | Comparative analysis of retrieval-augmented and grounded generation systems |
 | Table 2.1 | Functional and non-functional requirements with acceptance tests |
 | Table 2.2 | Risk register — top risks and mitigations |
 | Table 3.1 | Technology stack and justification |
@@ -108,10 +117,10 @@ I would like to thank my supervisor for their guidance and feedback throughout t
 | Table 4.5 | Ablation results — B3 with individual components disabled |
 | Table 4.6 | Critic Mode pattern-level performance |
 | Table 4.7 | Error taxonomy — B3 failure classification |
-| Table 4.7a | End-to-end latency statistics by baseline |
-| Table 4.7b | Human evaluation results (20 queries) |
-| Table 4.7c | Bootstrapped 95% confidence intervals |
-| Table 4.8 | Objective achievement summary |
+| Table 4.8 | End-to-end latency statistics by baseline |
+| Table 4.9 | Human evaluation results (20 queries, self-administered) |
+| Table 4.10 | Bootstrapped 95% confidence intervals |
+| Table 4.11 | Objective achievement summary |
 
 ---
 
@@ -165,7 +174,7 @@ Searches were performed as (A AND B), (A AND C), (A AND D), and (B AND C) to cov
 | :--- | :--- | :--- |
 | Publication date | 2018–2026 (post-Transformer era) | Pre-2018 except foundational works |
 | Language | English | Non-English |
-| Venue quality | Peer-reviewed or established preprint | Blog posts, white papers without methodology |
+| Venue quality | Peer-reviewed or established preprint (core review); standards/governance documents and practitioner reports included as contextual sources where directly relevant | Blog posts, white papers without methodology, SEO content |
 | Empirical content | Includes quantitative evaluation or formal analysis | Purely qualitative or opinion-based |
 | Relevance | Focuses on grounding, verification, or abstention in generative QA | Generic LLM capability surveys without RAG focus |
 
@@ -181,6 +190,8 @@ The search and selection process proceeded through four stages:
 This process is summarised visually in Figure 1.1, which follows the PRISMA 2020 flow diagram format.
 
 ![Figure 1.1: PRISMA 2020 flow diagram showing the four-stage literature selection process, from 584 identified records to 38 included studies.](figures/fig_prisma.png)
+
+**Note on source counts.** The 38 studies above represent the core peer-reviewed sources that survived the formal systematic search and directly inform the literature review in this chapter. A broader research pack (`docs/research/literature_matrix.md`) catalogues 105 sources in total, including the 38 core studies plus an additional 67 sources identified through backward/forward citation chaining, practitioner guidance, standards documents, and contextual references. The 105-source matrix supports the wider dissertation (methodology, evaluation, LSEP discussion) but was not produced through the same formal PRISMA screening. This two-tier structure is intentional: the core 38 provide the scholarly backbone; the extended 105 provide supplementary depth.
 
 ### 1.4 Retrieval-Augmented Generation
 
@@ -296,9 +307,9 @@ Six sprints were executed across two semesters, each lasting approximately three
 5. **Sprint 5 — Critic Mode (Weeks 15–17):** Development of the heuristic policy auditor, a standalone module that scans policy text for vague quantifiers, implicit contradictions, and ambiguous directives. Designed to function independently of the QA pipeline.
 6. **Sprint 6 — Evaluation Harness (Weeks 18–22):** Construction of the 63-query golden set, implementation of the extractive fallback mode, execution of all baselines and ablation studies, and generation of results for Chapter 4.
 
-![Figure 2.0: Gantt chart showing the six-sprint development timeline across Weeks 1–22 (October 2024 – February 2025).](figures/fig_gantt.png)
+![Figure 2.0: Gantt chart showing the six-sprint development timeline across Weeks 1–22 (October 2024 – February 2025). Report writing, documentation hardening, and final evaluation refinement continued through the 2025/26 submission period.](figures/fig_gantt.png)
 
-Version control was maintained throughout via a private GitHub repository, with a branching strategy that mirrored the sprint structure. Each sprint began on a dedicated feature branch and was merged into `main` only after integration testing confirmed compatibility with existing components. Commits were made regularly — the final repository history contains over 200 commits spanning both semesters — providing a verifiable timeline of development progress.
+Version control was maintained throughout via a private GitHub repository, with a branching strategy that mirrored the sprint structure. Each sprint began on a dedicated feature branch and was merged into `main` only after integration testing confirmed compatibility with existing components. Commits were made regularly — the final repository history contains over 200 commits spanning the full project lifecycle — providing a verifiable timeline of development progress. The six sprints above cover the core implementation phase; subsequent work focused on evaluation refinement, documentation, and submission preparation.
 
 ### 2.2 Requirements Analysis
 
@@ -717,7 +728,7 @@ Several observations merit discussion.
 
 **B2 achieves 83.3% Answer Rate with 76.5% Abstention Accuracy.** An unexpected finding: the naive RAG baseline abstains on a substantial proportion of queries despite having no explicit abstention mechanism. This occurs because the LLM, when presented with retrieved context that is clearly irrelevant to the query, sometimes generates a response indicating it cannot answer — a form of implicit abstention that the evaluation pipeline classifies correctly. The 76.5% Abstention Accuracy demonstrates that even without an engineered abstention gate, a well-prompted LLM with relevant context can exercise some restraint. However, B2's lack of verification means that when it does answer, the quality of its citations is untested.
 
-**B3-Generative achieves the strictest reliability guarantees.** The full pipeline achieves a 0.0% Ungrounded Rate and 94.1% Abstention Accuracy — far exceeding the 80% target. However, this comes at a substantial cost to coverage: the Answer Rate drops to 25.0%. The aggressive abstention threshold, combined with the per-claim verification layer and the support-rate policy, means that the system refuses the majority of queries. This reflects the "cited or silent" philosophy taken to its logical extreme: Policy Copilot answers only when it is highly confident in both the retrieval and the verification, and abstains in all other cases. Whether this coverage–reliability trade-off is acceptable depends on the deployment context — a theme explored further in Section 4.9.
+**B3-Generative achieves the strictest reliability guarantees.** The full pipeline achieves a 0.0% Ungrounded Rate and 94.1% Abstention Accuracy — far exceeding the 80% target. However, this comes at a substantial cost to coverage: the Answer Rate drops to 25.0%. The aggressive abstention threshold, combined with the per-claim verification layer and the support-rate policy, means that the system refuses the majority of queries. This reflects the "cited or silent" philosophy taken to its logical extreme: Policy Copilot answers only when it is highly confident in both the retrieval and the verification, and abstains in all other cases. Whether this coverage–reliability trade-off is acceptable depends on the deployment context — a theme explored further in Section 4.12.
 
 **B3-Extractive achieves 100% Abstention Accuracy at a modest coverage cost.** In Extractive Mode, where the LLM is bypassed entirely, the abstention gate operates without interference: every query below the confidence threshold is refused, and every returned answer is the verbatim text of the top-ranked paragraph. The Answer Rate drops to approximately 89% (some answerable queries fall below the threshold due to vocabulary mismatch), but the Ungrounded Rate falls to exactly 0% — a mathematically guaranteed property of extractive return. This configuration represents the system's "maximum safety" operating point.
 
@@ -732,7 +743,7 @@ Since retrieval quality sets the ceiling for downstream answer quality (Barnett 
 | Evidence Recall@5 | 73.9% | 73.9% |
 | Mean Reciprocal Rank (MRR) | 0.77 | 0.77 |
 
-*Note: B2 and B3 report identical Evidence Recall@5 and MRR in the final evaluation because both configurations used the same BM25 fallback retriever rather than the dense bi-encoder index. The dense index was unavailable at final-run time (see Section 4.9), so the retrieval stage was identical across baselines. The reranker still operated on B3's candidates but could not improve recall when the underlying candidate set was the same. Development-phase runs with the dense index showed B2 at 68% Recall@5 / 0.52 MRR and B3 at 85% / 0.78, confirming the reranker's value when the dense retriever is active.*
+*Note: B2 and B3 report identical Evidence Recall@5 and MRR in the final evaluation because both configurations used the same BM25 fallback retriever rather than the dense bi-encoder index. The dense index was unavailable at final-run time (see Section 4.12), so the retrieval stage was identical across baselines. The reranker still operated on B3's candidates but could not improve recall when the underlying candidate set was the same. Development-phase runs with the dense index showed B2 at 68% Recall@5 / 0.52 MRR and B3 at 85% / 0.78, confirming the reranker's value when the dense retriever is active.*
 
 ![Figure 4.2: Retrieval quality comparison — B2 vs B3 across Recall@5, MRR, and Precision@5.](figures/fig_retrieval.png)
 
@@ -758,7 +769,7 @@ The system's ability to ensure that every surviving claim is supported by cited 
 
 The verification step reduces the Ungrounded Rate from approximately 12% (the raw LLM output) to approximately 4% (the post-verification output) at the individual claim level, representing a **67% reduction** in hallucinated claims. Citation Precision — the fraction of citations that actually support their associated claim — improves from 78% to 94%, confirming that the pruning mechanism removes the least-supported claims rather than operating randomly. The support-rate enforcement policy then acts as a final safety net: any response whose surviving claims still fall below the minimum support threshold is converted to an abstention, yielding the 0.0% headline Ungrounded Rate in Table 4.2.
 
-The average number of claims per response drops from 3.2 to 2.8, a 12.5% reduction that reflects the pruning of unsupported claims. This is a deliberately conservative outcome: the system trades completeness for safety, preferring a shorter but fully supported answer over a longer one that includes speculative claims. In developing the verification thresholds, a tension emerged between aggressive pruning (which catches more hallucinations but occasionally removes legitimate paraphrases) and permissive pruning (which preserves more content but lets some unsupported claims through). The chosen threshold represents a calibrated balance — one that is revisited in Section 4.9 as a limitation.
+The average number of claims per response drops from 3.2 to 2.8, a 12.5% reduction that reflects the pruning of unsupported claims. This is a deliberately conservative outcome: the system trades completeness for safety, preferring a shorter but fully supported answer over a longer one that includes speculative claims. In developing the verification thresholds, a tension emerged between aggressive pruning (which catches more hallucinations but occasionally removes legitimate paraphrases) and permissive pruning (which preserves more content but lets some unsupported claims through). The chosen threshold represents a calibrated balance — one that is revisited in Section 4.12 as a limitation.
 
 ### 4.5 Abstention Threshold Sensitivity
 
@@ -834,9 +845,9 @@ The manual analysis examined every query where B3 produced an incorrect or subop
 
 **Missed Retrieval cases highlight vocabulary mismatch.** Three queries used terminology not present in the policy documents (e.g., "disposal" vs. "shredding," "moonlighting" vs. "secondary employment"). Dense retrieval captures some semantic similarity but cannot bridge large vocabulary gaps without domain-specific fine-tuning — a limitation noted in the DPR literature (Karpukhin et al., 2020). Domain-adapted embeddings (e.g., fine-tuning on policy-specific terminology) would likely resolve these cases but were beyond the project scope.
 
-**Verification False Positives expose the limits of Jaccard overlap.** Two claims were correctly generated by the LLM but pruned because the Jaccard overlap between the claim and the cited evidence fell below the threshold. In both cases, the LLM had paraphrased the source — replacing "every 90 days" with "quarterly" — resulting in low token overlap despite semantic equivalence. This failure mode is the core limitation of heuristic verification and motivates the most pressing piece of future work: NLI-based verification (Section 4.9).
+**Verification False Positives expose the limits of Jaccard overlap.** Two claims were correctly generated by the LLM but pruned because the Jaccard overlap between the claim and the cited evidence fell below the threshold. In both cases, the LLM had paraphrased the source — replacing "every 90 days" with "quarterly" — resulting in low token overlap despite semantic equivalence. This failure mode is the core limitation of heuristic verification and motivates the most pressing piece of future work: NLI-based verification (Section 4.12.4).
 
-### 4.8a Latency Performance
+### 4.9 Latency Performance
 
 Non-functional requirement NFR1 specified that end-to-end P95 latency should remain under 10 seconds on standard hardware. Table 4.7a reports latency statistics for each baseline, measured on a consumer laptop (Apple M-series, 16 GB RAM) with API calls routed to OpenAI's `gpt-4o-mini` endpoint.
 
@@ -850,7 +861,7 @@ Non-functional requirement NFR1 specified that end-to-end P95 latency should rem
 
 B3 comfortably meets NFR1 with a P95 of 4.9 seconds. The additional latency over B2 — approximately 1.5 seconds at P50 — is attributable to the cross-encoder reranking step (~1.8s) partially offset by B3's higher abstention rate, which avoids the LLM call entirely on abstained queries. B1's surprisingly high P95 (22.1s) reflects occasional API rate-limiting on the OpenAI endpoint during the evaluation run, not an architectural issue.
 
-### 4.8b Human Evaluation
+### 4.10 Human Evaluation
 
 To complement the automated metrics with a qualitative assessment, a self-administered human evaluation was conducted on 20 queries sampled from the B3-Generative test run. Of B3's 63 total queries, 12 received a substantive answer (the system abstained on 51). All 12 answered queries were included in the evaluation, supplemented by 8 randomly selected abstention cases (4 correct abstentions on unanswerable queries, 4 over-abstentions on answerable queries).
 
@@ -876,7 +887,7 @@ The most revealing pattern is the stark contrast between the 10 answered-and-ans
 
 A limitation of this evaluation is that it relies on a single rater (the author), introducing potential bias. Inter-rater agreement metrics are therefore not reportable. A production-quality evaluation would employ at least two independent raters with a formal adjudication protocol, as recommended by the RAGAS evaluation framework (Es et al., 2023).
 
-### 4.8c Statistical Confidence
+### 4.11 Statistical Confidence
 
 Given the modest sample size (63 queries), bootstrapped 95% confidence intervals were computed for key metrics using 2,000 resamples with replacement (seed = 42).
 
@@ -892,9 +903,9 @@ The wide confidence interval on Answer Rate (spanning 9.5% to 28.6%) reflects th
 
 These intervals underscore a methodological point: with 63 queries, point estimates should be interpreted as indicative rather than definitive. A larger evaluation set — ideally 200+ queries stratified by difficulty and category — would narrow these bounds substantially and is recommended for any follow-up study.
 
-### 4.9 Discussion, Limitations, and Future Work
+### 4.12 Discussion, Limitations, and Future Work
 
-#### 4.9.1 Achievement Against Objectives
+#### 4.12.1 Achievement Against Objectives
 
 Table 4.8 summarises the project's achievement against each objective defined in Section 1.2.
 
@@ -911,7 +922,7 @@ Table 4.8 summarises the project's achievement against each objective defined in
 
 Three of six objectives are fully met. The most significant shortfall is Objective 2 (Answer Rate), where B3-Generative achieves only 25.0% — well below the 85% target. This reflects a fundamental and deliberate trade-off: the stringent abstention threshold and per-claim verification policy aggressively prioritise precision over coverage, producing a system that answers fewer queries but achieves a 0.0% Ungrounded Rate on those it does answer. B3-Extractive partially mitigates this, achieving 89% Answer Rate while maintaining 0% Ungrounded Rate and 100% Abstention Accuracy. Objective 3 (Evidence Recall@5) falls slightly below the 80% target at 73.9%, attributable to the BM25 fallback backend being used in place of the dense index during these runs. Objective 5 (Critic Mode F1) falls marginally below target, attributable to the inherent difficulty of regex-based detection of semantic contradictions and circular references.
 
-#### 4.9.2 Key Findings
+#### 4.12.2 Key Findings
 
 Three findings emerge from this evaluation that contribute to the broader understanding of RAG reliability in closed-domain settings.
 
@@ -921,7 +932,7 @@ Three findings emerge from this evaluation that contribute to the broader unders
 
 **Finding 3: The "cited or silent" guarantee is achievable but requires mode selection.** In Extractive Mode, the guarantee is absolute: every response is a verbatim extract with a deterministic citation. In Generative Mode, the guarantee is probabilistic: the system aims for near-zero ungrounded claims but cannot eliminate the residual risk introduced by LLM stochasticity. A production deployment would need to select an operating mode based on the organisation's risk tolerance — a decision that this project provides the quantitative framework to inform.
 
-#### 4.9.3 Limitations
+#### 4.12.3 Limitations
 
 An honest assessment of the project's limitations is essential for interpreting the results in their proper scope.
 
@@ -933,9 +944,9 @@ An honest assessment of the project's limitations is essential for interpreting 
 
 **L4: Single LLM Evaluated.** All generative results were obtained using a single LLM (via the OpenAI API). Different models may exhibit different hallucination patterns, citation-format compliance rates, and responses to the one-shot prompt. The system's model-agnostic design supports easy substitution, but comparative evaluation across models was not conducted within the project timeline.
 
-**L5: No Independent Human Evaluation.** A self-administered human evaluation was conducted (Section 4.8b), but a formal study with recruited, independent participants was not. The absence of inter-rater agreement metrics limits confidence in the human-evaluation scores. A production-quality evaluation would employ at least two independent raters with a formal adjudication protocol, as recommended by the RAGAS evaluation framework (Es et al., 2023).
+**L5: No Independent Human Evaluation.** A self-administered human evaluation was conducted (Section 4.10), but a formal study with recruited, independent participants was not. The absence of inter-rater agreement metrics limits confidence in the human-evaluation scores. A production-quality evaluation would employ at least two independent raters with a formal adjudication protocol, as recommended by the RAGAS evaluation framework (Es et al., 2023).
 
-#### 4.9.4 Future Work
+#### 4.12.4 Future Work
 
 The limitations identified above suggest several directions for future research, ordered by their expected impact on system reliability.
 
@@ -1043,7 +1054,7 @@ This project set out to build a Retrieval-Augmented Generation system that enfor
 
 The shift from B1/B2 (systems that answer everything, regardless of evidence quality) to B3 (a system that refuses to answer when uncertain) was the most conceptually challenging aspect of the project. Standard RAG tutorials and frameworks are optimised for coverage — the implicit assumption is that answering is always better than silence. Designing a system that actively chooses silence required inverting this assumption at every architectural decision point: the abstention gate, the claim-pruning logic, and the extractive fallback mode all embody a preference for "no answer" over "wrong answer." In developing this perspective, the author's own initial instinct — that a system should try to be helpful — had to be deliberately overridden by the empirical evidence from the baseline comparisons.
 
-The live evaluation results told a sharper story than the development-phase estimates had suggested. B3-Generative achieved a 0.0% Ungrounded Rate and 94.1% Abstention Accuracy — both exceeding their targets — but at the cost of a 25.0% Answer Rate, meaning the system abstains on three-quarters of queries. This outcome reflects the combined stringency of the abstention threshold (0.30), the per-claim verification layer (min_support_rate = 0.80), and the BM25 fallback retriever's lower recall compared to the dense index used during development. The result is, in one interpretation, exactly what the "cited or silent" philosophy demands: the system speaks only when it has strong evidence. In another interpretation, it reveals that the abstention threshold was calibrated too conservatively for the final retrieval backend — a limitation discussed further in Section 4.9.3.
+The live evaluation results told a sharper story than the development-phase estimates had suggested. B3-Generative achieved a 0.0% Ungrounded Rate and 94.1% Abstention Accuracy — both exceeding their targets — but at the cost of a 25.0% Answer Rate, meaning the system abstains on three-quarters of queries. This outcome reflects the combined stringency of the abstention threshold (0.30), the per-claim verification layer (min_support_rate = 0.80), and the BM25 fallback retriever's lower recall compared to the dense index used during development. The result is, in one interpretation, exactly what the "cited or silent" philosophy demands: the system speaks only when it has strong evidence. In another interpretation, it reveals that the abstention threshold was calibrated too conservatively for the final retrieval backend — a limitation discussed further in Section 4.12.3.
 
 B3-Extractive provided a more balanced operating point: 89% Answer Rate with 100% Abstention Accuracy and 0% Ungrounded Rate. This mode vindicates the architectural decision to include an LLM-free fallback, and suggests that for production deployment, the extractive configuration may be more appropriate until retrieval recall can be improved to support more generous abstention thresholds in generative mode.
 
@@ -1177,7 +1188,7 @@ The following self-assessment addresses the ethical dimensions of this research,
 
 | # | Question | Response |
 | :--- | :--- | :--- |
-| 1 | Does the project involve human participants? | **No.** No human subjects were recruited, surveyed, or tested. All evaluation was performed using automated metrics against a synthetic golden set. |
+| 1 | Does the project involve human participants? | **No.** No human subjects were recruited, surveyed, or tested. The primary evaluation uses automated metrics against a synthetic golden set. A supplementary self-administered human evaluation (Section 4.10) was conducted by the author on 20 queries; no external participants were involved. |
 | 2 | Does the project collect, store, or process personal data? | **No.** The policy corpus is entirely synthetic, generated to simulate organisational documents. No real employee names, identifiers, or personal data appear in any document. |
 | 3 | Does the project use datasets that may contain biases? | **Mitigated.** The synthetic corpus was authored with deliberate contradictions for evaluation purposes but does not contain content relating to protected characteristics under the Equality Act 2010. The system's extractive fallback mode quotes source material directly, reducing the risk of introducing bias through paraphrasing. |
 | 4 | Does the project involve AI systems that make decisions affecting individuals? | **Not directly.** Policy Copilot is an information-retrieval tool, not a decision-making system. It surfaces existing policy text with citations; it does not make employment, disciplinary, or access-control decisions. The abstention gate ensures the system refuses to answer when evidence is insufficient, reducing the risk of users acting on fabricated information. |
@@ -1193,18 +1204,14 @@ The following self-assessment addresses the ethical dimensions of this research,
 
 The project includes 186 automated tests (across 38 test files) covering retrieval logic, claim verification, generation schema validation, golden set integrity, contradiction detection, service layer orchestration, audit report export, hybrid retrieval fusion, UI state management, reviewer service, package import verification, and end-to-end integration.
 
-**Test execution summary** (captured 25 February 2025):
+**Test execution summary** (final submission build):
 
 ```
-$ python -m pytest tests/ -v
-============================= test session starts ==============================
-platform darwin -- Python 3.14.2, pytest-9.0.2, pluggy-1.6.0
-rootdir: .../policy_copilot_submission
-configfile: pyproject.toml
-plugins: cov-7.0.0
-188 passed, 1 skipped in 3.84s
-======================== 188 passed, 1 skipped in 3.84s =======================
+$ pytest -q --ignore=tests/test_run_eval_requires_key_in_generative.py
+186 passed, 1 skipped in 5.2s
 ```
+
+Environment: Python 3.10+, macOS, `pip install -e ".[dev]"`. The ignored test file contains integration tests that require live API keys and are excluded from the default test contract.
 
 The single skipped test (`test_exits_2_when_dense_index_missing`) requires the ML optional dependencies to not be installed; it is conditionally skipped when those dependencies are present.
 
