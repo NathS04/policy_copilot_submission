@@ -190,7 +190,11 @@ The search and selection process proceeded through four stages:
 
 This process is summarised visually in Figure 1.1, which follows the PRISMA 2020 flow diagram format.
 
-![Figure 1.1: PRISMA 2020 flow diagram showing the four-stage literature selection process, from 584 identified records to 38 included studies.](figures/fig_prisma.png)
+<div align="center">
+<img src="figures/fig_prisma.png" alt="PRISMA 2020 flow diagram" width="600">
+
+*Figure 1.1: PRISMA 2020 flow diagram showing the four-stage literature selection process, from 584 identified records to 38 included studies.*
+</div>
 
 **Note on source counts.** The 38 studies above represent the core peer-reviewed sources that survived the formal systematic search and directly inform the literature review in this chapter. A broader research pack (`docs/research/literature_matrix.md`) catalogues 105 sources in total, including the 38 core studies plus an additional 67 sources identified through backward/forward citation chaining, practitioner guidance, standards documents, and contextual references. The 105-source matrix supports the wider dissertation (methodology, evaluation, LSEP discussion) but was not produced through the same formal PRISMA screening. This two-tier structure is intentional: the core 38 provide the scholarly backbone; the extended 105 provide supplementary depth.
 
@@ -308,7 +312,11 @@ Six sprints were executed across two semesters, each lasting approximately three
 5. **Sprint 5 — Critic Mode (Weeks 15–17):** Development of the heuristic policy auditor, a standalone module that scans policy text for vague quantifiers, implicit contradictions, and ambiguous directives. Designed to function independently of the QA pipeline.
 6. **Sprint 6 — Evaluation Harness (Weeks 18–22):** Construction of the 63-query golden set, implementation of the extractive fallback mode, execution of all baselines and ablation studies, and generation of results for Chapter 4.
 
-![Figure 2.0: Gantt chart showing the six-sprint development timeline across Weeks 1–22 (October 2024 – February 2025). Report writing, documentation hardening, and final evaluation refinement continued through the 2025/26 submission period.](figures/fig_gantt.png)
+<div align="center">
+<img src="figures/fig_gantt.png" alt="Gantt chart" width="700">
+
+*Figure 2.0: Gantt chart showing the six-sprint development timeline across Weeks 1–22 (October 2024 – February 2025). Report writing, documentation hardening, and final evaluation refinement continued through the 2025/26 submission period.*
+</div>
 
 Version control was maintained throughout via a private GitHub repository, with a branching strategy that mirrored the sprint structure. Each sprint began on a dedicated feature branch and was merged into `main` only after integration testing confirmed compatibility with existing components. Commits were made regularly — the final repository history contains over 200 commits spanning the full project lifecycle — providing a verifiable timeline of development progress. The six sprints above cover the core implementation phase; subsequent work focused on evaluation refinement, documentation, and submission preparation.
 
@@ -336,7 +344,11 @@ The distinction between functional and non-functional requirements reflects a de
 
 The system follows a modular **Retrieve-and-Rerank-then-Generate-and-Verify** pipeline, designed so that each stage can be independently tested, toggled, and replaced without disrupting subsequent stages. Figure 2.1 illustrates the end-to-end flow.
 
-![Figure 2.1: Data flow diagram showing the end-to-end pipeline from PDF ingestion through retrieval, reranking, abstention, generation, and verification.](figures/fig_data_flow.png)
+<div align="center">
+<img src="figures/fig_data_flow.png" alt="Data flow diagram" width="700">
+
+*Figure 2.1: Data flow diagram showing the end-to-end pipeline from PDF ingestion through retrieval, reranking, abstention, generation, and verification.*
+</div>
 
 The architecture comprises six stages, each corresponding to a distinct module in the codebase:
 
@@ -731,7 +743,11 @@ Table 4.2 presents the headline metrics for all baselines on the test split. Fig
 | B3 (Policy Copilot) | Generative | 25.0% | 94.1% | 0.0% | 73.9% |
 | B3 (Policy Copilot) | Extractive | 89% | 100% | 0% | 85% |
 
-![Figure 4.1: Grouped bar chart comparing B1, B2, and B3 across Answer Rate, Abstention Accuracy, Ungrounded Rate, and Evidence Recall@5.](figures/fig_baselines.png)
+<div align="center">
+<img src="figures/fig_baselines.png" alt="Baseline comparison bar chart" width="650">
+
+*Figure 4.1: Grouped bar chart comparing B1, B2, and B3 across Answer Rate, Abstention Accuracy, Ungrounded Rate, and Evidence Recall@5.*
+</div>
 
 Several observations merit discussion.
 
@@ -756,7 +772,11 @@ Since retrieval quality sets the ceiling for downstream answer quality (Barnett 
 
 *Note: B2 and B3 report identical Evidence Recall@5 and MRR in the final evaluation because both configurations used the same BM25 fallback retriever rather than the dense bi-encoder index. The dense index was unavailable at final-run time (see Section 4.12), so the retrieval stage was identical across baselines. The reranker still operated on B3's candidates but could not improve recall when the underlying candidate set was the same. Development-phase runs with the dense index showed B2 at 68% Recall@5 / 0.52 MRR and B3 at 85% / 0.78, confirming the reranker's value when the dense retriever is active.*
 
-![Figure 4.2: Retrieval quality comparison — B2 vs B3 across Recall@5, MRR, and Precision@5.](figures/fig_retrieval.png)
+<div align="center">
+<img src="figures/fig_retrieval.png" alt="Retrieval quality comparison" width="650">
+
+*Figure 4.2: Retrieval quality comparison — B2 vs B3 across Recall@5, MRR, and Precision@5.*
+</div>
 
 In the final evaluation, B2 and B3 report identical retrieval metrics (Evidence Recall@5 = 73.9%, MRR = 0.77) because both baselines fell back to the same BM25 retriever when the dense bi-encoder index was unavailable at run time. The reranker in B3 still re-scored the BM25 candidates, but because the candidate set was identical the resulting top-5 and ranking order converged to the same values. Development-phase runs with the dense index active showed a clear reranking benefit: Evidence Recall@5 rose from 68% (B2) to 85% (B3), Evidence Recall@1 from 42% to 71%, and MRR from 0.52 to 0.78 — confirming the two-stage retrieval benefit documented by Nogueira and Cho (2019) and Lin et al. (2021). The ablation study in Section 4.6 provides further evidence of the reranker's contribution when isolated from the retriever backend.
 
@@ -776,7 +796,11 @@ The system's ability to ensure that every surviving claim is supported by cited 
 
 *Note: The rates in Table 4.4 are **intermediate claim-level** rates, measured before the support-rate enforcement policy triggers full abstention on responses that fall below the minimum support threshold. After this final enforcement step, responses that still contain ungrounded claims are suppressed entirely, producing the 0.0% headline Ungrounded Rate reported in Table 4.2. In other words, verification reduces claim-level hallucination from 12% to 4%, and the support-rate gate then removes any remaining partially-grounded responses from the final output.*
 
-![Figure 4.3: Groundedness metrics — Ungrounded Rate and Citation Precision, before and after verification.](figures/fig_groundedness.png)
+<div align="center">
+<img src="figures/fig_groundedness.png" alt="Groundedness metrics" width="650">
+
+*Figure 4.3: Groundedness metrics — Ungrounded Rate and Citation Precision, before and after verification.*
+</div>
 
 The verification step reduces the Ungrounded Rate from approximately 12% (the raw LLM output) to approximately 4% (the post-verification output) at the individual claim level, representing a **67% reduction** in hallucinated claims. Citation Precision — the fraction of citations that actually support their associated claim — improves from 78% to 94%, confirming that the pruning mechanism removes the least-supported claims rather than operating randomly. The support-rate enforcement policy then acts as a final safety net: any response whose surviving claims still fall below the minimum support threshold is converted to an abstention, yielding the 0.0% headline Ungrounded Rate in Table 4.2.
 
@@ -786,7 +810,11 @@ The average number of claims per response drops from 3.2 to 2.8, a 12.5% reducti
 
 The abstention gate's behaviour is governed by a single hyperparameter: the cross-encoder confidence threshold. Figure 4.4 shows how Answer Rate and Abstention Accuracy vary as the threshold is swept from 0.0 to 2.0.
 
-![Figure 4.4: Threshold sensitivity analysis — Answer Rate vs Abstention Accuracy as a function of the reranker confidence threshold.](figures/fig_tradeoff.png)
+<div align="center">
+<img src="figures/fig_tradeoff.png" alt="Threshold sensitivity analysis" width="650">
+
+*Figure 4.4: Threshold sensitivity analysis — Answer Rate vs Abstention Accuracy as a function of the reranker confidence threshold.*
+</div>
 
 At a threshold of 0.0 (no gating), the system behaves identically to B2: it attempts to answer every query, achieving 100% Answer Rate but 0% Abstention Accuracy. As the threshold increases, Abstention Accuracy rises monotonically — the system becomes increasingly conservative, refusing queries for which evidence quality is marginal. Answer Rate falls correspondingly, as some answerable queries whose correct evidence paragraphs happen to receive borderline reranker scores are also refused.
 
@@ -1248,13 +1276,25 @@ The following screenshots demonstrate the application's behaviour across three r
 
 **Figure B.1: Answerable query** — The user asks "What is the company's remote work policy?" and receives an extractive answer with inline citations pointing to the internal policy handbook.
 
-![Figure B.1: Answerable query result showing extractive fallback with citations](figures/screenshot_answerable_query.png)
+<div align="center">
+<img src="figures/screenshot_answerable_query.png" alt="Answerable query screenshot" width="700">
+
+*Figure B.1: Answerable query result showing extractive fallback with citations.*
+</div>
 
 **Figure B.2: Unanswerable query** — The user asks "What is the GDP of France in 2024?", a question entirely outside the policy corpus scope. The system correctly abstains, displaying "The corpus does not contain enough information to answer this question" with a FALLBACK_RELEVANCE_FAIL note.
 
-![Figure B.2: Unanswerable query showing abstention behaviour](figures/screenshot_unanswerable_query.png)
+<div align="center">
+<img src="figures/screenshot_unanswerable_query.png" alt="Unanswerable query screenshot" width="700">
+
+*Figure B.2: Unanswerable query showing abstention behaviour.*
+</div>
 
 **Figure B.3: Contradiction-probing query** — The user asks "Are passwords required to be changed every 30 days in one section but every 90 days in another?" The system retrieves the relevant password policy paragraphs and presents the extracted content with citations.
 
-![Figure B.3: Contradiction query showing retrieved evidence with citations](figures/screenshot_contradiction_query.png)
+<div align="center">
+<img src="figures/screenshot_contradiction_query.png" alt="Contradiction query screenshot" width="700">
+
+*Figure B.3: Contradiction query showing retrieved evidence with citations.*
+</div>
 
