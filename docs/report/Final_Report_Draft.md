@@ -45,7 +45,7 @@ The submission accompanying this report comprises:
 2. **Evaluation harness** — golden set, scripts, and rubrics (`eval/`, `scripts/`).
 3. **Results artifacts** — JSONL predictions, summary metrics, tables and figures (`results/`).
 4. **Documentation** — research pack, traceability matrices, risk audit, demo scripts (`docs/`).
-5. **Test suite** — 38 test files / 186 cases, all passing (`tests/`).
+5. **Test suite** — 38 test files / 188 cases, all passing (`tests/`).
 6. **Reproducibility files** — `pyproject.toml`, `INSTRUCTIONS_FOR_EVALUATOR.md`, `.streamlit/`, CI workflow (`.github/`).
 7. **This report** — `docs/report/Final_Report_Draft.md` and `Final_Report_Draft.pdf`.
 
@@ -65,17 +65,17 @@ The architecture introduces four layers of reliability control absent from naïv
 3.  **Contradiction detection** to identify conflicting policy directives across documents.
 4.  An **Extractive Fallback Mode** that ensures functionality even when the LLM is unavailable, returning top-ranked evidence directly.
 
-Evaluation on a 63-query synthetic golden set (36 answerable, 17 unanswerable, 10 contradiction) demonstrates that the full system (B3) achieves a **0.0% ungrounded rate** (all claims verified against cited evidence) and **94.1% abstention accuracy** on unanswerable queries in generative mode — exceeding its 80% target — while maintaining a deliberately conservative 25% answer rate that reflects the system's strict refusal to speculate beyond its evidence. In extractive mode, where the LLM is bypassed entirely, the system achieves an **89% answer rate** with **100% citation precision** (by construction, since extractive answers are verbatim evidence) and **100% abstention accuracy**, confirming that the reliability architecture functions independently of the generative model. These results are specific to the bounded synthetic corpus; generalisability to larger, noisier real-world corpora remains an open question (see Section 4.12.3). Ablation studies confirm that cross-encoder reranking is the single most impactful reliability component. Additionally, a heuristic **Critic Mode** achieves 93.7% macro precision in auditing policy text for vague or contradictory language.
+Evaluation on a 63-query synthetic golden set (36 answerable, 17 unanswerable, 10 contradiction; 44 held-out test queries) demonstrates that the full system (B3) achieves a **0.0% headline ungrounded rate** on the test split — every surviving claim verified against cited evidence after the support-rate enforcement gate triggers full abstention on partially-grounded responses — and **94.1% abstention accuracy** on the 12 test-split unanswerable queries (exceeding the 80% target, though with a wide bootstrap confidence interval reflecting the small unanswerable subset). The trade-off is a 25% answer rate in generative mode, which falls short of the 85% target for Objective 2: the deliberate priority of precision over coverage produces a system that refuses three-quarters of test queries rather than risk speculation. The extractive mode partially recovers coverage, achieving an **89% answer rate** with **100% citation precision** (by construction, as extractive answers are verbatim evidence) and **100% abstention accuracy**, demonstrating that the reliability architecture functions independently of the generative model. Ablation studies confirm cross-encoder reranking is the single most impactful reliability component. A separate heuristic **Critic Mode** achieves **93.7% macro precision** (78.5% macro recall, 84.8% macro F1) on an internally-labelled test suite of policy sentences across six problematic-language categories — marginally below the 85% F1 target. All results apply to the bounded synthetic corpus; generalisability to noisier real-world corpora is a stated limitation (§4.12.3).
 
-The project concludes that lightweight, deterministic reliability controls — particularly the combination of confidence-gated abstention and per-claim verification — can render RAG viable for policy compliance, albeit with a coverage–precision trade-off that future work should address through threshold tuning and retrieval improvements.
+An **objective-slice evaluation** of 16 deterministically-checkable queries (specific numeric or yes/no obligations verifiable against source paragraphs without LLM judgement) supplements the broader 63-query evaluation, providing a subjectivity-free signal that addresses documented LLM-as-judge biases. The project concludes that lightweight, deterministic reliability controls — particularly the combination of confidence-gated abstention and per-claim verification — can render RAG viable for policy compliance, albeit with a coverage–precision trade-off that future work should address through threshold tuning, NLI-based verification, and retrieval improvements.
 
 ---
 
 ## Acknowledgements
 
-I would like to thank my supervisor for their guidance and feedback throughout this project. I would also like to thank the module coordinators for COMP3931 for providing clear expectations and resources.
+I would like to thank my supervisor for their guidance and feedback throughout this project, and the COMP3931 module coordinators for providing clear expectations and resources.
 
-*Note: No proofreading assistance was sought or received beyond standard word-processing tools (spell check). All writing is my own.*
+*Note: No third-party human proofreading was sought or received; only standard word-processor tooling (spell check) was used. All prose in this report is the author's own work; the limited use of generative AI tools as a development aid is fully disclosed in Appendix B.5 in line with the University of Leeds Generative AI policy (Amber category) for COMP3931/COMP3932.*
 
 ---
 
@@ -286,7 +286,7 @@ Development followed a sprint-based methodology adapted from agile principles fo
 *Figure 2.0: Gantt chart of the six-sprint development timeline (Weeks 1–22, October 2024 – February 2025). Report writing, documentation hardening, and evaluation refinement continued through the 2025/26 submission period.*
 </div>
 
-Version control used a private GitHub repository with a branch-per-sprint strategy. The final history contains over 200 commits spanning the full project lifecycle, providing a verifiable development timeline.
+Version control used a private GitHub repository with a branch-per-sprint strategy. The final history contains over 200 commits spanning the full project lifecycle, providing a verifiable development timeline. The six implementation sprints (S1–S6) ran from October 2024 to March 2025; subsequent activity through the 2025/26 submission cycle focused on report writing, documentation hardening, evaluation refinement, and final package preparation rather than new implementation work.
 
 ### 2.2 Requirements Analysis
 
@@ -566,7 +566,7 @@ Four ablations isolate the contribution of each reliability component.
 
 ### 4.7 Critic Mode Evaluation
 
-The Critic module was evaluated against a labelled test suite of policy sentences.
+The Critic module was evaluated against an internally-authored labelled test suite of policy sentences (no external benchmark exists for this task on organisational policy text). Each sentence was hand-tagged with its expected category (or "clean" for unproblematic sentences); precision and recall are computed per category.
 
 **Table 4.6: Critic Mode heuristic detection performance.**
 
@@ -915,7 +915,7 @@ The following self-assessment addresses the ethical dimensions of this research,
 
 #### B.7.1 Automated Test Suite
 
-The project includes 186 automated tests (across 38 test files) covering retrieval logic, claim verification, generation schema validation, golden set integrity, contradiction detection, service layer orchestration, audit report export, hybrid retrieval fusion, UI state management, reviewer service, package import verification, and end-to-end integration.
+The project includes 188 automated tests (across 38 test files) covering retrieval logic, claim verification, generation schema validation, golden set integrity, contradiction detection, service layer orchestration, audit report export, hybrid retrieval fusion, UI state management, reviewer service, package import verification, and end-to-end integration.
 
 **Test execution summary** (final submission build):
 

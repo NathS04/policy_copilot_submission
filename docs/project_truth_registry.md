@@ -40,19 +40,27 @@ Any contradiction with this file in other documents is a bug.
 | Multi-rater agreement (kappa) | Future work only — tooling exists but not exercised |
 | Independent raters | No — single rater acknowledged |
 
-## Research Pack
+## Research Pack — Count Hierarchy (Authoritative)
 
-| Fact | Value | Source |
+Two complementary literature flows are reported. Both are valid and they are not contradictory.
+
+| Tier | Count | Source |
 |------|-------|--------|
-| Total sources in literature matrix | 105 | `docs/research/literature_matrix.md` summary table |
-| Tier 1 venues | 59 | literature_matrix.md |
-| Tier 2 venues | 27 | literature_matrix.md |
-| Tier 3 / practitioner | 19 | literature_matrix.md |
-| Initial shortlist (database search) | 48 | search_strategy.md |
-| Citation chaining additions | ~52 | search_strategy.md |
-| Direct comparator systems | 10 | `docs/research/comparator_matrix.md` |
-| Topic clusters | 10 (C1-C10) | literature_matrix.md, taxonomy |
-| Criticising sources | 16 | literature_matrix.md |
+| **Strict scholarly review (Report Chapter 1 PRISMA)** | | |
+| Raw database hits (cross-database, w/ duplicates) | 584 | Report §1.3 |
+| After deduplication | 472 | Report §1.3 |
+| Full-text assessed | 154 | Report §1.3 |
+| **Core peer-reviewed studies included** | **38** | Report Chapter 1 |
+| **Broader research pack (literature matrix)** | | |
+| Unique title-level candidates (matrix flow) | ~120 | `search_strategy.md` |
+| Citation-chain additions | ~55 | `search_strategy.md` |
+| **All sources in literature matrix** | **105** | `docs/research/literature_matrix.md` |
+| Tier 1 venues (matrix) | 59 | literature_matrix.md |
+| Tier 2 venues (matrix) | 27 | literature_matrix.md |
+| Tier 3 / practitioner (matrix) | 19 | literature_matrix.md |
+| Direct comparator systems | 10 | `docs/research/comparator_matrix.md` / Appendix B.8 |
+| Topic clusters | 10 (C1–C10) | literature_matrix.md, taxonomy |
+| Criticising sources (matrix) | 16 | literature_matrix.md |
 
 ## UI Views
 
@@ -79,7 +87,7 @@ Any contradiction with this file in other documents is a bug.
 | Fact | Value | Source |
 |------|-------|--------|
 | Total test files | 38 | `tests/` directory |
-| Total test cases | 186 | `pytest -q` output |
+| Total test cases | 188 | `pytest -q` output |
 | Conditionally skipped | 1 | FAISS-dependent test |
 
 ## Evaluation Artefacts (added in Final Maximiser phase)

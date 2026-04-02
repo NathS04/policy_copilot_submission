@@ -1,6 +1,6 @@
 # Reference Audit
 
-Last updated: March 2026
+Last updated: April 2026
 
 ## Summary
 
@@ -9,6 +9,7 @@ Last updated: March 2026
 - **Citation style:** Leeds Harvard (Author, Year)
 - **Orphan references (listed but never cited):** 0
 - **Missing references (cited but not listed):** 0
+- **Source-tier note:** of the 38 listed references, 36 are peer-reviewed scholarly sources that survived the strict §1.3 PRISMA inclusion criteria. Two (Deloitte AI Institute 2024 — industry/practitioner report; Kamradt 2024 — practitioner educational article) are explicitly cited as **contextual sources** under the broader-source clause of §1.3, used only to support the practitioner-context framing in the introduction and the chunking-strategy discussion respectively. They are not used as primary scholarly evidence for any methodology or evaluation claim.
 
 ## Audit Actions Taken
 

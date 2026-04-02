@@ -17,7 +17,7 @@ Maps each functional and non-functional requirement to its implementing source f
 
 | Req | Description | Source Files | Tests | Evaluation Evidence |
 |-----|-------------|-------------|-------|---------------------|
-| NFR1 | Latency — P95 end-to-end < 10s | All pipeline modules | `test_chat_orchestrator.py` | Table 4.7a: B3 P95 = 4.9s |
+| NFR1 | Latency — P95 end-to-end < 10s | All pipeline modules | `test_chat_orchestrator.py` | Table 4.8: B3 P95 = 4.9s |
 | NFR2 | Reproducibility — all results scriptable and deterministic | `scripts/run_eval.py`, `scripts/reproduce_offline.py`, `scripts/reproduce_online.py` | `test_run_inspector.py`, `test_verify_artifacts_smoke.py` | `results/runs/` artifacts, `results/manifest.json` |
 | NFR3 | Modularity — components toggleable independently | `service/chat_orchestrator.py`, `scripts/run_eval.py` (ablation flags) | `test_b3_fallback_relevance_gate.py` | Ablation study: `--no_rerank`, `--no_verify`, `--no_contradictions`; `results/tables/ablation_comparison.csv` |
 | NFR4 | Auditability — provenance, traceability, evidence integrity | `service/schemas.py`, `service/audit_report_service.py`, `scripts/verify_artifacts.py` | `test_audit_report_export.py`, `test_verify_artifacts_smoke.py` | Risk audit table: `docs/risk_audit_table.md`; Auditability rubric: `eval/rubrics/auditability_rubric.md`; Failure taxonomy: `results/tables/failure_taxonomy.csv` |

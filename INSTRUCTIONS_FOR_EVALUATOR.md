@@ -33,7 +33,7 @@ After installation (Option A or B), run:
 ```bash
 pytest -q --ignore=tests/test_run_eval_requires_key_in_generative.py
 ```
-Expected: **186 passed, 1 skipped**. The ignored tests require API keys and are not part of the core test contract.
+Expected: **188 passed, 1 skipped**. The ignored tests require API keys and are not part of the core test contract.
 
 ## 3. Verification Steps
 

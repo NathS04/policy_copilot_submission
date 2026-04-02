@@ -7,7 +7,7 @@
   "seed": 42,
   "enable_llm": true,
   "embedding_model": "sentence-transformers/all-MiniLM-L6-v2",
-  "run_name": "20260420_164929",
+  "run_name": "20260420_170305",
   "retrieve_k_candidates": 50,
   "rerank_k_final": 5,
   "rerank_model": "cross-encoder/ms-marco-MiniLM-L-6-v2",
