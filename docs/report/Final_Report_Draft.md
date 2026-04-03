@@ -1,5 +1,7 @@
 <div class="title-page" align="center">
 
+**Final Report**
+
 # Audit-Ready Policy Copilot
 ## Evidence-Grounded Retrieval-Augmented Generation with Deterministic Reliability Controls
 
@@ -14,12 +16,17 @@
 
 <br>
 
-**The University of Leeds**
-**School of Computing**
+**2025/26**
 
 <br>
 
-**COMP3931 Individual Project — 2025/26**
+**COMP3931 Individual Project**
+**School of Computing — The University of Leeds**
+
+<br>
+<br>
+
+*© 2026 The University of Leeds and Nathan S*
 
 </div>
 
@@ -41,17 +48,17 @@ The use of Generative AI tools during this project complies with the University 
 
 ## Deliverables
 
-The submission accompanying this report comprises:
+The candidate confirms that the following have been submitted:
 
-1. **Source code** — full Python implementation of the Policy Copilot pipeline (`src/policy_copilot/`).
-2. **Evaluation harness** — golden set, scripts, and rubrics (`eval/`, `scripts/`).
-3. **Results artifacts** — JSONL predictions, summary metrics, tables and figures (`results/`).
-4. **Documentation** — research pack, traceability matrices, risk audit, demo scripts (`docs/`).
-5. **Test suite** — 38 test files / 188 cases, all passing (`tests/`).
-6. **Reproducibility files** — `pyproject.toml`, `INSTRUCTIONS_FOR_EVALUATOR.md`, `.streamlit/`, CI workflow (`.github/`).
-7. **This report** — `docs/report/Final_Report_Draft.md` and `Final_Report_Draft.pdf`.
+1. **This final report** — `docs/report/Final_Report_Draft.pdf` (49 pages, 25-page body within the 30-page limit) and its source markdown `docs/report/Final_Report_Draft.md`.
+2. **Source code** — full Python implementation of the Policy Copilot pipeline under `src/policy_copilot/` (ingestion, retrieval, reranking, verification, critic, service, UI).
+3. **Evaluation harness** — golden set, evaluation scripts, and rubrics under `eval/` and `scripts/`.
+4. **Results artefacts** — JSONL predictions, summary metrics, tables, and figures under `results/`.
+5. **Documentation pack** — research pack, requirements traceability matrix, claim–evidence map, risk audit table, project truth registry, and demo scripts under `docs/`.
+6. **Automated test suite** — 38 test files / 188 cases, all passing (`tests/`).
+7. **Reproducibility files** — `pyproject.toml`, `INSTRUCTIONS_FOR_EVALUATOR.md`, `.streamlit/config.toml`, GitHub Actions CI workflow under `.github/`.
 
-A single one-line install (`pip install -e ".[dev]"`) followed by `python scripts/run_eval.py` reproduces all reported metrics.
+A single install (`pip install -e ".[dev]"`) followed by `python scripts/run_eval.py` reproduces all reported metrics on a consumer laptop.
 
 ---
 
@@ -77,7 +84,7 @@ An **objective-slice evaluation** of 16 deterministically-checkable queries (spe
 
 I would like to thank my supervisor for their guidance and feedback throughout this project, and the COMP3931 module coordinators for providing clear expectations and resources.
 
-*Note: No third-party human proofreading was sought or received; only standard word-processor tooling (spell check) was used. All prose in this report is the author's own work; the limited use of generative AI tools as a development aid is fully disclosed in Appendix B.5 in line with the University of Leeds Generative AI policy (Amber category) for COMP3931/COMP3932.*
+*This report has been prepared in accordance with the University of Leeds proof-reading policy (https://ses.leeds.ac.uk/info/22165/coursework/669/proof-reading-taught-components). No third-party human proof-reading was sought or received; only standard word-processor tooling (spell check) was used. All prose in this report is the author's own work; the limited use of generative AI tools as a development aid is fully disclosed in Appendix B.5 in line with the University of Leeds Generative AI policy (Amber category for COMP3931/COMP3932).*
 
 ---
 
