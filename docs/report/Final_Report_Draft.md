@@ -136,7 +136,12 @@ I would like to thank my supervisor for their guidance and feedback throughout t
   - [4.9 Latency Performance](#latency-performance)
   - [4.10 Human Evaluation](#human-evaluation)
   - [4.11 Statistical Confidence](#statistical-confidence)
-  - [4.12 Discussion, Limitations, and Future Work](#discussion-limitations-and-future-work)
+  - [4.12 Discussion: Achievement Against Objectives](#discussion-achievement-against-objectives)
+- [Chapter 5: Conclusions and Reflection](#chapter-5-conclusions-and-reflection)
+  - [5.1 Conclusions](#conclusions)
+  - [5.2 Limitations](#limitations)
+  - [5.3 Future Work](#future-work)
+  - [5.4 Reflection](#reflection)
 - [List of References](#list-of-references)
 - [Appendix A: Self-appraisal](#appendix-a-self-appraisal)
 - [Appendix B: External Materials](#appendix-b-external-materials)
@@ -175,7 +180,7 @@ I would like to thank my supervisor for their guidance and feedback throughout t
 | Table 4.8 | End-to-end latency statistics by baseline |
 | Table 4.9 | Human evaluation results (20 queries, self-administered) |
 | Table 4.10 | Bootstrapped 95% confidence intervals |
-| Table 4.11 | Objective achievement summary |
+| Table 4.11 | Objective achievement summary (Chapter 4 §4.12) |
 
 </div>
 
@@ -653,9 +658,7 @@ Bootstrapped 95% confidence intervals (2,000 resamples, seed = 42) were computed
 
 The wide Answer Rate CI reflects the small number of answered queries; Abstention Accuracy's upper bound at 100% indicates a ceiling effect. With n = 63, point estimates are indicative, not definitive — an n = 200+ stratified evaluation is recommended for follow-up.
 
-### 4.12 Discussion, Limitations, and Future Work
-
-#### 4.12.1 Achievement Against Objectives
+### 4.12 Discussion: Achievement Against Objectives
 
 **Table 4.11: Objective achievement summary.**
 
@@ -668,23 +671,57 @@ The wide Answer Rate CI reflects the small number of answered queries; Abstentio
 | 5. Critic Mode F1 ≥ 85% | ≥ 85% | 84.8% | Marginally below |
 | 6. Systematic Evaluation | Complete | Complete | Met |
 
-Three of six objectives are fully met. Objective 2 (Answer Rate) is the most significant shortfall in Generative Mode, reflecting the deliberate trade-off prioritising precision over coverage; Extractive Mode meets the spirit of the objective (89%). Objective 3 misses the target by 6.1 pp due to the BM25 fallback — development-phase runs with the dense index hit 85% Recall@5. Objective 5 misses by 0.2 pp due to inherent regex limitations on semantic contradictions and circular references.
+Three of six objectives are fully met. Objective 2 (Answer Rate) is the most significant shortfall in Generative Mode, reflecting the deliberate trade-off prioritising precision over coverage; Extractive Mode meets the spirit of the objective (89%). Objective 3 misses the target by 6.1 pp due to the BM25 fallback — development-phase runs with the dense index hit 85% Recall@5. Objective 5 misses by 0.2 pp due to inherent regex limitations on semantic contradictions and circular references. Conclusions, limitations, and future work arising from these results are presented in Chapter 5.
 
-#### 4.12.2 Key Findings
+## Chapter 5: Conclusions and Reflection
 
-**Finding 1: Cross-encoder reranking is the most impactful intervention.** Ablations (§4.6) demonstrate reranking contributes more to system reliability than verification, abstention, or contradiction detection — practitioners should prioritise it over more exotic interventions like LLM self-evaluation.
+This chapter synthesises the findings of Chapter 4 into project-level conclusions, examines the principal limitations of the work, and identifies the most impactful directions for future research.
 
-**Finding 2: Heuristic verification catches most but not all hallucinations.** The 67% reduction in Ungrounded Rate (12%→4%) leaves a residual long tail of semantically-hallucinated-but-lexically-similar claims. NLI-based verification could close this gap at the cost of latency, cost, and determinism.
+### 5.1 Conclusions
 
-**Finding 3: The "cited or silent" guarantee is achievable but mode-dependent.** Extractive Mode delivers it absolutely (verbatim returns); Generative Mode delivers it probabilistically. Production deployments must select operating mode based on risk tolerance — a quantitative framework for which this project provides.
+The project's central question — whether RAG can be made reliably grounded and abstention-aware over closed-domain policy corpora — is answered affirmatively, with three findings of broader interest to the field.
 
-#### 4.12.3 Limitations
+**Finding 1: Cross-encoder reranking is the most impactful reliability intervention.** Ablations (§4.6) demonstrate reranking contributes more to system reliability than verification, abstention, or contradiction detection. Practitioners building closed-domain RAG should prioritise reranking over more exotic interventions such as LLM self-evaluation or multi-step verification chains: the cost is modest (≈1.8 s per query on consumer hardware) and the resulting confidence logit provides a calibrated signal that downstream gates can consume directly.
 
-**L1: Synthetic Corpus** — results may not transfer directly to real scanned PDFs with OCR noise, complex tables, multi-language content. The synthetic paragraphs are unusually clean. **L2: Golden Set Size** — at 63 queries, point estimates have wide CIs; ≥200 queries are needed for robust conclusions. **L3: Heuristic Verification Ceiling** — Jaccard cannot detect semantic entailment; the 67% catch rate is its ceiling under the current approach. **L4: Single LLM Evaluated** — generative results use only OpenAI's API; comparative model evaluation was beyond the timeline. **L5: No Independent Human Evaluation** — single-rater design lacks inter-rater agreement metrics.
+**Finding 2: Heuristic verification catches most but not all hallucinations.** The verification step reduces claim-level Ungrounded Rate from 12% to 4% — a 67% reduction. The residual 4% consists of claims that are semantically hallucinated but lexically similar to the evidence: the long tail that token-overlap methods cannot reach. Closing this gap requires semantic verification (NLI), which would introduce latency, cost, and potential non-determinism — trade-offs that must be calibrated against deployment requirements rather than assumed favourable.
 
-#### 4.12.4 Future Work
+**Finding 3: The "cited or silent" guarantee is achievable but mode-dependent.** Extractive Mode delivers the guarantee absolutely — every response is a verbatim extract with a deterministic citation, and Citation Precision is 100% by construction. Generative Mode delivers it probabilistically: the system aims for near-zero Ungrounded Rate but cannot eliminate the residual risk introduced by LLM stochasticity. Production deployments must select the operating mode based on the organisation's risk tolerance, and this project provides the quantitative framework to inform that choice.
 
-**F1: NLI-Based Verification** — supplement Jaccard with NLI models (FEVER; Thorne et al., 2018; SciFact; Wadden et al., 2020) classifying claim–evidence entailment, ideally as a borderline-case backstop to the heuristic to preserve speed and auditability. **F2: Domain-Adapted Embeddings** — fine-tune the bi-encoder on policy terminology pairs ("disposal"↔"shredding") via transfer from legal NLP corpora (Chalkidis et al., 2020). **F3: Multi-Model Evaluation** — evaluate across GPT-4, Claude 3, Llama 3, Mistral to establish model-dependence; informal early testing suggested smaller models produce more schema violations but similar hallucination rates. **F4: Larger Externally-Annotated Golden Set** — 200+ queries with independent annotators and Cohen's kappa for credibility. **F5: User Feedback Integration** — production feedback loops for dynamic threshold tuning. **F6: Transfer to Real-World Documents** — empirical validation on noisy organisational corpora is the ultimate test; an industry partner sharing a redacted corpus would be the ideal next step.
+These findings together support the project's central thesis: lightweight, deterministic reliability layers — confidence-gated abstention, per-claim verification, and cross-encoder reranking — can render RAG viable for policy compliance, with a coverage–precision trade-off that is tunable rather than fixed.
+
+### 5.2 Limitations
+
+An honest assessment of the project's limitations is essential to interpret the results in their proper scope.
+
+**L1: Synthetic Corpus.** The evaluation corpus was authored specifically for this project. While this enabled controlled injection of test cases (deliberate contradictions, vague language), the results may not transfer directly to real-world scanned PDFs with OCR noise, complex tables, headers, footers, and multi-language content. The synthetic paragraphs are unusually clean and well-structured — a best-case scenario for the ingestion pipeline.
+
+**L2: Golden Set Size.** At 63 queries (44 test, 19 dev), the golden set provides directional evidence but limited statistical power. Bootstrap confidence intervals (§4.11) are wide, particularly for Answer Rate, and a five-percentage-point shift in any headline metric would be within sampling variability. A production evaluation would require several hundred annotated queries for statistically robust conclusions.
+
+**L3: Heuristic Verification Ceiling.** Jaccard token overlap cannot detect semantic entailment, paraphrasing, or implicit support. The verification step's 67% hallucination-catch rate represents its ceiling under the current heuristic approach, and §4.8 documents two cases where correctly generated claims were pruned because the LLM paraphrased the source text below the overlap threshold.
+
+**L4: Single LLM Evaluated.** All generative results were obtained using a single LLM family via the OpenAI API. Different models may exhibit different hallucination patterns, citation-format compliance rates, and prompt-following behaviour. The system's model-agnostic architecture supports easy substitution, but a comparative evaluation across model families was not conducted within the project timeline.
+
+**L5: No Independent Human Evaluation.** A self-administered human evaluation was conducted (§4.10) but a formal study with recruited, independent participants was not. The absence of inter-rater agreement metrics (Cohen's kappa) limits the credibility of the human-evaluation scores. A production-quality evaluation would employ at least two independent raters with a formal adjudication protocol, as recommended by Es et al. (2023).
+
+### 5.3 Future Work
+
+The limitations above suggest several research directions, ordered by expected impact on system reliability.
+
+**F1: NLI-Based Verification** — supplement Jaccard with NLI models (FEVER; Thorne et al., 2018; SciFact; Wadden et al., 2020) classifying claim–evidence entailment, ideally as a borderline-case backstop to the heuristic to preserve determinism and speed where the heuristic is confident.
+
+**F2: Domain-Adapted Embeddings** — fine-tune the bi-encoder on policy-specific terminology pairs ("disposal" ↔ "shredding"; "moonlighting" ↔ "secondary employment") via transfer learning from legal NLP corpora (Chalkidis et al., 2020). This would directly address the vocabulary-mismatch failures identified in the error analysis.
+
+**F3: Multi-Model Evaluation** — systematically evaluate the pipeline across GPT-4, Claude 3, Llama 3, and Mistral to establish the degree to which the reliability properties are model-dependent. Early informal testing suggested smaller models produce more schema violations but similar hallucination rates — a hypothesis a controlled study could confirm or refute.
+
+**F4: Larger, Externally-Annotated Golden Set** — expand to 200+ queries with independent annotators and Cohen's kappa, providing the credibility signal absent from the single-annotator design.
+
+**F5: User Feedback Integration** — incorporate a production feedback loop in which policy owners rate answers as useful, partially useful, or incorrect. Aggregated feedback would enable dynamic threshold tuning and identify systematic retrieval gaps.
+
+**F6: Transfer to Real-World Documents** — empirical validation on a real organisational policy corpus, ideally with an industry partner willing to share a redacted version, is the ultimate test of the system's viability and the most important next step for converting this work from a research prototype into a deployable tool.
+
+### 5.4 Reflection
+
+Beyond the specific findings, this project surfaced two broader lessons worth capturing for future students working in adjacent areas. First, **reliability features are easier to engineer than to evaluate**: building the abstention gate took days, but designing an evaluation that could honestly demonstrate it worked — without LLM-judge circularity — took weeks and required several rounds of methodological refinement. Second, **the conventional priority ordering of RAG metrics is wrong for compliance**: open-domain RAG literature optimises for recall and answer rate; compliance-grade RAG must invert this and accept low coverage to preserve precision. The project's most defensible architectural decisions all flowed from accepting this inversion explicitly rather than treating it as a bug to be fixed.
 
 </div>
 
