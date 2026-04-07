@@ -5,9 +5,9 @@
   "max_tokens": 600,
   "top_k": 5,
   "seed": 42,
-  "enable_llm": true,
+  "enable_llm": false,
   "embedding_model": "sentence-transformers/all-MiniLM-L6-v2",
-  "run_name": "20260422_200136",
+  "run_name": "20260422_200137",
   "retrieve_k_candidates": 50,
   "rerank_k_final": 5,
   "rerank_model": "cross-encoder/ms-marco-MiniLM-L-6-v2",
@@ -19,17 +19,17 @@
   "baseline": "b2",
   "ablations": {
     "backend": "bm25",
-    "allow_fallback": false
+    "allow_fallback": true
   },
   "split": "test",
-  "mode": "generative",
+  "mode": "extractive",
   "backend_requested": "bm25",
   "backend": "bm25",
   "backend_used": "bm25",
-  "allow_fallback": false,
+  "allow_fallback": true,
   "cli_args": {
     "baseline": "b2",
-    "run_name": "test_allow_no_key_generates_llm_disabled",
+    "run_name": null,
     "golden_set": "eval/golden_set/golden_set.csv",
     "split": "test",
     "config": null,
@@ -43,9 +43,9 @@
     "min_support_rate": null,
     "enable_llm_verify": null,
     "enable_llm_contradictions": null,
-    "mode": "generative",
+    "mode": "extractive",
     "backend": "bm25",
-    "allow_no_key": true
+    "allow_no_key": false
   },
   "thresholds": {
     "abstain_threshold": 0.3,
