@@ -215,12 +215,13 @@ def make_fig_baselines(df: pd.DataFrame, strict: bool, out_fig_dir: Path):
         return
 
     metrics = ["answer_rate", "abstention_accuracy", "ungrounded_rate"]
-    fig, ax = plt.subplots(figsize=(8, 5))
+    fig, ax = plt.subplots(figsize=(8, 4.5))
     variants = [v for v in ["b1", "b2", "b3"] if v in set(plot_df["variant"].tolist())]
     _plot_grouped_metrics(ax, plot_df, metrics, variants)
-    ax.set_title("Baseline Comparison (Test Set)")
+    # NOTE: title removed; the markdown caption supplies the figure title
+    ax.set_ylabel("Score (0-1)")
     ax.set_ylim(0, 1.05)
-    ax.legend()
+    ax.legend(loc="upper right")
     save_fig(fig, "fig_baselines", out_fig_dir)
 
 
@@ -238,12 +239,12 @@ def make_fig_retrieval(df: pd.DataFrame, strict: bool, out_fig_dir: Path):
         return
 
     metrics = ["evidence_recall", "evidence_mrr", "citation_precision"]
-    fig, ax = plt.subplots(figsize=(8, 5))
+    fig, ax = plt.subplots(figsize=(8, 4.5))
     variants = [v for v in ["b2", "b3"] if v in set(plot_df["variant"].tolist())]
     _plot_grouped_metrics(ax, plot_df, metrics, variants)
-    ax.set_title("Retrieval & Citation Quality (Test Set)")
+    ax.set_ylabel("Score (0-1)")
     ax.set_ylim(0, 1.05)
-    ax.legend()
+    ax.legend(loc="upper right")
     save_fig(fig, "fig_retrieval", out_fig_dir)
 
 
@@ -265,12 +266,12 @@ def make_fig_groundedness(df: pd.DataFrame, strict: bool, out_fig_dir: Path):
     if "support_rate_mean" in plot_df.columns and plot_df["support_rate_mean"].notna().any():
         metrics.append("support_rate_mean")
 
-    fig, ax = plt.subplots(figsize=(8, 5))
+    fig, ax = plt.subplots(figsize=(8, 4.5))
     variants = list(dict.fromkeys(plot_df["variant"].tolist()))
     _plot_grouped_metrics(ax, plot_df, metrics, variants)
-    ax.set_title("Groundedness (B3 Test Set)")
+    ax.set_ylabel("Score (0-1)")
     ax.set_ylim(0, 1.05)
-    ax.legend()
+    ax.legend(loc="upper right")
     save_fig(fig, "fig_groundedness", out_fig_dir)
 
 
@@ -298,14 +299,13 @@ def make_fig_tradeoff(df: pd.DataFrame, strict: bool, out_fig_dir: Path):
         plot_df["citation_precision"]
     )
 
-    fig, ax = plt.subplots(figsize=(6, 5))
+    fig, ax = plt.subplots(figsize=(7, 5))
     for variant in plot_df["variant"].unique():
         sub = plot_df[plot_df["variant"] == variant]
-        ax.scatter(sub["coverage"], sub["groundedness"], label=variant, s=80, alpha=0.8)
+        ax.scatter(sub["coverage"], sub["groundedness"], label=variant, s=120, alpha=0.85, edgecolors="white", linewidth=1)
     ax.set_xlabel("Coverage (answer rate)")
-    ax.set_ylabel("Groundedness (1 - ungrounded_rate or citation precision)")
-    ax.set_title("Coverage vs Groundedness (Test Set)")
-    ax.legend()
+    ax.set_ylabel("Groundedness (1 - ungrounded rate)")
+    ax.legend(loc="lower left")
     ax.set_xlim(0, 1.05)
     ax.set_ylim(0, 1.05)
     save_fig(fig, "fig_tradeoff", out_fig_dir)

@@ -86,9 +86,7 @@ def draw_prisma():
         "Studies included in\nqualitative synthesis\nn = 38",
         color=incl_color, fontsize=10, bold=True)
 
-    fig.suptitle("Figure 1.1: PRISMA 2020 flow diagram — systematic search\nand selection process",
-                 fontsize=12, weight="bold", y=0.98)
-
+    # No baked-in title; the markdown caption supplies the figure title in the report.
     fig.savefig(OUT / "fig_prisma.png", dpi=300, bbox_inches="tight",
                 facecolor="white", edgecolor="none")
     plt.close(fig)
@@ -134,8 +132,7 @@ def draw_gantt():
         ax.axvline(x=wk - 0.5, color="#cccccc", linestyle="--", linewidth=0.5)
         ax.text(wk - 0.3, len(sprints) - 0.3, label, fontsize=7, color="#666666")
 
-    ax.set_title("Figure 2.0: Gantt chart — six-sprint development timeline (Weeks 1–22)",
-                 fontsize=11, weight="bold", pad=15)
+    # No baked-in title; the markdown caption supplies the figure title in the report.
     ax.spines["top"].set_visible(False)
     ax.spines["right"].set_visible(False)
 
@@ -225,9 +222,7 @@ def draw_dataflow():
     ax.text(9.5, 4.8, "below\nthreshold", fontsize=7, color=red_edge, style="italic")
     ax.text(8.2, 3.5, "above\nthreshold", fontsize=7, color=green_edge, style="italic")
 
-    fig.suptitle("Figure 2.1: Data flow diagram — end-to-end RAG pipeline architecture",
-                 fontsize=12, weight="bold", y=0.98)
-
+    # No baked-in title; the markdown caption supplies the figure title in the report.
     fig.savefig(OUT / "fig_data_flow.png", dpi=300, bbox_inches="tight",
                 facecolor="white", edgecolor="none")
     plt.close(fig)

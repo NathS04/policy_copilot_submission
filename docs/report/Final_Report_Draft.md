@@ -172,7 +172,7 @@ I would like to thank my supervisor for their guidance and feedback throughout t
 | Figure 4.1 | Grouped bar chart — baseline comparison across primary metrics |
 | Figure 4.2 | Retrieval performance — Evidence Recall@5 and MRR by baseline |
 | Figure 4.3 | Groundedness metrics — ungrounded rate and citation precision |
-| Figure 4.4 | Abstention threshold sensitivity — answer rate vs abstention accuracy trade-off |
+| Figure 4.4 | Coverage–groundedness operating points for B2 and B3 baselines (test split) |
 | Figure B.1 | Answerable query result showing extractive fallback with citations |
 | Figure B.2 | Unanswerable query showing abstention behaviour |
 | Figure B.3 | Contradiction query showing retrieved evidence with citations |
@@ -573,7 +573,7 @@ Verification reduces claim-level Ungrounded Rate from 12% to 4% (a **67% reducti
 <div align="center">
 <img src="figures/fig_tradeoff.png" alt="Threshold sensitivity analysis" width="650">
 
-*Figure 4.4: Threshold sensitivity — Answer Rate vs Abstention Accuracy as the reranker confidence threshold varies.*
+*Figure 4.4: Coverage–groundedness operating points for the B2 and B3 baselines on the test split. Points in the upper-right corner indicate desirable behaviour (high coverage, high groundedness). Section 4.5 discusses the threshold sensitivity that drives B3 toward the upper edge of this space.*
 </div>
 
 At threshold 0.0 the system behaves as B2 (100% Answer Rate, 0% Abstention Accuracy). As the threshold rises, Abstention Accuracy increases monotonically while Answer Rate falls — answerable queries with borderline reranker scores are also refused. The selected operating point of **0.30** (tuned on the dev split) yields test-split Answer Rate 25.0% and Abstention Accuracy 94.1% in Generative Mode (100% in Extractive). The low Answer Rate reflects deliberate conservatism: a production deployment would calibrate this threshold based on organisational risk tolerance.
