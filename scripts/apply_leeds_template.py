@@ -17,13 +17,18 @@ This script:
      (pandoc does not embed raw <img> HTML tags).
   9. Italicises figure captions and centres them.
  10. Centres tables and applies clean grid styling.
+ 11. Restyles the manual TOC, List of Figures, and List of Tables bullet lists
+     into clean indented entries with right-aligned dot-leader tab stops and
+     page numbers (when scripts/build_report.py runs the second pass and a
+     pagemap.json is found alongside this script).
 """
+import json
 import re
 import sys
 from pathlib import Path
 from docx import Document
 from docx.shared import Pt, Cm, Emu, Inches, RGBColor
-from docx.enum.text import WD_BREAK, WD_ALIGN_PARAGRAPH, WD_LINE_SPACING
+from docx.enum.text import WD_BREAK, WD_ALIGN_PARAGRAPH, WD_LINE_SPACING, WD_TAB_ALIGNMENT, WD_TAB_LEADER
 from docx.enum.table import WD_TABLE_ALIGNMENT
 from docx.oxml.ns import qn
 from docx.oxml import OxmlElement
@@ -33,14 +38,19 @@ REPORT = Path(__file__).resolve().parent.parent / "docs" / "report"
 # Pandoc renders the intermediate docx; this script post-processes it in place.
 SRC = REPORT / "Final_Report_Draft_template.docx"
 DST = REPORT / "Final_Report_Draft_template.docx"
+# Optional page-number map written by build_report.py after the first PDF pass.
+PAGEMAP_PATH = REPORT / "pagemap.json"
 # Final PDF is rendered from the docx into the canonical primary path
 # Final_Report_Draft.pdf (no separate _template.pdf duplicate).
 
 
-# Patterns that should be Heading 1 (chapter-level)
+# Patterns that should be Heading 1 (chapter-level).
+# Both colon and no-colon forms are matched so the script keeps working
+# whether the markdown uses "Chapter 1: Introduction..." or the Leeds-template
+# "Chapter 1 Introduction..." form.
 H1_PATTERNS = [
-    r"^Chapter \d+:",
-    r"^Appendix [AB]:",
+    r"^Chapter \d+[:\s]",
+    r"^Appendix [AB][:\s]",
     r"^List of References$",
     r"^Summary$",
     r"^Acknowledgements$",
@@ -225,45 +235,123 @@ def insert_figures_before_captions(doc, figures_dir):
 
 def style_tables(doc):
     """Apply consistent professional styling to all tables: centred,
-    grid borders, header row shaded, compact 9pt cell text."""
+    visible grid borders, shaded header row, consistent 10pt body text.
+
+    Critical: every cell paragraph must use the Normal style (not the
+    pandoc-emitted Compact, which the Leeds template does not define).
+    """
+    normal_style = doc.styles["Normal"]
     for table in doc.tables:
-        # Centre the table on the page
         table.alignment = WD_TABLE_ALIGNMENT.CENTER
-        # Apply grid style if available
         try:
-            table.style = "Table Grid"
+            table.style = "TableGrid"
         except KeyError:
-            pass
-        # Style cells
+            try:
+                table.style = "Table Grid"
+            except KeyError:
+                pass
+
+        # Wide tables (4+ columns) get autofit + smaller cells so long
+        # identifiers like test_reproduce_online_preflight.py do not split
+        # mid-word. 6+ columns drops to 8pt to stop multi-line wraps in tables
+        # like B.8 Comparative Analysis.
+        n_cols = len(table.columns) if table.columns else 0
+        is_wide = n_cols >= 4
+        if n_cols >= 6:
+            cell_pt = 8
+        elif is_wide:
+            cell_pt = 9
+        else:
+            cell_pt = 10
+
+        # Force visible single-line borders on every side and inside the table,
+        # so the grid renders even if the table style lookup is unreliable.
+        tblPr = table._element.find(qn("w:tblPr"))
+        if tblPr is None:
+            tblPr = OxmlElement("w:tblPr")
+            table._element.insert(0, tblPr)
+        existing_borders = tblPr.find(qn("w:tblBorders"))
+        if existing_borders is not None:
+            tblPr.remove(existing_borders)
+        tblBorders = OxmlElement("w:tblBorders")
+        for side in ("top", "left", "bottom", "right", "insideH", "insideV"):
+            b = OxmlElement(f"w:{side}")
+            b.set(qn("w:val"), "single")
+            b.set(qn("w:sz"), "4")
+            b.set(qn("w:space"), "0")
+            b.set(qn("w:color"), "auto")
+            tblBorders.append(b)
+        tblPr.append(tblBorders)
+
         for row_idx, row in enumerate(table.rows):
             is_header = row_idx == 0
             for cell in row.cells:
-                # Shade header row
+                tcPr = cell._element.get_or_add_tcPr()
                 if is_header:
-                    tcPr = cell._element.get_or_add_tcPr()
                     shd = OxmlElement("w:shd")
                     shd.set(qn("w:val"), "clear")
                     shd.set(qn("w:color"), "auto")
                     shd.set(qn("w:fill"), "2C3E50")
                     tcPr.append(shd)
-                # Reduce cell padding via tcMar (cell margins)
-                tcPr = cell._element.get_or_add_tcPr()
                 tcMar = OxmlElement("w:tcMar")
-                for side, val in [("top", "40"), ("bottom", "40"), ("left", "80"), ("right", "80")]:
+                for side, val in [("top", "60"), ("bottom", "60"), ("left", "100"), ("right", "100")]:
                     mar = OxmlElement(f"w:{side}")
                     mar.set(qn("w:w"), val)
                     mar.set(qn("w:type"), "dxa")
                     tcMar.append(mar)
                 tcPr.append(tcMar)
                 for para in cell.paragraphs:
-                    para.paragraph_format.line_spacing = 1.0
-                    para.paragraph_format.space_before = Pt(0)
-                    para.paragraph_format.space_after = Pt(0)
+                    # Force Normal style so the paragraph is renderable.
+                    para.style = normal_style
+                    # Insert a zero-width space (U+200B) after every '_' in
+                    # snake_case identifiers so LibreOffice can wrap long
+                    # filenames such as test_reproduce_online_preflight.py
+                    # without splitting them mid-word as
+                    # `test_generation_schema. / py`.
                     for run in para.runs:
-                        run.font.size = Pt(9)
+                        if run.text and "_" in run.text and "." in run.text:
+                            run.text = run.text.replace("_", "_\u200b")
+                    pf = para.paragraph_format
+                    pf.line_spacing = 1.15
+                    pf.space_before = Pt(0)
+                    pf.space_after = Pt(0)
+                    for run in para.runs:
+                        run.font.name = "Times New Roman"
+                        run.font.size = Pt(cell_pt)
                         if is_header:
                             run.font.bold = True
                             run.font.color.rgb = RGBColor(0xFF, 0xFF, 0xFF)
+                        else:
+                            run.font.color.rgb = RGBColor(0x00, 0x00, 0x00)
+
+        # For wide tables, switch the table layout from fixed to autofit and
+        # clear pandoc-supplied per-column widths so LibreOffice / Word will
+        # flex columns around the longest content (no more truncating
+        # identifiers like `test_generation_schema.py` mid-word).
+        if is_wide:
+            tbl_layout = tblPr.find(qn("w:tblLayout"))
+            if tbl_layout is None:
+                tbl_layout = OxmlElement("w:tblLayout")
+                tblPr.append(tbl_layout)
+            tbl_layout.set(qn("w:type"), "autofit")
+            tbl_w = tblPr.find(qn("w:tblW"))
+            if tbl_w is None:
+                tbl_w = OxmlElement("w:tblW")
+                tblPr.append(tbl_w)
+            tbl_w.set(qn("w:type"), "pct")
+            tbl_w.set(qn("w:w"), "5000")
+            tbl_grid = table._element.find(qn("w:tblGrid"))
+            if tbl_grid is not None:
+                for col in tbl_grid.findall(qn("w:gridCol")):
+                    col.set(qn("w:w"), "0")
+            for row in table.rows:
+                for cell in row.cells:
+                    tcPr = cell._element.find(qn("w:tcPr"))
+                    if tcPr is not None:
+                        tcW = tcPr.find(qn("w:tcW"))
+                        if tcW is not None:
+                            tcW.set(qn("w:w"), "0")
+                            tcW.set(qn("w:type"), "auto")
 
 
 def style_table_captions(doc):
@@ -307,16 +395,56 @@ def enforce_leeds_spec(doc):
         except (KeyError, AttributeError):
             pass
 
-    # Compact code blocks
+    # Code blocks: monospace 9pt with light grey background, tight spacing.
+    # Pandoc emits "Source Code" for fenced blocks and "Verbatim Char" for inline
+    # code spans; the Leeds template does not pre-define either, so we set both.
     for sname in ["Source Code", "Verbatim Char", "Code"]:
         try:
             cs = doc.styles[sname]
             cs.font.size = Pt(9)
+            cs.font.name = "Courier New"
+            try:
+                rpr = cs.element.get_or_add_rPr()
+                rfonts = rpr.find(qn("w:rFonts"))
+                if rfonts is None:
+                    rfonts = OxmlElement("w:rFonts")
+                    rpr.append(rfonts)
+                for attr in ("ascii", "hAnsi", "cs"):
+                    rfonts.set(qn(f"w:{attr}"), "Courier New")
+            except Exception:
+                pass
             cs.paragraph_format.line_spacing = 1.1
-            cs.paragraph_format.space_before = Pt(1)
-            cs.paragraph_format.space_after = Pt(1)
+            cs.paragraph_format.space_before = Pt(2)
+            cs.paragraph_format.space_after = Pt(2)
         except (KeyError, AttributeError):
             pass
+
+    # Belt-and-braces: walk the body and force monospace on any paragraph whose
+    # style id looks like a Pandoc code style, in case the style lookups above
+    # missed a name. This catches inline `code` spans that pandoc tags as
+    # "VerbatimChar" without a space.
+    body = doc.element.body
+    for p in body.iter(qn("w:p")):
+        pStyle = p.find(qn("w:pPr") + "/" + qn("w:pStyle"))
+        if pStyle is not None:
+            sid = pStyle.get(qn("w:val")) or ""
+            if "Source" in sid or "Verbatim" in sid or sid == "Code":
+                for r in p.iter(qn("w:r")):
+                    rpr = r.find(qn("w:rPr"))
+                    if rpr is None:
+                        rpr = OxmlElement("w:rPr")
+                        r.insert(0, rpr)
+                    rfonts = rpr.find(qn("w:rFonts"))
+                    if rfonts is None:
+                        rfonts = OxmlElement("w:rFonts")
+                        rpr.append(rfonts)
+                    for attr in ("ascii", "hAnsi", "cs"):
+                        rfonts.set(qn(f"w:{attr}"), "Courier New")
+                    sz = rpr.find(qn("w:sz"))
+                    if sz is None:
+                        sz = OxmlElement("w:sz")
+                        rpr.append(sz)
+                    sz.set(qn("w:val"), "18")  # 9pt = 18 half-points
 
     # Heading 1: chapter level — 15pt, tight
     # The Leeds template's Heading 1 has built-in pageBreakBefore which
@@ -392,13 +520,297 @@ def remove_consecutive_empty_paragraphs(doc):
     print(f"Removed {removed} duplicate empty paragraphs")
 
 
+def strip_unknown_pstyles(doc):
+    """Remove or remap pStyle references that the Leeds template does not define.
+
+    Pandoc emits <w:pStyle w:val="Compact"/> on table-cell paragraphs, but the
+    official Leeds template has no Compact style; LibreOffice then fails to
+    render those paragraphs (cells appear empty). Same risk for any other
+    pandoc-emitted style that isn't in the template.
+    """
+    available = {s.style_id for s in doc.styles}
+    body = doc.element.body
+    removed = 0
+    for pStyle in body.iter(qn("w:pStyle")):
+        val = pStyle.get(qn("w:val"))
+        if val and val not in available:
+            parent = pStyle.getparent()
+            if parent is not None:
+                parent.remove(pStyle)
+                removed += 1
+    print(f"Stripped {removed} unknown pStyle references")
+
+
+def _load_pagemap():
+    """Return {entry_text: page_number} from PAGEMAP_PATH, or {} if absent."""
+    if not PAGEMAP_PATH.exists():
+        return {}
+    try:
+        return json.loads(PAGEMAP_PATH.read_text())
+    except Exception as exc:
+        print(f"  WARNING: could not parse pagemap.json: {exc}")
+        return {}
+
+
+def _add_dot_leader_tab(paragraph, position_pt=435):
+    """Add a right-aligned tab stop with dot leader at the given position
+    (in points from the left margin). 435pt ~= 6 inches, comfortable for an
+    A4 page with 2.5cm margins.
+    """
+    pPr = paragraph._element.get_or_add_pPr()
+    tabs = pPr.find(qn("w:tabs"))
+    if tabs is None:
+        tabs = OxmlElement("w:tabs")
+        pPr.append(tabs)
+    # Drop any existing tab stops so the leader is the only one in play.
+    for old in list(tabs.findall(qn("w:tab"))):
+        tabs.remove(old)
+    tab = OxmlElement("w:tab")
+    tab.set(qn("w:val"), "right")
+    tab.set(qn("w:leader"), "dot")
+    # Position is in twentieths of a point (dxa).
+    tab.set(qn("w:pos"), str(int(position_pt * 20)))
+    tabs.append(tab)
+
+
+def _append_page_number_run(paragraph, page_number, font_pt=11, bold=False):
+    """Append `<tab><page>` to the paragraph as a styled run so the dot
+    leader fills the gap and the number sits flush right.
+    """
+    r = OxmlElement("w:r")
+    rpr = OxmlElement("w:rPr")
+    rfonts = OxmlElement("w:rFonts")
+    for attr in ("ascii", "hAnsi", "cs"):
+        rfonts.set(qn(f"w:{attr}"), "Times New Roman")
+    rpr.append(rfonts)
+    sz = OxmlElement("w:sz")
+    sz.set(qn("w:val"), str(int(font_pt * 2)))
+    rpr.append(sz)
+    color = OxmlElement("w:color")
+    color.set(qn("w:val"), "000000")
+    rpr.append(color)
+    u = OxmlElement("w:u")
+    u.set(qn("w:val"), "none")
+    rpr.append(u)
+    if bold:
+        b = OxmlElement("w:b")
+        rpr.append(b)
+    r.append(rpr)
+    tab = OxmlElement("w:tab")
+    r.append(tab)
+    t = OxmlElement("w:t")
+    t.text = str(page_number)
+    t.set(qn("xml:space"), "preserve")
+    r.append(t)
+    paragraph._element.append(r)
+
+
+def _restyle_link_runs(paragraph, font_pt=11, bold=False):
+    """Force every run (including those inside w:hyperlink) to plain black
+    Times New Roman with no underline, optionally bold.
+    """
+    for r in paragraph._element.iter(qn("w:r")):
+        rpr = r.find(qn("w:rPr"))
+        if rpr is None:
+            rpr = OxmlElement("w:rPr")
+            r.insert(0, rpr)
+        rstyle = rpr.find(qn("w:rStyle"))
+        if rstyle is not None:
+            rpr.remove(rstyle)
+        rfonts = rpr.find(qn("w:rFonts"))
+        if rfonts is None:
+            rfonts = OxmlElement("w:rFonts")
+            rpr.append(rfonts)
+        for attr in ("ascii", "hAnsi", "cs"):
+            rfonts.set(qn(f"w:{attr}"), "Times New Roman")
+        sz = rpr.find(qn("w:sz"))
+        if sz is None:
+            sz = OxmlElement("w:sz")
+            rpr.append(sz)
+        sz.set(qn("w:val"), str(int(font_pt * 2)))
+        color = rpr.find(qn("w:color"))
+        if color is None:
+            color = OxmlElement("w:color")
+            rpr.append(color)
+        color.set(qn("w:val"), "000000")
+        u = rpr.find(qn("w:u"))
+        if u is None:
+            u = OxmlElement("w:u")
+            rpr.append(u)
+        u.set(qn("w:val"), "none")
+        if bold:
+            b = rpr.find(qn("w:b"))
+            if b is None:
+                b = OxmlElement("w:b")
+                rpr.append(b)
+
+
+def style_manual_toc(doc, pagemap):
+    """Convert the pandoc-rendered TOC bullet list into a clean indented TOC
+    (no bullet markers, depth-based indentation, dot-leader tab stop, and
+    page numbers when a pagemap is supplied).
+    """
+    paras = list(doc.paragraphs)
+    toc_idx = None
+    for i, p in enumerate(paras):
+        if p.text.strip() == "Table of Contents":
+            toc_idx = i
+            break
+    if toc_idx is None:
+        print("  TOC heading not found")
+        return False
+
+    end_idx = len(paras)
+    for j in range(toc_idx + 1, len(paras)):
+        text = paras[j].text.strip()
+        sname = paras[j].style.name if paras[j].style else ""
+        if text and "Heading" in sname:
+            end_idx = j
+            break
+
+    normal_style = doc.styles["Normal"]
+    styled = 0
+    matched_pages = 0
+    for j in range(toc_idx + 1, end_idx):
+        p = paras[j]
+        text = p.text.strip()
+        if not text:
+            continue
+        ilvl = 0
+        pPr = p._element.find(qn("w:pPr"))
+        if pPr is not None:
+            numPr = pPr.find(qn("w:numPr"))
+            if numPr is not None:
+                ilvl_elem = numPr.find(qn("w:ilvl"))
+                if ilvl_elem is not None:
+                    try:
+                        ilvl = int(ilvl_elem.get(qn("w:val")) or 0)
+                    except (TypeError, ValueError):
+                        ilvl = 0
+        p.style = normal_style
+        new_pPr = p._element.find(qn("w:pPr"))
+        if new_pPr is not None:
+            for tag in ("w:numPr", "w:pStyle"):
+                el = new_pPr.find(qn(tag))
+                if el is not None:
+                    new_pPr.remove(el)
+        indent_pts = 14 + ilvl * 18
+        p.paragraph_format.left_indent = Pt(indent_pts)
+        p.paragraph_format.line_spacing = 1.2
+        p.paragraph_format.space_before = Pt(0)
+        p.paragraph_format.space_after = Pt(2)
+        is_top_chapter = ilvl == 0 and (
+            text.startswith("Chapter ") or text.startswith("Appendix ")
+        )
+        _restyle_link_runs(p, font_pt=11, bold=is_top_chapter)
+        # Dot-leader tab stop and page number injection.
+        page = pagemap.get(text)
+        if page is not None:
+            _add_dot_leader_tab(p, position_pt=435 - indent_pts)
+            _append_page_number_run(p, page, font_pt=11, bold=is_top_chapter)
+            matched_pages += 1
+        styled += 1
+    print(f"Styled {styled} TOC entries ({matched_pages} with page numbers)")
+    return True
+
+
+def style_manual_loft(doc, heading_text, pagemap):
+    """Same treatment as TOC but for List of Figures / List of Tables.
+    Items are flat (no indent depth), each one has a dot-leader tab and page
+    number when the pagemap supplies one.
+    """
+    paras = list(doc.paragraphs)
+    head_idx = None
+    for i, p in enumerate(paras):
+        if p.text.strip() == heading_text:
+            head_idx = i
+            break
+    if head_idx is None:
+        print(f"  '{heading_text}' heading not found")
+        return False
+
+    end_idx = len(paras)
+    for j in range(head_idx + 1, len(paras)):
+        text = paras[j].text.strip()
+        sname = paras[j].style.name if paras[j].style else ""
+        if text and "Heading" in sname:
+            end_idx = j
+            break
+
+    normal_style = doc.styles["Normal"]
+    styled = 0
+    matched_pages = 0
+    for j in range(head_idx + 1, end_idx):
+        p = paras[j]
+        text = p.text.strip()
+        if not text:
+            continue
+        p.style = normal_style
+        new_pPr = p._element.find(qn("w:pPr"))
+        if new_pPr is not None:
+            for tag in ("w:numPr", "w:pStyle"):
+                el = new_pPr.find(qn(tag))
+                if el is not None:
+                    new_pPr.remove(el)
+        p.paragraph_format.left_indent = Pt(14)
+        p.paragraph_format.line_spacing = 1.2
+        p.paragraph_format.space_before = Pt(0)
+        p.paragraph_format.space_after = Pt(2)
+        _restyle_link_runs(p, font_pt=11, bold=False)
+        page = pagemap.get(text)
+        if page is not None:
+            _add_dot_leader_tab(p, position_pt=421)
+            _append_page_number_run(p, page, font_pt=11, bold=False)
+            matched_pages += 1
+        styled += 1
+    print(f"Styled {styled} '{heading_text}' entries ({matched_pages} with page numbers)")
+    return True
+
+
+def insert_leeds_logo(doc, logo_path):
+    """Insert the Leeds University logo at the very top of the document
+    (above the title block), centred, on the title page."""
+    if not logo_path.exists():
+        print(f"  WARNING: Leeds logo not found at {logo_path}, skipping")
+        return False
+    body = doc.element.body
+    first_para = doc.paragraphs[0]
+    new_p = first_para.insert_paragraph_before("")
+    new_p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    new_p.paragraph_format.space_before = Pt(0)
+    new_p.paragraph_format.space_after = Pt(12)
+    run = new_p.add_run()
+    try:
+        run.add_picture(str(logo_path), width=Inches(2.6))
+        return True
+    except Exception as e:
+        print(f"  WARNING: failed to insert Leeds logo: {e}")
+        return False
+
+
 def main() -> int:
     doc = Document(str(SRC))
+    strip_unknown_pstyles(doc)
     enforce_leeds_spec(doc)
+    logo_path = REPORT / "figures" / "leeds_logo.jpeg"
+    logo_inserted = insert_leeds_logo(doc, logo_path)
+    print(f"Leeds logo inserted: {logo_inserted}")
 
     # Insert figure images before each italic caption
     figures_dir = REPORT / "figures"
     insert_figures_before_captions(doc, figures_dir)
+
+    # Restyle the pandoc-rendered TOC, List of Figures, and List of Tables
+    # bullet lists as clean indented entries with dot-leader tab stops.
+    # Page numbers are injected if pagemap.json is present (second pass).
+    pagemap = _load_pagemap()
+    if pagemap:
+        print(f"Loaded pagemap with {len(pagemap)} entries")
+    else:
+        print("No pagemap.json found; running pass 1 (no page numbers)")
+    style_manual_toc(doc, pagemap)
+    style_manual_loft(doc, "List of Figures", pagemap)
+    style_manual_loft(doc, "List of Tables", pagemap)
 
     # Style tables and table captions
     style_tables(doc)
@@ -458,13 +870,13 @@ def main() -> int:
                 or text == "Table of Contents"
                 or text == "List of Figures"
                 or text == "List of Tables"
-                or text.startswith("Chapter 1:")
+                or text.startswith("Chapter 1")
                 or text == "List of References"
                 or text.startswith("Appendix ")
             )
             if wants_page_break:
                 add_page_break_before(p)
-            if text.startswith("Chapter 1:") and chapter_one_para is None:
+            if text.startswith("Chapter 1") and chapter_one_para is None:
                 chapter_one_para = p
             promoted_h1 += 1
             continue

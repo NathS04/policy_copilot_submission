@@ -46,3 +46,8 @@ generate_presentation.py
 Dissertation_Progress_Presentation.pptx
 Speaking_Script.pdf
 *.log
+
+# ── Report build cache ─────────────────────────
+docs/report/pagemap.json
+docs/report/Final_Report_Draft_humanised.md
+docs/report/Final_Report_Draft_pre_humanise.md
