@@ -77,8 +77,9 @@ and the post-processor script.
   extraction path; pdfplumber is documented as an optional fallback).
 - [x] Body length within the stated 30-page limit (28 pages).
 - [x] Summary fits on one A4 page.
-- [x] No "TODO", "Error! Reference source not found", "Nathan S " (with
-  trailing space), "FIXME", or "XXX" markers remain in the PDF.
+- [x] No placeholder or marker strings remain in the PDF (TODO, FIXME,
+  XXX, broken cross-reference text, or the truncated-name placeholder
+  that previously appeared on the title page).
 - [x] Every figure has a caption directly beneath it; every table has a
   caption directly above it.
 - [x] All wide tables (B.1, B.2, B.7.x) wrap snake_case identifiers via
