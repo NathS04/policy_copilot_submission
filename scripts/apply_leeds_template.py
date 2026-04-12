@@ -107,8 +107,25 @@ def split_sections_for_page_numbering(doc, chapter_one_paragraph):
         return False
     last_prelim = paras[ch1_idx - 1]
 
+    # Bind the same default header (PAGE field) the Leeds template uses
+    # for the body section to the preliminaries section too. Without this
+    # binding the preliminary pages render with no page number at all,
+    # violating the Leeds spec ("preliminaries from Summary to Table of
+    # Contents should be sequentially numbered in Roman numerals").
+    body_header_rid = None
+    body_sectPr_existing = body_xml.find(qn("w:sectPr"))
+    if body_sectPr_existing is not None:
+        existing_ref = body_sectPr_existing.find(qn("w:headerReference"))
+        if existing_ref is not None:
+            body_header_rid = existing_ref.get(qn("r:id"))
+
     # Build sectPr for section 1 (preliminaries: lower roman)
     sect1 = OxmlElement("w:sectPr")
+    if body_header_rid:
+        headerRef = OxmlElement("w:headerReference")
+        headerRef.set(qn("w:type"), "default")
+        headerRef.set(qn("r:id"), body_header_rid)
+        sect1.append(headerRef)
     pgSz1 = OxmlElement("w:pgSz")
     pgSz1.set(qn("w:w"), "11906")
     pgSz1.set(qn("w:h"), "16838")
@@ -274,13 +291,21 @@ def style_tables(doc):
         if existing_borders is not None:
             tblPr.remove(existing_borders)
         tblBorders = OxmlElement("w:tblBorders")
-        for side in ("top", "left", "bottom", "right", "insideH", "insideV"):
+        # Outer box + horizontal row separators only; inner vertical lines
+        # are intentionally omitted so the tables read as professional
+        # academic black-and-grey rather than a busy spreadsheet grid.
+        for side in ("top", "left", "bottom", "right", "insideH"):
             b = OxmlElement(f"w:{side}")
             b.set(qn("w:val"), "single")
             b.set(qn("w:sz"), "4")
             b.set(qn("w:space"), "0")
             b.set(qn("w:color"), "auto")
             tblBorders.append(b)
+        # Explicitly suppress inner vertical borders so the table style
+        # cannot reintroduce them via inheritance.
+        b_iv = OxmlElement("w:insideV")
+        b_iv.set(qn("w:val"), "nil")
+        tblBorders.append(b_iv)
         tblPr.append(tblBorders)
 
         for row_idx, row in enumerate(table.rows):
@@ -291,7 +316,9 @@ def style_tables(doc):
                     shd = OxmlElement("w:shd")
                     shd.set(qn("w:val"), "clear")
                     shd.set(qn("w:color"), "auto")
-                    shd.set(qn("w:fill"), "2C3E50")
+                    # Light grey (Word "Grey-15%") for a neutral, professional
+                    # header band -- replaces the previous dark navy 2C3E50.
+                    shd.set(qn("w:fill"), "D9D9D9")
                     tcPr.append(shd)
                 tcMar = OxmlElement("w:tcMar")
                 for side, val in [("top", "60"), ("bottom", "60"), ("left", "100"), ("right", "100")]:
@@ -318,11 +345,12 @@ def style_tables(doc):
                     for run in para.runs:
                         run.font.name = "Times New Roman"
                         run.font.size = Pt(cell_pt)
+                        # Always black text; header is differentiated by the
+                        # light-grey shading + bold, not by an inverted
+                        # white-on-blue colour scheme.
+                        run.font.color.rgb = RGBColor(0x00, 0x00, 0x00)
                         if is_header:
                             run.font.bold = True
-                            run.font.color.rgb = RGBColor(0xFF, 0xFF, 0xFF)
-                        else:
-                            run.font.color.rgb = RGBColor(0x00, 0x00, 0x00)
 
         # For wide tables, switch the table layout from fixed to autofit and
         # clear pandoc-supplied per-column widths so LibreOffice / Word will
@@ -373,17 +401,22 @@ def enforce_leeds_spec(doc):
         section.left_margin = Cm(2.5)
         section.right_margin = Cm(2.5)
 
-    # Normal body: 11pt, 1.5 line spacing (Leeds spec), minimal paragraph spacing
+    # Normal body: 11pt, 1.5 line spacing (Leeds spec), 4pt after for visible
+    # paragraph separation. Leeds template's own Normal uses 6pt after, but
+    # we use 4pt as a compromise to keep the body within the 30-page hard
+    # limit set by COMP3931 layout requirements.
     normal = doc.styles["Normal"]
     normal.font.size = Pt(11)
     normal.font.name = "Times New Roman"
     pf = normal.paragraph_format
     pf.line_spacing = 1.5
     pf.space_before = Pt(0)
-    pf.space_after = Pt(0)  # tightened from 2pt
+    pf.space_after = Pt(4)
     pf.widow_control = True
 
-    # Tighten Compact / List Paragraph styles too
+    # Compact and List Paragraph styles inherit from Normal but Pandoc emits
+    # tighter defaults; align them with Normal so list items and table cells
+    # do not visually clash with body paragraphs around them.
     for sname in ["Compact", "List Paragraph"]:
         try:
             cs = doc.styles[sname]
@@ -391,7 +424,7 @@ def enforce_leeds_spec(doc):
             cspf = cs.paragraph_format
             cspf.line_spacing = 1.5
             cspf.space_before = Pt(0)
-            cspf.space_after = Pt(0)
+            cspf.space_after = Pt(2)
         except (KeyError, AttributeError):
             pass
 
