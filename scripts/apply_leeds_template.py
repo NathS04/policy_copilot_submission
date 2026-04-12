@@ -169,8 +169,8 @@ def split_sections_for_page_numbering(doc, chapter_one_paragraph):
 FIGURE_MAP = [
     # (caption prefix, image filename, width in inches) - tightened to stay within 30-page body limit
     ("Figure 1.1: PRISMA", "fig_prisma.png", 3.5),
-    ("Figure 2.0: Gantt chart", "fig_gantt.png", 4.5),
-    ("Figure 2.1: End-to-end pipeline", "fig_data_flow.png", 4.5),
+    ("Figure 2.1: Gantt chart", "fig_gantt.png", 4.5),
+    ("Figure 2.2: End-to-end pipeline", "fig_data_flow.png", 4.5),
     ("Figure 4.1: Grouped bar chart", "fig_baselines.png", 4.0),
     ("Figure 4.2: Retrieval quality", "fig_retrieval.png", 4.0),
     ("Figure 4.3: Groundedness", "fig_groundedness.png", 4.0),

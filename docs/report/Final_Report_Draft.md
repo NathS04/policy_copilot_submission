@@ -5,6 +5,9 @@
 **FACULTY OF ENGINEERING AND PHYSICAL SCIENCES**
 
 <br>
+
+**Final Report**
+
 <br>
 
 # Audit-Ready Policy Copilot
@@ -46,9 +49,9 @@ The candidate confirms that the following have been submitted:
 
 | Items | Format | Recipient(s) and Date |
 | :--- | :--- | :--- |
-| Final Report | PDF file | Uploaded to Minerva |
-| Source code repository | URL (private GitHub) | Sent to supervisor and assessor |
-| Documentation pack and evaluation results | URL (private GitHub) | Sent to supervisor and assessor |
+| Final Report | PDF file | Uploaded to Minerva, 30/04/2026 |
+| Source code repository | URL (private GitHub) | Sent to supervisor and assessor, 30/04/2026 |
+| Documentation pack and evaluation results | URL (private GitHub) | Sent to supervisor and assessor, 30/04/2026 |
 
 The submitted report sits within the COMP3931 30-page body limit (Chapters 1 to 5; preliminaries, references, and appendices are excluded from that count). A single install (`pip install -e ".[dev]"`) followed by `python scripts/run_eval.py` reproduces every reported metric on a consumer laptop.
 
@@ -163,8 +166,8 @@ This report has been prepared in accordance with the University of Leeds proof-r
 ## List of Figures
 
 - [Figure 1.1 PRISMA 2020 flow diagram: systematic search and selection process](#fig-1-1)
-- [Figure 2.0 Gantt chart: six-sprint development timeline (Weeks 1 to 22)](#fig-2-0)
-- [Figure 2.1 Data flow diagram: end-to-end RAG pipeline architecture](#fig-2-1)
+- [Figure 2.1 Gantt chart: six-sprint development timeline (Weeks 1 to 22)](#fig-2-1)
+- [Figure 2.2 Data flow diagram: end-to-end RAG pipeline architecture](#fig-2-2)
 - [Figure 4.1 Grouped bar chart: baseline comparison across primary metrics](#fig-4-1)
 - [Figure 4.2 Retrieval performance: Evidence Recall@5 and MRR by baseline](#fig-4-2)
 - [Figure 4.3 Groundedness metrics: ungrounded rate and citation precision](#fig-4-3)
@@ -308,12 +311,12 @@ Development followed a sprint-based methodology adapted from agile principles fo
 5. **Sprint 5, Critic Mode (Weeks 15 to 17):** heuristic policy auditor for vague quantifiers, implicit contradictions, and ambiguous directives.
 6. **Sprint 6, Evaluation Harness (Weeks 18 to 22):** 63-query golden set, extractive fallback mode, all baselines and ablations, and the results that feed Chapter 4.
 
-<a id="fig-2-0"></a>
+<a id="fig-2-1"></a>
 
 <div align="center">
 <img src="figures/fig_gantt.png" alt="Gantt chart" width="700">
 
-*Figure 2.0: Gantt chart of the six-sprint development timeline (Weeks 1 to 22, October 2024 to February 2025). Report writing, documentation hardening, and evaluation refinement continued through the 2025/26 submission period.*
+*Figure 2.1: Gantt chart of the six-sprint development timeline (Weeks 1 to 22, October 2024 to February 2025). Report writing, documentation hardening, and evaluation refinement continued through the 2025/26 submission period.*
 </div>
 
 Version control used a private GitHub repository with a branch-per-sprint strategy. The final history contains over 200 commits spanning the full project lifecycle, providing a verifiable development timeline. The six implementation sprints (S1 to S6) ran from October 2024 to March 2025; subsequent activity through the 2025/26 submission cycle focused on report writing, documentation hardening, evaluation refinement, and final package preparation rather than new implementation work.
@@ -342,14 +345,14 @@ Functional requirements (FR1 to FR6) define *what* the system promises. Non-func
 
 ### 2.3 System Architecture
 
-The system follows a modular **Retrieve-and-Rerank-then-Generate-and-Verify** pipeline (Figure 2.1) in which each stage can be independently tested, toggled, and replaced.
+The system follows a modular **Retrieve-and-Rerank-then-Generate-and-Verify** pipeline (Figure 2.2) in which each stage can be independently tested, toggled, and replaced.
 
-<a id="fig-2-1"></a>
+<a id="fig-2-2"></a>
 
 <div align="center">
 <img src="figures/fig_data_flow.png" alt="Data flow diagram" width="700">
 
-*Figure 2.1: End-to-end pipeline from PDF ingestion through retrieval, reranking, abstention, generation, and verification.*
+*Figure 2.2: End-to-end pipeline from PDF ingestion through retrieval, reranking, abstention, generation, and verification.*
 </div>
 
 There are six stages, each a distinct module. (1) **Ingestion** parses PDFs into paragraph chunks with stable identifiers `doc_id::page::index::hash` (truncated SHA-256), preserving citation integrity across re-ingestion. (2) **Retrieval** uses `all-MiniLM-L6-v2` to embed paragraphs into a 384-dim FAISS `IndexFlatL2`; top 20 candidates are returned per query. (3) **Reranking** uses `cross-encoder/ms-marco-MiniLM-L-6-v2` to rescore the 20 candidates; the top score then feeds the abstention gate. (4) **Abstention Gate** triggers `INSUFFICIENT_EVIDENCE` if the top reranker score falls below threshold (default 0.30), and crucially does so *before* any LLM call, so the decision is deterministic. (5) **Generation** sends the top 5 reranked paragraphs to the LLM with a strict Pydantic-enforced JSON schema in Generative Mode; in Extractive Mode the LLM is bypassed entirely and the verbatim top paragraph is returned with its citation ID, so citation precision in that mode is 100% by construction. (6) **Verification** decomposes the LLM answer into sentence-level claims and checks each against cited evidence using Jaccard token overlap and numeric consistency. Failed claims are pruned, and if all are pruned the response is downgraded to abstention.
