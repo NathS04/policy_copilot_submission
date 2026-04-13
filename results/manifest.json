@@ -1,7 +1,7 @@
 {
   "source": "make_figures.py",
   "verified_by": "verify_artifacts.py",
-  "verified_at": "2026-04-13T22:15:53.903127+00:00",
+  "verified_at": "2026-04-13T22:22:33.651030+00:00",
   "strict": false,
   "allow_backend_mismatch": false,
   "runs": [
@@ -31,6 +31,7 @@
     "b2_test_extractive_bm25_20260413_230627",
     "b2_test_extractive_bm25_20260413_230918",
     "b2_test_extractive_bm25_20260413_231551",
+    "b2_test_extractive_bm25_20260413_232231",
     "b3_generative_bm25_fallback_final",
     "b3_test_extractive_bm25_20260322_173801",
     "b3_test_extractive_bm25_20260322_182521",
@@ -56,6 +57,7 @@
     "b3_test_extractive_bm25_20260413_230627",
     "b3_test_extractive_bm25_20260413_230919",
     "b3_test_extractive_bm25_20260413_231551",
+    "b3_test_extractive_bm25_20260413_232231",
     "test_allow_no_key_generates_llm_disabled",
     "test_b2_extractive_bm25_integration"
   ],
@@ -294,6 +296,15 @@
       "backend_requested": "bm25",
       "backend_used": "bm25"
     },
+    "b2_test_extractive_bm25_20260413_232231": {
+      "run_config_sha256": "b4114da78c2f0797ad853b4c7732bddddf3ef39ac2eb3e489036f5876633a6f0",
+      "summary_sha256": "497b27203b536b32d234b81349d758f281436346e98e8d497de2384714ce0164",
+      "baseline": "b2",
+      "split": "test",
+      "mode": "extractive",
+      "backend_requested": "bm25",
+      "backend_used": "bm25"
+    },
     "b3_generative_bm25_fallback_final": {
       "run_config_sha256": "4e52a17d879dbace9e48bf01f1b9b3aa6c162343bd54d5c6b044dac5bfe1dbcf",
       "summary_sha256": "b775d78d38fb8d272ada36e61c1b9e7b31975a41e20c0d69d818ffea198f82f1",
@@ -519,6 +530,15 @@
       "backend_requested": "bm25",
       "backend_used": "bm25"
     },
+    "b3_test_extractive_bm25_20260413_232231": {
+      "run_config_sha256": "62367adbe660214fd1bb69ed95cd6a1570939a82d7bad44344f6455a95924a9d",
+      "summary_sha256": "4084eee95aa7399f757323f4570a35d0bc269d2878d595d6c1e86f46ee23f362",
+      "baseline": "b3",
+      "split": "test",
+      "mode": "extractive",
+      "backend_requested": "bm25",
+      "backend_used": "bm25"
+    },
     "test_allow_no_key_generates_llm_disabled": {
       "run_config_sha256": "d2e4301db936b9ce0e68b409192294b02790df2eeb05ffcedc5d4af0f6559d37",
       "summary_sha256": "e1260349ddf96b834516efade4024eb5a86521992dce185fd6a53869b5474e1e",
@@ -529,7 +549,7 @@
       "backend_used": "bm25"
     },
     "test_b2_extractive_bm25_integration": {
-      "run_config_sha256": "94be0bce9d84e948c6edcc5643814f7f36d992c8435e2954c73e786d97814f72",
+      "run_config_sha256": "1156eddb5c59bb7de194d6bfa3973c562abb27eb6bba739a8c540d67b36737e5",
       "summary_sha256": "497b27203b536b32d234b81349d758f281436346e98e8d497de2384714ce0164",
       "baseline": "b2",
       "split": "test",
