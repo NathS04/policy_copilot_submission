@@ -5,9 +5,7 @@ os.environ.setdefault("MPLBACKEND", "Agg")
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
-import matplotlib.patches as mpatches
-from matplotlib.patches import FancyBboxPatch, FancyArrowPatch
-import numpy as np
+from matplotlib.patches import FancyBboxPatch
 from pathlib import Path
 
 OUT = Path(__file__).resolve().parent.parent / "docs" / "report" / "figures"
@@ -157,12 +155,10 @@ def draw_dataflow():
     green = "#d5e8d4"
     orange = "#fce5cd"
     red = "#f2dcdb"
-    grey = "#e2e2e2"
     blue_edge = "#4472c4"
     green_edge = "#548235"
     orange_edge = "#c55a11"
     red_edge = "#c0504d"
-    grey_edge = "#808080"
 
     def box(x, y, w, h, text, fcolor, ecolor, fontsize=8.5, bold=False):
         rect = FancyBboxPatch((x, y), w, h, boxstyle="round,pad=0.12",
