@@ -13,80 +13,114 @@ OUT.mkdir(parents=True, exist_ok=True)
 
 
 def draw_prisma():
-    fig, ax = plt.subplots(figsize=(10, 13))
-    ax.set_xlim(0, 10)
-    ax.set_ylim(0, 14)
+    """PRISMA 2020 flow diagram. Academic-journal style: muted greys with one
+    accent for inclusion, square corners, thin borders, generous whitespace.
+    Designed to read clearly at 6-inch print width."""
+    fig, ax = plt.subplots(figsize=(11, 14.5))
+    ax.set_xlim(0, 11)
+    ax.set_ylim(0, 15)
     ax.axis("off")
 
-    box_color = "#dce6f1"
-    excl_color = "#f2dcdb"
-    incl_color = "#d5e8d4"
-    edge_color = "#4472c4"
+    main_face   = "#ffffff"
+    excl_face   = "#f5f1ec"
+    incl_face   = "#eef3ec"
+    border      = "#3a3a3a"
+    accent      = "#1f4d3a"
+    excl_border = "#7a6a58"
+    text_main   = "#1a1a1a"
+    band        = "#f3f3f3"
 
-    def box(x, y, w, h, text, color=box_color, fontsize=9, bold=False):
-        rect = FancyBboxPatch((x, y), w, h, boxstyle="round,pad=0.15",
-                              facecolor=color, edgecolor=edge_color, linewidth=1.2)
+    def box(x, y, w, h, text, face=main_face, edge=border,
+            fontsize=10, bold=False, italic=False):
+        rect = FancyBboxPatch((x, y), w, h,
+                              boxstyle="round,pad=0.04,rounding_size=0.04",
+                              facecolor=face, edgecolor=edge, linewidth=1.0)
         ax.add_patch(rect)
-        weight = "bold" if bold else "normal"
-        ax.text(x + w/2, y + h/2, text, ha="center", va="center",
-                fontsize=fontsize, weight=weight, wrap=True,
+        ax.text(x + w/2, y + h/2, text,
+                ha="center", va="center",
+                fontsize=fontsize,
+                weight="bold" if bold else "normal",
+                style="italic" if italic else "normal",
+                color=text_main,
                 multialignment="center")
 
-    def arrow(x1, y1, x2, y2):
+    def arrow(x1, y1, x2, y2, color=border, lw=1.1):
         ax.annotate("", xy=(x2, y2), xytext=(x1, y1),
-                     arrowprops=dict(arrowstyle="-|>", color=edge_color, lw=1.5))
+                    arrowprops=dict(arrowstyle="-|>,head_width=0.25,head_length=0.5",
+                                    color=color, lw=lw, shrinkA=0, shrinkB=0))
 
-    def side_arrow(x1, y1, x2, y2):
-        ax.annotate("", xy=(x2, y2), xytext=(x1, y1),
-                     arrowprops=dict(arrowstyle="-|>", color="#c0504d", lw=1.2))
+    # Left-side stage band (replaces the standalone text labels)
+    ax.add_patch(plt.Rectangle((0.0, 0.0), 1.5, 15, facecolor=band,
+                               edgecolor="none", zorder=0))
 
-    # Stage labels
-    ax.text(0.3, 13.2, "IDENTIFICATION", fontsize=11, weight="bold", color=edge_color)
-    ax.text(0.3, 10.7, "SCREENING", fontsize=11, weight="bold", color=edge_color)
-    ax.text(0.3, 8.0, "ELIGIBILITY", fontsize=11, weight="bold", color=edge_color)
-    ax.text(0.3, 5.0, "INCLUDED", fontsize=11, weight="bold", color=edge_color)
+    stage_centres = [13.2, 10.5, 7.6, 4.6]  # IDENT, SCREEN, ELIG, INCL
+    for label, yc in zip(
+        ["IDENTIFICATION", "SCREENING", "ELIGIBILITY", "INCLUDED"], stage_centres
+    ):
+        ax.text(0.75, yc, label, fontsize=11.5, weight="bold", color=accent,
+                ha="center", va="center", rotation=90, family="serif")
 
-    # Stage 1
-    box(1.5, 12.0, 7, 1.0,
-        "Records identified through\ndatabase searching\n(Google Scholar, ACM DL, IEEE Xplore, arXiv)\nn = 584",
-        fontsize=9.5)
+    # Vertical separator line on right edge of band
+    ax.plot([1.5, 1.5], [0.2, 14.8], color=border, lw=0.7)
 
-    arrow(5, 12.0, 5, 11.2)
+    # Stage 1 — Identification
+    box(2.2, 12.4, 7.4, 1.5,
+        "Records identified through database searching\n"
+        "(Google Scholar, ACM Digital Library, IEEE Xplore, arXiv)\n"
+        "$\\mathit{n}$ = 584",
+        fontsize=10.5)
 
-    # Stage 2
-    box(1.5, 10.0, 4.5, 1.0,
-        "Records after duplicates\nremoved\nn = 472", fontsize=9.5)
-    box(6.5, 10.0, 3, 1.0,
-        "Duplicates removed\nn = 112", color=excl_color, fontsize=9)
-    side_arrow(6.0, 10.5, 6.5, 10.5)
+    arrow(5.9, 12.4, 5.9, 11.6)
 
-    arrow(3.75, 10.0, 3.75, 9.2)
+    # Stage 2 — Screening: dedup
+    box(2.2, 10.2, 5.0, 1.4,
+        "Records after duplicates removed\n$\\mathit{n}$ = 472",
+        fontsize=10.5)
+    box(7.6, 10.2, 3.0, 1.4,
+        "Duplicates removed\n$\\mathit{n}$ = 112",
+        face=excl_face, edge=excl_border, fontsize=10)
+    arrow(7.2, 10.9, 7.6, 10.9, color=excl_border)
 
-    box(1.5, 8.0, 4.5, 1.0,
-        "Records screened by\ntitle and abstract\nn = 472", fontsize=9.5)
-    box(6.5, 8.0, 3, 1.0,
-        "Records excluded\n(off-topic, no eval,\nno retrieval)\nn = 318",
-        color=excl_color, fontsize=8.5)
-    side_arrow(6.0, 8.5, 6.5, 8.5)
+    arrow(4.7, 10.2, 4.7, 9.4)
 
-    arrow(3.75, 8.0, 3.75, 7.2)
+    # Stage 2 — title/abstract screening
+    box(2.2, 8.0, 5.0, 1.4,
+        "Records screened by title and abstract\n$\\mathit{n}$ = 472",
+        fontsize=10.5)
+    box(7.6, 7.7, 3.0, 1.7,
+        "Records excluded\n(off-topic, no empirical\nevaluation, no retrieval)\n"
+        "$\\mathit{n}$ = 318",
+        face=excl_face, edge=excl_border, fontsize=10)
+    arrow(7.2, 8.7, 7.6, 8.7, color=excl_border)
 
-    # Stage 3
-    box(1.5, 5.8, 4.5, 1.2,
-        "Full-text articles\nassessed for eligibility\nn = 154", fontsize=9.5)
-    box(6.5, 5.5, 3, 1.8,
-        "Full-text excluded (n = 116)\n\nInsufficient verification\nfocus: n = 62\n\nPurely open-domain: n = 31\n\nNo empirical baselines: n = 23",
-        color=excl_color, fontsize=7.8)
-    side_arrow(6.0, 6.4, 6.5, 6.4)
+    arrow(4.7, 8.0, 4.7, 7.2)
 
-    arrow(3.75, 5.8, 3.75, 5.0)
+    # Stage 3 — Eligibility
+    box(2.2, 5.5, 5.0, 1.7,
+        "Full-text articles assessed for eligibility\n$\\mathit{n}$ = 154",
+        fontsize=10.5)
+    box(7.6, 4.9, 3.2, 2.3,
+        "Full-text articles excluded ($\\mathit{n}$ = 116)\n"
+        "\u2022 Insufficient verification focus  62\n"
+        "\u2022 Purely open-domain scope     31\n"
+        "\u2022 No empirical baselines              23",
+        face=excl_face, edge=excl_border, fontsize=9.5)
+    arrow(7.2, 6.05, 7.6, 6.05, color=excl_border)
 
-    # Stage 4
-    box(1.5, 3.8, 4.5, 1.0,
-        "Studies included in\nqualitative synthesis\nn = 38",
-        color=incl_color, fontsize=10, bold=True)
+    arrow(4.7, 5.5, 4.7, 4.7)
 
-    # No baked-in title; the markdown caption supplies the figure title in the report.
+    # Stage 4 — Included
+    box(2.2, 3.0, 5.0, 1.7,
+        "Studies included in qualitative synthesis\n"
+        "$\\mathit{n}$ = 38",
+        face=incl_face, edge=accent, fontsize=11.5, bold=True)
+
+    # Footer note (small print, journal style)
+    ax.text(5.5, 1.3,
+            "Adapted from the PRISMA 2020 flow diagram template (Page et al., 2021).",
+            ha="center", va="center", fontsize=8.5, style="italic", color="#555555",
+            family="serif")
+
     fig.savefig(OUT / "fig_prisma.png", dpi=300, bbox_inches="tight",
                 facecolor="white", edgecolor="none")
     plt.close(fig)
