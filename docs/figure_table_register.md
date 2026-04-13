@@ -48,9 +48,17 @@ This register lists every figure and table embedded or defined in `docs/report/F
 
 ---
 
+## Generated evaluation tables (new in Final Maximiser phase)
+
+| ID | Title | File | What it supports |
+| :--- | :--- | :--- | :--- |
+| — | Failure-mode taxonomy counts per baseline | `results/tables/failure_taxonomy.csv` | Error Analysis (§4.8) — diagnostic breakdown |
+| — | Auditability rubric scores per baseline | `results/tables/auditability_scores.csv` | Evaluation protocol (§4) — 5-axis auditability profile |
+| — | Ablation comparison delta table | `results/tables/ablation_comparison.csv` | Ablation Studies (§4.6) — side-by-side metric deltas |
+
 ## Missing figures (require manual capture or generation)
 
-The markdown references the following PNG paths (relative to `docs/report/`). **None of these files were present** in the submission tree at register creation time (`docs/report/figures/` contained no `.png` files). All should be treated as **missing until added**:
+The following PNG paths are referenced in the report. Chart figures (fig_baselines, fig_retrieval, fig_groundedness, fig_tradeoff) now exist under `results/figures/` and should be copied to `docs/report/figures/` before PDF compilation. Remaining items require manual creation:
 
 | Expected path | Kind |
 | :--- | :--- |

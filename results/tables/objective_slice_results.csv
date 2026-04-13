@@ -1,0 +1,4 @@
+run,objective_queries,answered,abstained,answer_rate,abstention_rate
+b1_generative_final,16,16,0,1.0,0.0
+b2_generative_bm25_fallback_final,16,13,3,0.8125,0.1875
+b3_generative_bm25_fallback_final,16,3,13,0.1875,0.8125

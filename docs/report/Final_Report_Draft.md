@@ -41,43 +41,43 @@ I would like to thank my supervisor for their guidance and feedback throughout t
 - [Summary](#summary)
 - [Acknowledgements](#acknowledgements)
 - [Chapter 1: Introduction and Background Research](#chapter-1-introduction-and-background-research)
-  - [1.1 Introduction](#11-introduction)
-  - [1.2 Aims and Objectives](#12-aims-and-objectives)
-  - [1.3 Systematic Search Strategy](#13-systematic-search-strategy)
-  - [1.4 Retrieval-Augmented Generation](#14-retrieval-augmented-generation)
-  - [1.5 Hallucination, Attribution, and Post-Hoc Verification](#15-hallucination-attribution-and-post-hoc-verification)
-  - [1.6 Information Retrieval: Dense Retrieval and Cross-Encoder Reranking](#16-information-retrieval)
-  - [1.7 NLP in Legal and Policy Domains](#17-nlp-in-legal-and-policy-domains)
-  - [1.8 Selective Prediction and Abstention](#18-selective-prediction-and-abstention)
-  - [1.9 Evaluation Frameworks for RAG](#19-evaluation-frameworks-for-rag)
-  - [1.10 Comparative Analysis](#110-comparative-analysis)
-  - [1.11 Gap Analysis and Research Questions](#111-gap-analysis)
+  - [1.1 Introduction](#introduction)
+  - [1.2 Aims and Objectives](#aims-and-objectives)
+  - [1.3 Systematic Search Strategy](#systematic-search-strategy)
+  - [1.4 Retrieval-Augmented Generation](#retrieval-augmented-generation)
+  - [1.5 Hallucination, Attribution, and Post-Hoc Verification](#hallucination-attribution-and-post-hoc-verification)
+  - [1.6 Information Retrieval: Dense Retrieval and Cross-Encoder Reranking](#information-retrieval-dense-retrieval-and-cross-encoder-reranking)
+  - [1.7 NLP in Legal and Policy Domains](#nlp-in-legal-and-policy-domains)
+  - [1.8 Selective Prediction and Abstention](#selective-prediction-and-abstention)
+  - [1.9 Evaluation Frameworks for RAG](#evaluation-frameworks-for-retrieval-augmented-generation)
+  - [1.10 Comparative Analysis](#comparative-analysis-of-existing-systems)
+  - [1.11 Gap Analysis and Research Questions](#gap-analysis-and-project-rationale)
 - [Chapter 2: Methodology](#chapter-2-methodology)
-  - [2.1 Sprint Timeline](#21-sprint-timeline)
-  - [2.2 Requirements Analysis](#22-requirements-analysis)
-  - [2.3 System Architecture](#23-system-architecture)
-  - [2.4 Evaluation Design](#24-evaluation-design)
+  - [2.1 Sprint Timeline](#development-process)
+  - [2.2 Requirements Analysis](#requirements-analysis)
+  - [2.3 System Architecture](#system-architecture)
+  - [2.4 Evaluation Design](#evaluation-methodology)
 - [Chapter 3: Implementation and Validation](#chapter-3-implementation-and-validation)
-  - [3.1 Ingestion Pipeline](#31-ingestion-pipeline)
-  - [3.2 Retrieval and Reranking](#32-retrieval-and-reranking)
-  - [3.3 Abstention and Confidence Gating](#33-abstention-and-confidence-gating)
-  - [3.4 Answer Generation](#34-answer-generation)
-  - [3.5 Verification](#35-verification)
-  - [3.6 Critic Mode](#36-critic-mode)
-  - [3.7 Testing Strategy](#37-testing-strategy)
+  - [3.1 Ingestion Pipeline](#corpus-engineering-and-ingestion)
+  - [3.2 Retrieval and Reranking](#retrieval-and-reranking)
+  - [3.3 Abstention and Confidence Gating](#citation-verification-and-abstention)
+  - [3.4 Answer Generation](#answer-generation)
+  - [3.5 Verification](#citation-verification-and-abstention)
+  - [3.6 Critic Mode](#critic-mode)
+  - [3.7 Testing Strategy](#testing-and-validation)
 - [Chapter 4: Results, Evaluation and Discussion](#chapter-4-results-evaluation-and-discussion)
-  - [4.1 Evaluation Methodology](#41-evaluation-methodology)
-  - [4.2 Baseline Comparison](#42-baseline-comparison)
-  - [4.3 Retrieval Performance](#43-retrieval-performance)
-  - [4.4 Citation and Verification Metrics](#44-citation-and-verification-metrics)
-  - [4.5 Critic Mode Evaluation](#45-critic-mode-evaluation)
-  - [4.6 Ablation Studies](#46-ablation-studies)
-  - [4.7 Contradiction Detection](#47-contradiction-detection)
-  - [4.8 Error Analysis](#48-error-analysis)
-  - [4.8a Latency Performance](#48a-latency-performance)
-  - [4.8b Human Evaluation](#48b-human-evaluation)
-  - [4.8c Statistical Confidence](#48c-statistical-confidence)
-  - [4.9 Discussion, Limitations, and Future Work](#49-discussion)
+  - [4.1 Evaluation Methodology](#experimental-setup)
+  - [4.2 Baseline Comparison](#headline-results-baseline-comparison)
+  - [4.3 Retrieval Performance](#retrieval-performance)
+  - [4.4 Citation and Verification Metrics](#groundedness-and-verification)
+  - [4.5 Critic Mode Evaluation](#critic-mode-evaluation)
+  - [4.6 Ablation Studies](#ablation-studies)
+  - [4.7 Contradiction Detection](#error-analysis)
+  - [4.8 Error Analysis](#error-analysis)
+  - [4.8a Latency Performance](#a-latency-performance)
+  - [4.8b Human Evaluation](#b-human-evaluation)
+  - [4.8c Statistical Confidence](#c-statistical-confidence)
+  - [4.9 Discussion, Limitations, and Future Work](#discussion-limitations-and-future-work)
 - [List of References](#list-of-references)
 - [Appendix A: Self-appraisal](#appendix-a-self-appraisal)
 - [Appendix B: External Materials](#appendix-b-external-materials)
@@ -378,7 +378,7 @@ The marking guidance for this module emphasises that methodology marks are award
 
 ### 2.5 Risk Assessment
 
-A risk assessment was conducted at the project outset and revisited at the end of Sprint 3, when the scope of the reliability layers became clearer. Table 2.2 summarises the principal risks, their assessed likelihood and impact, and the mitigations implemented.
+A risk assessment was conducted at the project outset and revisited at the end of Sprint 3, when the scope of the reliability layers became clearer. Table 2.2 summarises the principal risks, their assessed likelihood and impact, and the mitigations implemented. A complementary system-level risk audit table (`docs/risk_audit_table.md`) documents 10 failure modes specific to an audit-ready policy assistant — covering hallucination, citation fabrication, contradiction suppression, abstention failure, stale corpus, adversarial prompts, backend fallback, automation bias, privacy, and environmental cost — with detection mechanisms, mitigations, and residual risk for each.
 
 **Table 2.2: Risk register.**
 
@@ -393,7 +393,7 @@ A risk assessment was conducted at the project outset and revisited at the end o
 
 ### 2.6 Evaluation Methodology
 
-The evaluation strategy was designed to isolate the contribution of each architectural component and to provide quantitative evidence for or against the central hypothesis — that deterministic reliability layers improve the trustworthiness of RAG in closed-domain settings.
+The evaluation strategy was designed to isolate the contribution of each architectural component and to provide quantitative evidence for or against the central hypothesis — that deterministic reliability layers improve the trustworthiness of RAG in closed-domain settings. To make the project's "audit-ready" claim measurable, a 5-axis auditability rubric (`eval/rubrics/auditability_rubric.md`) was defined covering evidence relevance, citation faithfulness, abstention correctness, contradiction correctness, and failure-mode attribution. Each axis maps to a quantitative metric computed from evaluation artifacts, enabling per-baseline auditability profiling (`results/tables/auditability_scores.csv`).
 
 #### 2.6.1 Baseline Ladder
 
@@ -816,7 +816,9 @@ One pattern that emerged during Critic evaluation warrants specific discussion: 
 
 ### 4.8 Error Analysis
 
-A systematic error analysis was conducted on B3's failure cases across the test split, following the error taxonomy defined in `eval/analysis/error_taxonomy.md`. The analysis examined every query where B3 produced an incorrect or suboptimal response and classified the failure into one of five categories.
+A systematic error analysis was conducted on B3's failure cases across the test split. The analysis combines two complementary approaches: (1) a manual qualitative classification of B3's failure cases into the error taxonomy defined in `eval/analysis/error_taxonomy.md`, and (2) an automated heuristic classifier (`scripts/classify_errors.py`) that applies the 8-category failure-mode taxonomy across all baselines, producing per-baseline diagnostic profiles in `results/tables/failure_taxonomy.csv`. The automated classifier reveals that the **dominant failure mode shifts across baselines**: B1 is dominated by missed retrieval (no retrieval stage), B2 by wrong claim-evidence linkage, and B3 by abstention errors (over-cautious thresholding). This diagnostic attribution supports the claim that each pipeline stage addresses a distinct failure family.
+
+The manual analysis examined every query where B3 produced an incorrect or suboptimal response and classified the failure into one of five categories.
 
 **Table 4.7: Error taxonomy — B3 failure classification (test split).**
 

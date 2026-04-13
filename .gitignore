@@ -45,3 +45,4 @@ INSTRUCTIONS_FOR_GPT.md
 generate_presentation.py
 Dissertation_Progress_Presentation.pptx
 Speaking_Script.pdf
+*.log

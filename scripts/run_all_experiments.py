@@ -46,7 +46,17 @@ def main():
     # 3. Generate Figures & Tables
     print("=== GENERATING FIGURES ===")
     run_command(["python", "eval/analysis/make_figures.py"])
-    
+
+    # 4. Post-processing: failure taxonomy, auditability scores, ablation comparison
+    print("=== POST-PROCESSING ===")
+    run_command(["python", "scripts/classify_errors.py"])
+    run_command(["python", "scripts/compute_auditability_scores.py"])
+    run_command(["python", "scripts/compare_ablations.py", "--include-baselines"])
+
+    # 5. Verify artifact integrity
+    print("=== VERIFYING ARTIFACTS ===")
+    run_command(["python", "scripts/verify_artifacts.py"])
+
     print("=== DONE ===")
     print("Results updated in results/tables/ and results/figures/")
 

@@ -20,6 +20,7 @@ from policy_copilot.ui.components import (
     render_citation_pills,
     render_claim_verification_table,
     render_confidence_badge,
+    render_contradiction_alert,
     render_contradiction_section,
     render_critic_findings,
     render_empty_state,
@@ -128,7 +129,6 @@ def _render_answer_footer(result: QueryResult, export_report_fn: Callable) -> No
 
     if result.is_abstained:
         render_abstention_banner(result)
-        return
 
     if result.answer in ("ERROR", "LLM_DISABLED"):
         render_status_banner(result)
@@ -646,7 +646,15 @@ def _render_scoring_tab(
             )
             for c in contras:
                 if isinstance(c, dict):
-                    st.caption(c.get("rationale", str(c)))
+                    from policy_copilot.service.schemas import ContradictionAlert
+                    alert = ContradictionAlert(
+                        paragraph_ids=c.get("paragraph_ids", []),
+                        rationale=c.get("rationale", ""),
+                        confidence=c.get("confidence", "low"),
+                        text_a=c.get("text_a", ""),
+                        text_b=c.get("text_b", ""),
+                    )
+                    render_contradiction_alert(alert)
 
     with col_ev:
         section_header("Retrieved Evidence")

@@ -120,7 +120,7 @@ def _export_audit_report(result):
     from policy_copilot.service.audit_report_service import AuditReportService
     report = AuditReportService.generate_report(result)
 
-    col_j, col_h = st.columns(2)
+    col_j, col_h, col_m = st.columns(3)
     col_j.download_button(
         f"{ICONS['export']} Download JSON",
         data=AuditReportService.to_json(report),
@@ -133,6 +133,13 @@ def _export_audit_report(result):
         data=AuditReportService.to_html(report),
         file_name=f"audit_report_{result.query_id}.html",
         mime="text/html",
+        use_container_width=True,
+    )
+    col_m.download_button(
+        f"{ICONS['export']} Download Markdown",
+        data=AuditReportService.to_markdown(report),
+        file_name=f"audit_report_{result.query_id}.md",
+        mime="text/markdown",
         use_container_width=True,
     )
 

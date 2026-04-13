@@ -210,7 +210,7 @@ If you use this work, please cite:
 @dissertation{sebastian2026policycop,
   title   = {Audit-Ready Policy Copilot: RAG with Citation Enforcement
              and Reliability Evaluation},
-  author  = {Sebastian, Nathaniel},
+  author  = {Sebastian, Nathan},
   school  = {University of Leeds},
   year    = {2026},
   type    = {BSc Dissertation (COMP3931)}

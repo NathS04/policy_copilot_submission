@@ -15,7 +15,13 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 ALLOWED_FIGURES = {"fig_baselines.png", "fig_retrieval.png", "fig_groundedness.png", "fig_tradeoff.png"}
-ALLOWED_TABLES = {"run_summary.csv"}
+ALLOWED_TABLES = {
+    "run_summary.csv",
+    "failure_taxonomy.csv",
+    "objective_slice_results.csv",
+    "auditability_scores.csv",
+    "ablation_comparison.csv",
+}
 
 
 def _sha256_file(path: Path) -> str:

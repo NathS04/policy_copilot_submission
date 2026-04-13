@@ -115,6 +115,16 @@ class ChatOrchestrator:
             )
         timings.llm_gen_ms = round(meta.get("latency_ms", 0), 1)
 
+        from policy_copilot.service.schemas import TokenUsage
+        token_usage = None
+        usage = meta.get("usage")
+        if isinstance(usage, dict):
+            token_usage = TokenUsage(
+                prompt_tokens=usage.get("prompt_tokens", 0),
+                completion_tokens=usage.get("completion_tokens", 0),
+                total_tokens=usage.get("total_tokens", 0),
+            )
+
         answer = resp.answer
         citations = list(resp.citations)
         if resp.notes:
@@ -174,6 +184,7 @@ class ChatOrchestrator:
             critic_findings=critic_findings,
             notes=notes,
             latency=timings,
+            token_usage=token_usage,
             provider=meta.get("provider", cfg.get("provider", "")),
             model=meta.get("model", cfg.get("model", "")),
             backend_requested=backend_requested,

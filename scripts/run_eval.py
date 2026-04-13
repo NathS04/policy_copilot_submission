@@ -258,6 +258,7 @@ def _run_b3_query(question: str, category: str, retriever: Retriever,
         "provider": meta.get("provider", cfg.get("provider", "")),
         "model": meta.get("model", cfg.get("model", "")),
         "latency_ms": timings,
+        "token_usage": meta.get("usage") if isinstance(meta.get("usage"), dict) else None,
         "backend_requested": backend_requested,
         "backend_used": backend_used,
     }
@@ -434,6 +435,9 @@ def run_baseline(baseline: str, golden_path: str, run_name: str,
             "provider": r.get("provider", ""),
             "model": r.get("model", ""),
             "latency_total_ms": round(latency_total, 1),
+            "prompt_tokens": r.get("token_usage", {}).get("prompt_tokens", "") if isinstance(r.get("token_usage"), dict) else "",
+            "completion_tokens": r.get("token_usage", {}).get("completion_tokens", "") if isinstance(r.get("token_usage"), dict) else "",
+            "total_tokens": r.get("token_usage", {}).get("total_tokens", "") if isinstance(r.get("token_usage"), dict) else "",
             "error": "",
         })
 
@@ -587,6 +591,24 @@ def _write_summary_metrics(run_dir: Path, records: list[dict], baseline: str):
     else:
         summary["contradiction_precision"] = "N/A"
 
+
+    # -- Token usage aggregation --
+    total_prompt = 0
+    total_completion = 0
+    token_queries = 0
+    for r in records:
+        tu = r.get("token_usage")
+        if isinstance(tu, dict) and tu.get("total_tokens"):
+            total_prompt += tu.get("prompt_tokens", 0)
+            total_completion += tu.get("completion_tokens", 0)
+            token_queries += 1
+    if token_queries > 0:
+        summary["total_prompt_tokens"] = total_prompt
+        summary["total_completion_tokens"] = total_completion
+        summary["total_tokens"] = total_prompt + total_completion
+        summary["mean_tokens_per_query"] = round(
+            (total_prompt + total_completion) / token_queries, 1
+        )
 
     # write summary
     with open(run_dir / "summary.json", "w") as f:
