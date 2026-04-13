@@ -53,11 +53,11 @@ Build a literature backbone for the dissertation that is "systematic and exhaust
 
 ## Screening Process
 
-1. **Title/abstract scan:** ~120 candidates identified across all clusters
-2. **Full-text review:** ~80 papers reviewed in full
-3. **Initial shortlist from database search:** 48 sources selected
-4. **Citation chaining expansion:** backward/forward chaining added ~52 further sources (see below)
-5. **Final literature matrix:** 105 sources after deduplication and quality filtering
+1. **Title/abstract scan:** ~120 candidates identified across all clusters from database searching
+2. **Initial shortlist from database search:** 48 sources selected for full review
+3. **Citation chaining expansion:** backward/forward chaining identified ~55 additional candidate sources (see below)
+4. **Full-text assessment:** ~115 articles assessed for eligibility after deduplication
+5. **Final literature matrix:** 105 sources included after quality filtering
 6. **Direct comparators:** 10 systems/papers selected for the comparator matrix
 7. **Standards/governance:** 5 documents identified
 
@@ -81,10 +81,10 @@ Beyond database search, the following doctoral-standard techniques were applied:
 
 ```
 Records identified through database searching: ~120
-Records identified through citation chaining: ~40
-Records after duplicate removal: ~130
-Records screened (title/abstract): ~130
-Records excluded at screening: ~15
+Records identified through citation chaining: ~55
+Records after duplicate removal: ~140
+Records screened (title/abstract): ~140
+Records excluded at screening: ~25
 Full-text articles assessed: ~115
 Full-text articles excluded (irrelevance, low quality): ~10
 Studies included in literature matrix: 105
@@ -96,6 +96,8 @@ Studies included in literature matrix: 105
   - Standards/regulations: 2
 Direct comparator systems: 10
 ```
+
+*Note: Role categories are non-exclusive; some sources serve multiple roles (e.g., a review that also criticises, or a benchmark that is also foundational). The six role counts therefore sum to more than 105.*
 
 ## Saturation Assessment
 
