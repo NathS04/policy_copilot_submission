@@ -5,7 +5,7 @@
 - **Duration**: 0.0s
 - **Provider**: openai
 - **Model**: gpt-4o-mini
-- **Created**: 2026-04-13T21:29:39.026713+00:00
+- **Created**: 2026-04-13T21:43:57.723721+00:00
 
 ## Locked Targets (placeholders)
 - (T1) ≥30% reduction in ungrounded-claim rate vs B2

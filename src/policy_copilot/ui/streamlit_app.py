@@ -38,6 +38,7 @@ from policy_copilot.ui.renderers import (                                      #
     render_audit_trace_view,
     render_critic_lens_view,
     render_experiment_explorer_view,
+    render_help_view,
     render_reviewer_view,
 )
 
@@ -143,6 +144,24 @@ def _export_audit_report(result):
         use_container_width=True,
     )
 
+    import io, zipfile as _zf
+    buf = io.BytesIO()
+    with _zf.ZipFile(buf, "w", _zf.ZIP_DEFLATED) as zf:
+        zf.writestr(f"audit_report_{result.query_id}.json",
+                     AuditReportService.to_json(report))
+        zf.writestr(f"audit_report_{result.query_id}.html",
+                     AuditReportService.to_html(report))
+        zf.writestr(f"audit_report_{result.query_id}.md",
+                     AuditReportService.to_markdown(report))
+    st.download_button(
+        f"{ICONS['export']} Export Full Audit Packet (ZIP)",
+        data=buf.getvalue(),
+        file_name=f"audit_packet_{result.query_id}.zip",
+        mime="application/zip",
+        use_container_width=True,
+        help="Download a single ZIP containing JSON, HTML, and Markdown audit reports.",
+    )
+
 
 # ================================================================== #
 #  Page config + state + CSS                                           #
@@ -173,13 +192,21 @@ with st.sidebar:
     )
     st.markdown('<hr class="pc-sidebar-divider">', unsafe_allow_html=True)
 
-    # View selector
     _VIEW_LABELS = {
         "ask":        f'{ICONS["search"]}  Ask',
         "audit":      f'{ICONS["document"]}  Audit Trace',
         "critic":     f'{ICONS["shield"]}  Critic Lens',
         "experiment": f'{ICONS["chart"]}  Experiment Explorer',
         "reviewer":   f'{ICONS["pencil"]}  Reviewer Mode',
+        "help":       f'{ICONS["copy"]}  Help & Guide',
+    }
+    _VIEW_DESCRIPTIONS = {
+        "ask":        "Ask questions and get evidence-grounded answers",
+        "audit":      "Inspect claim-by-claim verification and provenance",
+        "critic":     "Analyse policy language for issues and bias",
+        "experiment": "Browse and compare evaluation runs",
+        "reviewer":   "Score outputs with a structured rubric",
+        "help":       "Learn how to use the system",
     }
 
     current = get_view()
@@ -187,10 +214,13 @@ with st.sidebar:
         "Navigation",
         list(_VIEW_LABELS.keys()),
         format_func=lambda v: _VIEW_LABELS[v],
-        index=list(_VIEW_LABELS.keys()).index(current),
+        index=list(_VIEW_LABELS.keys()).index(current) if current in _VIEW_LABELS else 0,
         key="view_radio",
         label_visibility="collapsed",
     )
+    desc = _VIEW_DESCRIPTIONS.get(selected_view, "")
+    if desc:
+        st.markdown(f'<p class="pc-mode-desc">{desc}</p>', unsafe_allow_html=True)
     if selected_view != current:
         switch_view(selected_view)
         st.rerun()
@@ -204,11 +234,12 @@ with st.sidebar:
         type=["pdf"],
         accept_multiple_files=True,
         label_visibility="collapsed",
+        help="Upload policy documents (PDF) to add them to the searchable corpus.",
     )
-    if st.button("Process & Index", disabled=not uploaded, use_container_width=True):
+    if st.button("Process & Index", disabled=not uploaded, use_container_width=True,
+                  help="Parse, chunk, and index the uploaded PDFs for retrieval."):
         _process_uploads(uploaded)
 
-    # Corpus stats
     jsonl = Path(settings.CORPUS_JSONL)
     if jsonl.exists():
         count = sum(1 for _ in open(jsonl, encoding="utf-8"))
@@ -216,11 +247,25 @@ with st.sidebar:
 
     st.markdown('<hr class="pc-sidebar-divider">', unsafe_allow_html=True)
 
-    # Chat controls
     if get_view() == "ask":
         if st.button("Clear Chat", use_container_width=True):
             clear_chat()
             st.rerun()
+
+    # Quick Help panel
+    with st.expander("Quick Help", expanded=False):
+        st.markdown(
+            '<div class="pc-quick-help">'
+            "<strong>Getting started:</strong> Type a question in the Ask tab. "
+            "The system retrieves evidence, generates an answer, and shows citations.<br><br>"
+            "<strong>Yellow warning?</strong> The system could not find enough evidence "
+            "to answer confidently. This is a safety feature, not an error.<br><br>"
+            "<strong>Export:</strong> Use the download buttons after any answer to save "
+            "a full audit report (JSON, HTML, or Markdown).<br><br>"
+            "<strong>Need more help?</strong> Switch to the <em>Help &amp; Guide</em> tab."
+            "</div>",
+            unsafe_allow_html=True,
+        )
 
 
 # ================================================================== #
@@ -239,8 +284,19 @@ elif view == "experiment":
     render_experiment_explorer_view()
 elif view == "reviewer":
     render_reviewer_view()
+elif view == "help":
+    render_help_view()
 else:
     render_ask_view(_get_retriever, _get_orchestrator, _export_audit_report)
+
+st.markdown(
+    '<div class="pc-footer">'
+    '<strong>Policy Copilot</strong> v1.0 &mdash; '
+    'Audit-ready AI for policy documents &mdash; '
+    'University of Leeds COMP3931'
+    '</div>',
+    unsafe_allow_html=True,
+)
 
 
 # ================================================================== #
