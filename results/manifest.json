@@ -1,7 +1,7 @@
 {
   "source": "make_figures.py",
   "verified_by": "verify_artifacts.py",
-  "verified_at": "2026-04-13T21:44:01.523200+00:00",
+  "verified_at": "2026-04-13T21:49:19.965286+00:00",
   "strict": false,
   "allow_backend_mismatch": false,
   "runs": [
@@ -24,6 +24,8 @@
     "b2_test_extractive_bm25_20260413_224349",
     "b2_test_extractive_bm25_20260413_224354",
     "b2_test_extractive_bm25_20260413_224359",
+    "b2_test_extractive_bm25_20260413_224648",
+    "b2_test_extractive_bm25_20260413_224917",
     "b3_generative_bm25_fallback_final",
     "b3_test_extractive_bm25_20260322_173801",
     "b3_test_extractive_bm25_20260322_182521",
@@ -42,6 +44,8 @@
     "b3_test_extractive_bm25_20260413_224350",
     "b3_test_extractive_bm25_20260413_224354",
     "b3_test_extractive_bm25_20260413_224359",
+    "b3_test_extractive_bm25_20260413_224649",
+    "b3_test_extractive_bm25_20260413_224918",
     "test_allow_no_key_generates_llm_disabled",
     "test_b2_extractive_bm25_integration"
   ],
@@ -217,6 +221,24 @@
       "backend_requested": "bm25",
       "backend_used": "bm25"
     },
+    "b2_test_extractive_bm25_20260413_224648": {
+      "run_config_sha256": "2b968a0296121ee35bc8c487c8b99f4ed233b9d42b4b00b964fd03b70d4b8472",
+      "summary_sha256": "497b27203b536b32d234b81349d758f281436346e98e8d497de2384714ce0164",
+      "baseline": "b2",
+      "split": "test",
+      "mode": "extractive",
+      "backend_requested": "bm25",
+      "backend_used": "bm25"
+    },
+    "b2_test_extractive_bm25_20260413_224917": {
+      "run_config_sha256": "d99c67d89aec865f49ac31e45583a9767d8e80c7d2e71e97c450417f4b03ab6f",
+      "summary_sha256": "497b27203b536b32d234b81349d758f281436346e98e8d497de2384714ce0164",
+      "baseline": "b2",
+      "split": "test",
+      "mode": "extractive",
+      "backend_requested": "bm25",
+      "backend_used": "bm25"
+    },
     "b3_generative_bm25_fallback_final": {
       "run_config_sha256": "4e52a17d879dbace9e48bf01f1b9b3aa6c162343bd54d5c6b044dac5bfe1dbcf",
       "summary_sha256": "b775d78d38fb8d272ada36e61c1b9e7b31975a41e20c0d69d818ffea198f82f1",
@@ -379,6 +401,24 @@
       "backend_requested": "bm25",
       "backend_used": "bm25"
     },
+    "b3_test_extractive_bm25_20260413_224649": {
+      "run_config_sha256": "e8672f4aa3155dbafaec2db8fef687575f7b99718fdad9d351542ee0e1448385",
+      "summary_sha256": "4084eee95aa7399f757323f4570a35d0bc269d2878d595d6c1e86f46ee23f362",
+      "baseline": "b3",
+      "split": "test",
+      "mode": "extractive",
+      "backend_requested": "bm25",
+      "backend_used": "bm25"
+    },
+    "b3_test_extractive_bm25_20260413_224918": {
+      "run_config_sha256": "b2a7c8dddf76f92ccb0d7e1f4397a8990ede0ba8ad4c323f2349a0a2c180ea3b",
+      "summary_sha256": "4084eee95aa7399f757323f4570a35d0bc269d2878d595d6c1e86f46ee23f362",
+      "baseline": "b3",
+      "split": "test",
+      "mode": "extractive",
+      "backend_requested": "bm25",
+      "backend_used": "bm25"
+    },
     "test_allow_no_key_generates_llm_disabled": {
       "run_config_sha256": "d2e4301db936b9ce0e68b409192294b02790df2eeb05ffcedc5d4af0f6559d37",
       "summary_sha256": "e1260349ddf96b834516efade4024eb5a86521992dce185fd6a53869b5474e1e",
@@ -389,7 +429,7 @@
       "backend_used": "bm25"
     },
     "test_b2_extractive_bm25_integration": {
-      "run_config_sha256": "c1c796220e621f0503317bda17c93a9f0e2d2a35377f27ac0fb1fbe49affdf79",
+      "run_config_sha256": "ae68cadc5037c0c22b81a0b7da3daf4fbcdd3a513db36b5c41031778527a13d3",
       "summary_sha256": "497b27203b536b32d234b81349d758f281436346e98e8d497de2384714ce0164",
       "baseline": "b2",
       "split": "test",

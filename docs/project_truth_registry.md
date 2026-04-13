@@ -63,6 +63,7 @@ Any contradiction with this file in other documents is a bug.
 | Critic Lens | L1-L6 policy language analysis | `critic_agent.detect_heuristic` |
 | Experiment Explorer | Browse and compare evaluation runs | `RunInspector` |
 | Reviewer Mode | Human rubric scoring with export | `ReviewerService` |
+| Help & Guide | Getting started, mode guide, glossary, FAQ, accessibility | Static content (no service) |
 
 ## Provenance Behaviour
 
