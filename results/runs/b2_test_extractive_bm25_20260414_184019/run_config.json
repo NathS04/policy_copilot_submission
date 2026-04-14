@@ -7,7 +7,7 @@
   "seed": 42,
   "enable_llm": false,
   "embedding_model": "sentence-transformers/all-MiniLM-L6-v2",
-  "run_name": "20260414_174022",
+  "run_name": "20260414_174019",
   "retrieve_k_candidates": 50,
   "rerank_k_final": 5,
   "rerank_model": "cross-encoder/ms-marco-MiniLM-L-6-v2",
@@ -29,7 +29,7 @@
   "allow_fallback": true,
   "cli_args": {
     "baseline": "b2",
-    "run_name": "test_b2_extractive_bm25_integration",
+    "run_name": null,
     "golden_set": "eval/golden_set/golden_set.csv",
     "split": "test",
     "config": null,
