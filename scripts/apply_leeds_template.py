@@ -404,7 +404,8 @@ def enforce_leeds_spec(doc):
     # Normal body: 11pt, 1.5 line spacing (Leeds spec), 4pt after for visible
     # paragraph separation. Leeds template's own Normal uses 6pt after, but
     # we use 4pt as a compromise to keep the body within the 30-page hard
-    # limit set by COMP3931 layout requirements.
+    # limit set by COMP3931 layout requirements. Full justification matches
+    # the academic-publication style and is not prohibited by the spec.
     normal = doc.styles["Normal"]
     normal.font.size = Pt(11)
     normal.font.name = "Times New Roman"
@@ -413,6 +414,7 @@ def enforce_leeds_spec(doc):
     pf.space_before = Pt(0)
     pf.space_after = Pt(4)
     pf.widow_control = True
+    pf.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
 
     # Compact and List Paragraph styles inherit from Normal but Pandoc emits
     # tighter defaults; align them with Normal so list items and table cells
@@ -425,6 +427,7 @@ def enforce_leeds_spec(doc):
             cspf.line_spacing = 1.5
             cspf.space_before = Pt(0)
             cspf.space_after = Pt(2)
+            cspf.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
         except (KeyError, AttributeError):
             pass
 
@@ -478,6 +481,41 @@ def enforce_leeds_spec(doc):
                         sz = OxmlElement("w:sz")
                         rpr.append(sz)
                     sz.set(qn("w:val"), "18")  # 9pt = 18 half-points
+
+    # Belt-and-braces: explicitly justify every TOP-LEVEL body paragraph that
+    # does not already carry a non-default alignment (CENTER / RIGHT / JUSTIFY)
+    # and is not a heading, code block, or caption. Top-level only avoids
+    # touching table cells, headers, and footers. Pandoc sometimes emits an
+    # explicit w:jc=left which would otherwise override the Normal style's
+    # JUSTIFY default, so we normalise here.
+    SKIP_STYLES = {
+        "Heading1", "Heading2", "Heading3", "Heading4", "Heading5",
+        "Title", "Subtitle",
+        "Source Code", "SourceCode", "Verbatim", "VerbatimChar", "Code",
+        "Caption", "TOC1", "TOC2", "TOC3", "TOC Heading",
+    }
+    for p in body.findall(qn("w:p")):  # direct children only
+        pPr = p.find(qn("w:pPr"))
+        if pPr is None:
+            pPr = OxmlElement("w:pPr")
+            p.insert(0, pPr)
+
+        pStyle = pPr.find(qn("w:pStyle"))
+        sid = pStyle.get(qn("w:val")) if pStyle is not None else ""
+        if sid in SKIP_STYLES:
+            continue
+
+        existing_jc = pPr.find(qn("w:jc"))
+        if existing_jc is not None:
+            current = existing_jc.get(qn("w:val"))
+            # leave centered/right/justified paragraphs alone
+            if current in ("center", "right", "both", "distribute"):
+                continue
+            existing_jc.set(qn("w:val"), "both")
+        else:
+            jc = OxmlElement("w:jc")
+            jc.set(qn("w:val"), "both")
+            pPr.append(jc)
 
     # Heading 1: chapter level — 15pt, tight
     # The Leeds template's Heading 1 has built-in pageBreakBefore which
