@@ -264,10 +264,36 @@ def main() -> int:
     PAGEMAP.write_text(json.dumps(pagemap, indent=2, ensure_ascii=False))
     print(f"  wrote {len(pagemap)} mappings to {PAGEMAP.name}")
 
-    print("\n=== PASS 2: rebuild PDF with real page numbers ===")
-    render_docx()
-    apply_template()
-    render_pdf()
+    # Iterate to convergence. Inserting page numbers into the TOC/LoF/LoT
+    # may shift back-matter pagination by 1 page when long entries wrap or
+    # extra rows push paragraphs onto a new page. Rebuild and re-extract
+    # the pagemap until two consecutive maps agree, or up to MAX_PASSES.
+    MAX_PASSES = 5
+    prev_map = pagemap
+    for pass_idx in range(2, MAX_PASSES + 1):
+        print(f"\n=== PASS {pass_idx}: rebuild PDF with current pagemap ===")
+        render_docx()
+        apply_template()
+        render_pdf()
+
+        new_map = build_pagemap_from_pdf(PDF, entries)
+        diffs = {
+            k: (prev_map.get(k), new_map.get(k))
+            for k in set(prev_map) | set(new_map)
+            if prev_map.get(k) != new_map.get(k)
+        }
+        if not diffs:
+            print(f"  pagemap converged after pass {pass_idx}")
+            break
+        print(f"  {len(diffs)} entries shifted; updating pagemap and rebuilding")
+        for k, (old, new) in list(diffs.items())[:6]:
+            print(f"    {k!r:55s}  {old!r} -> {new!r}")
+        if len(diffs) > 6:
+            print(f"    ... and {len(diffs)-6} more")
+        PAGEMAP.write_text(json.dumps(new_map, indent=2, ensure_ascii=False))
+        prev_map = new_map
+    else:
+        print(f"  WARNING: pagemap did not converge within {MAX_PASSES} passes")
 
     print("\n=== done ===")
     print(f"Final PDF: {PDF}")

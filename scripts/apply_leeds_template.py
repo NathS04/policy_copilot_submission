@@ -281,6 +281,23 @@ def style_tables(doc):
         else:
             cell_pt = 10
 
+        # Deliverables-table override: when the first row reads
+        # ``Items | Format | Recipient(s) and Date``, set custom column
+        # proportions so the date column is wide enough to keep
+        # ``Supervisor and assessor, 30/04/2026`` on one line. The default
+        # equal-third split clips/wraps that string in LibreOffice render.
+        is_deliverables = False
+        try:
+            header_cells = [c.text.strip().lower()
+                            for c in table.rows[0].cells]
+            if (n_cols == 3
+                    and header_cells[0].startswith("items")
+                    and header_cells[1].startswith("format")
+                    and "recipient" in header_cells[2]):
+                is_deliverables = True
+        except Exception:
+            pass
+
         # Force visible single-line borders on every side and inside the table,
         # so the grid renders even if the table style lookup is unreliable.
         tblPr = table._element.find(qn("w:tblPr"))
@@ -380,6 +397,44 @@ def style_tables(doc):
                         if tcW is not None:
                             tcW.set(qn("w:w"), "0")
                             tcW.set(qn("w:type"), "auto")
+
+        # Deliverables-table column widths: 28% / 25% / 47% in fifty-thousandths
+        # of a percent (Word's "pct" unit). 47% on the third column is enough
+        # for "Supervisor and assessor, 30/04/2026" on one line at 10pt.
+        if is_deliverables:
+            tbl_layout = tblPr.find(qn("w:tblLayout"))
+            if tbl_layout is None:
+                tbl_layout = OxmlElement("w:tblLayout")
+                tblPr.append(tbl_layout)
+            tbl_layout.set(qn("w:type"), "fixed")
+            tbl_w = tblPr.find(qn("w:tblW"))
+            if tbl_w is None:
+                tbl_w = OxmlElement("w:tblW")
+                tblPr.append(tbl_w)
+            tbl_w.set(qn("w:type"), "pct")
+            tbl_w.set(qn("w:w"), "5000")  # 100% of available width
+            widths_pct = ("1400", "1250", "2350")  # 28% / 25% / 47%
+            tbl_grid = table._element.find(qn("w:tblGrid"))
+            if tbl_grid is not None:
+                cols = tbl_grid.findall(qn("w:gridCol"))
+                # gridCol uses dxa (twips); 9024 twips approx 6.27 inches
+                # available with 2.5cm margins. Compute proportional widths.
+                avail_dxa = 9024
+                target = [int(avail_dxa * 0.28),
+                          int(avail_dxa * 0.25),
+                          int(avail_dxa * 0.47)]
+                for col, w in zip(cols, target):
+                    col.set(qn("w:w"), str(w))
+            for row in table.rows:
+                cells = row.cells
+                for i, cell in enumerate(cells[:3]):
+                    tcPr = cell._element.get_or_add_tcPr()
+                    tcW = tcPr.find(qn("w:tcW"))
+                    if tcW is None:
+                        tcW = OxmlElement("w:tcW")
+                        tcPr.append(tcW)
+                    tcW.set(qn("w:w"), widths_pct[i])
+                    tcW.set(qn("w:type"), "pct")
 
 
 def style_table_captions(doc):

@@ -50,8 +50,8 @@ The candidate confirms that the following have been submitted:
 | Items | Format | Recipient(s) and Date |
 | :--- | :--- | :--- |
 | Final Report | PDF file | Uploaded to Minerva, 30/04/2026 |
-| Source code repository | URL (private GitHub) | Sent to supervisor and assessor, 30/04/2026 |
-| Documentation pack and evaluation results | URL (private GitHub) | Sent to supervisor and assessor, 30/04/2026 |
+| Source code repository | URL (private GitHub) | Supervisor and assessor, 30/04/2026 |
+| Documentation and evaluation pack | URL (private GitHub) | Supervisor and assessor, 30/04/2026 |
 
 The submitted report sits within the COMP3931 30-page body limit (Chapters 1 to 5; preliminaries, references, and appendices are excluded from that count). A single install (`pip install -e ".[dev]"`) followed by `python scripts/run_eval.py` reproduces every reported metric on a consumer laptop.
 
