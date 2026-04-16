@@ -128,47 +128,72 @@ def draw_prisma():
 
 
 def draw_gantt():
-    fig, ax = plt.subplots(figsize=(12, 5))
+    """Six-sprint Gantt chart in a single muted blue tone with a parallel
+    documentation strip. Restrained palette, no rainbow."""
+    fig, ax = plt.subplots(figsize=(11.5, 5.2))
 
     sprints = [
-        ("S1: Corpus Engineering", 1, 3),
-        ("S2: Retrieval Pipeline", 4, 6),
-        ("S3: Generative Pipeline", 7, 9),
-        ("S4: Reliability Layers", 10, 14),
-        ("S5: Critic Mode", 15, 17),
-        ("S6: Evaluation Harness", 18, 22),
+        ("S1  Corpus Engineering",  1,  3),
+        ("S2  Retrieval Pipeline",  4,  6),
+        ("S3  Generative Pipeline", 7,  9),
+        ("S4  Reliability Layers", 10, 14),
+        ("S5  Critic Mode",        15, 17),
+        ("S6  Evaluation Harness", 18, 22),
     ]
 
-    colors = ["#4472c4", "#5b9bd5", "#70ad47", "#ed7d31", "#ffc000", "#c0504d"]
-    month_labels = [
-        (1, "Oct 2024"), (4, "Nov"), (7, "Dec"),
-        (10, "Jan 2025"), (14, "Feb"), (18, "Mar"),
-    ]
+    bar_color    = "#3b6c8b"   # muted slate blue
+    docs_color   = "#a8a8a8"   # warm grey for the parallel docs strip
+    grid_color   = "#dddddd"
+    text_main    = "#1a1a1a"
 
-    y_positions = list(range(len(sprints) - 1, -1, -1))
+    rows = list(range(len(sprints), 0, -1))  # 6,5,4,3,2,1 (top → bottom)
+    docs_row = 0  # parallel documentation strip below sprint rows
 
-    for i, (name, start, end) in enumerate(sprints):
+    for (name, start, end), y in zip(sprints, rows):
         duration = end - start + 1
-        ax.barh(y_positions[i], duration, left=start - 0.5, height=0.6,
-                color=colors[i], edgecolor="white", linewidth=0.5, alpha=0.9)
-        ax.text(start + duration / 2 - 0.5, y_positions[i],
-                f"Wk {start}–{end}", ha="center", va="center",
-                fontsize=8, color="white", weight="bold")
+        ax.barh(y, duration, left=start - 0.5, height=0.55,
+                color=bar_color, edgecolor="white", linewidth=0.6)
+        ax.text(start + duration / 2 - 0.5, y,
+                f"Wk {start}\u2013{end}", ha="center", va="center",
+                fontsize=9, color="white", family="serif")
 
-    ax.set_yticks(y_positions)
-    ax.set_yticklabels([s[0] for s in sprints], fontsize=9)
-    ax.set_xlabel("Week", fontsize=10)
+    # Parallel documentation strip (real continuous activity per §2.1)
+    ax.barh(docs_row, 22, left=0.5, height=0.45,
+            color=docs_color, edgecolor="white", linewidth=0.6, alpha=0.85)
+    ax.text(11, docs_row, "Documentation, evaluation refinement, report writing",
+            ha="center", va="center", fontsize=8.5, color="white",
+            style="italic", family="serif")
+
+    yticks = [docs_row] + rows
+    yticklabels = ["  Continuous"] + [s[0] for s in sprints]
+    ax.set_yticks(yticks)
+    ax.set_yticklabels(yticklabels, fontsize=9.5, family="serif")
+    ax.set_xlabel("Project week", fontsize=10, family="serif")
     ax.set_xlim(0.5, 22.5)
+    ax.set_ylim(-0.7, len(sprints) + 0.7)
     ax.set_xticks(range(1, 23))
-    ax.set_xticklabels(range(1, 23), fontsize=7)
+    ax.set_xticklabels(range(1, 23), fontsize=7.5)
+    ax.tick_params(axis="x", length=2, pad=2)
+    ax.tick_params(axis="y", length=0, pad=4)
 
+    # Subtle vertical month separators (no big rainbow lines)
+    month_labels = [
+        (1, "Oct 2024"), (5, "Nov"), (9, "Dec"),
+        (13, "Jan 2025"), (17, "Feb"), (21, "Mar"),
+    ]
+    for wk, _ in month_labels:
+        ax.axvline(x=wk - 0.5, color=grid_color, linestyle="-",
+                   linewidth=0.5, zorder=0)
     for wk, label in month_labels:
-        ax.axvline(x=wk - 0.5, color="#cccccc", linestyle="--", linewidth=0.5)
-        ax.text(wk - 0.3, len(sprints) - 0.3, label, fontsize=7, color="#666666")
+        ax.text(wk - 0.5, len(sprints) + 0.5, label, fontsize=7.5,
+                color="#666666", family="serif", ha="left")
 
-    # No baked-in title; the markdown caption supplies the figure title in the report.
-    ax.spines["top"].set_visible(False)
-    ax.spines["right"].set_visible(False)
+    # Clean spines: keep bottom and left only
+    for s in ("top", "right"):
+        ax.spines[s].set_visible(False)
+    for s in ("bottom", "left"):
+        ax.spines[s].set_color("#888888")
+        ax.spines[s].set_linewidth(0.6)
 
     fig.savefig(OUT / "fig_gantt.png", dpi=300, bbox_inches="tight",
                 facecolor="white", edgecolor="none")
@@ -177,86 +202,153 @@ def draw_gantt():
 
 
 def draw_dataflow():
-    fig, ax = plt.subplots(figsize=(14, 9))
-    ax.set_xlim(0, 14)
-    ax.set_ylim(0, 9)
+    """End-to-end Policy Copilot architecture: top-to-bottom flow with
+    sharp rectangles, restrained greys, and one accent for the abstention
+    branch and one for the verified output. Project-specific labels with
+    real module names from src/policy_copilot/."""
+    fig, ax = plt.subplots(figsize=(11.5, 11))
+    ax.set_xlim(0, 12)
+    ax.set_ylim(0, 13)
     ax.axis("off")
 
-    blue = "#dce6f1"
-    green = "#d5e8d4"
-    orange = "#fce5cd"
-    red = "#f2dcdb"
-    blue_edge = "#4472c4"
-    green_edge = "#548235"
-    orange_edge = "#c55a11"
-    red_edge = "#c0504d"
+    # Restrained palette: greyscale + one warm accent (abstention) + one
+    # cool accent (verified output). Everything else is monochrome.
+    process_face   = "#f7f7f7"
+    process_edge   = "#3a3a3a"
+    abstain_face   = "#f3e9d2"
+    abstain_edge   = "#8a6a2e"
+    verify_face    = "#e8f0e9"
+    verify_edge    = "#2f5d3a"
+    store_face     = "#ebebeb"
+    store_edge     = "#555555"
+    text_main      = "#1a1a1a"
+    arrow_color    = "#2a2a2a"
 
-    def box(x, y, w, h, text, fcolor, ecolor, fontsize=8.5, bold=False):
-        rect = FancyBboxPatch((x, y), w, h, boxstyle="round,pad=0.12",
-                              facecolor=fcolor, edgecolor=ecolor, linewidth=1.3)
+    def box(x, y, w, h, title, sub="", *,
+            face=process_face, edge=process_edge,
+            title_size=10.5, sub_size=8.5, bold=True, italic_sub=True):
+        rect = FancyBboxPatch((x, y), w, h,
+                              boxstyle="round,pad=0.04,rounding_size=0.06",
+                              facecolor=face, edgecolor=edge, linewidth=1.1)
         ax.add_patch(rect)
-        ax.text(x + w/2, y + h/2, text, ha="center", va="center",
-                fontsize=fontsize, weight="bold" if bold else "normal",
-                multialignment="center")
+        if sub:
+            ax.text(x + w / 2, y + h * 0.66, title,
+                    ha="center", va="center",
+                    fontsize=title_size, weight="bold" if bold else "normal",
+                    color=text_main, family="serif")
+            ax.text(x + w / 2, y + h * 0.30, sub,
+                    ha="center", va="center",
+                    fontsize=sub_size,
+                    color="#3a3a3a", family="serif",
+                    style="italic" if italic_sub else "normal",
+                    multialignment="center")
+        else:
+            ax.text(x + w / 2, y + h / 2, title,
+                    ha="center", va="center",
+                    fontsize=title_size, weight="bold" if bold else "normal",
+                    color=text_main, family="serif",
+                    multialignment="center")
 
-    def arrow(x1, y1, x2, y2, color=blue_edge):
+    def arrow(x1, y1, x2, y2, *, color=arrow_color, lw=1.1, label=None):
         ax.annotate("", xy=(x2, y2), xytext=(x1, y1),
-                     arrowprops=dict(arrowstyle="-|>", color=color, lw=1.5))
+                    arrowprops=dict(arrowstyle="-|>,head_width=0.25,head_length=0.5",
+                                    color=color, lw=lw, shrinkA=0, shrinkB=0))
+        if label:
+            mx, my = (x1 + x2) / 2, (y1 + y2) / 2
+            ax.text(mx + 0.08, my, label, fontsize=8, family="serif",
+                    color="#555555", style="italic")
 
-    # Row 1: Input
-    box(0.3, 7.5, 2.5, 1.0, "PDF Policy\nCorpus", blue, blue_edge, bold=True)
-    arrow(2.8, 8.0, 3.5, 8.0)
-    box(3.5, 7.5, 2.5, 1.0, "INGESTION\nParse → Chunk → Hash IDs", blue, blue_edge)
-    arrow(6.0, 8.0, 6.8, 8.0)
-    box(6.8, 7.5, 2.5, 1.0, "Paragraph\nStore", blue, blue_edge)
+    # ----- Top: ingestion lane ------------------------------------------
+    box(0.4, 11.4, 2.8, 1.1, "PDF Corpus",
+        "policy handbook,\nIT addendum, etc.",
+        face=store_face, edge=store_edge, sub_size=8)
+    box(4.2, 11.4, 3.4, 1.1, "Ingestion",
+        "ingest.parse_pdf  \u2192  chunk\nstable IDs (SHA-256)")
+    box(8.6, 11.4, 3.0, 1.1, "Paragraph store",
+        "doc::page::idx::hash",
+        face=store_face, edge=store_edge, sub_size=8)
+    arrow(3.2, 11.95, 4.2, 11.95)
+    arrow(7.6, 11.95, 8.6, 11.95)
 
-    # Row 2: Retrieval
-    box(0.3, 5.8, 2.5, 1.0, "User\nQuery", green, green_edge, bold=True)
-    arrow(2.8, 6.3, 3.5, 6.3)
-    box(3.5, 5.8, 2.5, 1.0, "RETRIEVAL\nBi-encoder + FAISS/BM25\nTop-20 candidates", blue, blue_edge)
-    arrow(6.0, 6.3, 6.8, 6.3)
-    box(6.8, 5.8, 2.5, 1.0, "RERANKING\nCross-encoder\nTop-5 + Score", blue, blue_edge)
+    # ----- Query lane ---------------------------------------------------
+    box(0.4, 9.5, 2.8, 1.1, "User query",
+        "natural language",
+        face=store_face, edge=store_edge, sub_size=8)
 
-    # Paragraph store feeds retrieval
-    arrow(8.05, 7.5, 8.05, 6.8, color=blue_edge)
+    # ----- Retrieval ----------------------------------------------------
+    box(4.2, 9.5, 3.4, 1.1, "Dense retrieval",
+        "all-MiniLM-L6-v2 + FAISS\ntop-20 candidates")
+    arrow(3.2, 10.05, 4.2, 10.05)
+    # paragraph store feeds retriever
+    arrow(10.1, 11.4, 6.5, 10.6)
 
-    # Row 3: Abstention gate
-    arrow(8.05, 5.8, 8.05, 5.0)
-    box(6.8, 4.0, 2.5, 0.9, "ABSTENTION\nGATE\n(threshold = 0.30)", orange, orange_edge, bold=True)
+    # ----- Reranker -----------------------------------------------------
+    box(4.2, 7.7, 3.4, 1.1, "Cross-encoder rerank",
+        "ms-marco-MiniLM-L-6-v2\ntop-5 + confidence score")
+    arrow(5.9, 9.5, 5.9, 8.8)
 
-    # Abstention output
-    arrow(9.3, 4.45, 10.2, 4.45, color=red_edge)
-    box(10.2, 4.0, 3.2, 0.9, "INSUFFICIENT\nEVIDENCE", red, red_edge, bold=True)
+    # Confidence flows down to the gate
+    box(4.2, 5.9, 3.4, 1.1, "Abstention gate",
+        "score \u2265 0.30 ? \u2014 decided\n\u2003before\u2003 any LLM call",
+        face=abstain_face, edge=abstain_edge)
+    arrow(5.9, 7.7, 5.9, 7.0)
 
-    # Pass through gate
-    arrow(8.05, 4.0, 8.05, 3.2)
+    # ----- Abstention branch (right) -----------------------------------
+    box(8.6, 5.9, 3.0, 1.1, "INSUFFICIENT\nEVIDENCE",
+        "FALLBACK_RELEVANCE_FAIL",
+        face=abstain_face, edge=abstain_edge, title_size=11, sub_size=8)
+    arrow(7.6, 6.45, 8.6, 6.45, color=abstain_edge,
+          label="below\u2003threshold")
 
-    # Row 4: Generation
-    box(6.0, 2.0, 3.2, 1.0, "GENERATION\nLLM + Citation Enforcement\nPydantic Schema", green, green_edge)
+    # ----- Generative path (left) --------------------------------------
+    box(4.2, 4.0, 3.4, 1.1, "Answer generator",
+        "OpenAI \u00b7 Anthropic\nPydantic JSON schema")
+    arrow(5.9, 5.9, 5.9, 5.1, label="above\u2003threshold")
 
-    # Row 5: Verification
-    arrow(7.6, 2.0, 7.6, 1.2)
-    box(5.5, 0.2, 4.2, 0.9, "VERIFICATION\nJaccard Overlap · Numeric Check\nClaim Pruning · Support Policy", orange, orange_edge)
+    # ----- Verification -------------------------------------------------
+    box(4.2, 2.1, 3.4, 1.2, "Per-claim verifier",
+        "Jaccard \u2265 0.10  \u00b7  numeric check\nsupport policy  \u00b7  claim pruning")
+    arrow(5.9, 4.0, 5.9, 3.3)
 
-    # Final output
-    arrow(9.7, 0.65, 10.8, 0.65, color=green_edge)
-    box(10.8, 0.2, 2.8, 0.9, "Verified Answer\n+ Audit Trail", green, green_edge, bold=True)
+    # ----- Contradiction detector (right of verifier) ------------------
+    box(8.6, 2.1, 3.0, 1.2, "Contradiction\ndetection",
+        "antonym \u00b7 numeric \u00b7 negation",
+        face=process_face, edge=process_edge, title_size=10, sub_size=8)
+    arrow(7.6, 2.7, 8.6, 2.7)
 
-    # Contradiction detection branch
-    box(10.5, 5.8, 3.0, 1.0, "CONTRADICTION\nDETECTION\nAntonym/Negation/Numeric", orange, orange_edge)
-    arrow(9.3, 6.3, 10.5, 6.3, color=orange_edge)
-    arrow(12.0, 5.8, 12.0, 1.1, color=orange_edge)
+    # ----- Final output ------------------------------------------------
+    box(4.2, 0.3, 3.4, 1.0, "Verified answer + audit trail",
+        face=verify_face, edge=verify_edge, title_size=11)
+    arrow(5.9, 2.1, 5.9, 1.3)
 
-    # Labels for flow
-    ax.text(3.0, 8.35, "raw PDFs", fontsize=7, color="#666", style="italic")
-    ax.text(6.2, 8.35, "paragraphs", fontsize=7, color="#666", style="italic")
-    ax.text(3.0, 6.65, "NL question", fontsize=7, color="#666", style="italic")
-    ax.text(6.2, 6.65, "candidates", fontsize=7, color="#666", style="italic")
-    ax.text(8.2, 5.3, "confidence\nscore", fontsize=7, color="#666", style="italic")
-    ax.text(9.5, 4.8, "below\nthreshold", fontsize=7, color=red_edge, style="italic")
-    ax.text(8.2, 3.5, "above\nthreshold", fontsize=7, color=green_edge, style="italic")
+    # ----- Extractive fallback edge (alternate path) -------------------
+    # Diagonal from rerank output to answer generator with an annotation.
+    ax.annotate(
+        "Extractive Mode  \u2014  bypass LLM,\nreturn top reranked paragraph verbatim",
+        xy=(7.6, 4.55), xytext=(7.95, 8.0),
+        fontsize=8, color="#555555", family="serif", style="italic",
+        ha="left", va="center",
+        arrowprops=dict(arrowstyle="-|>,head_width=0.2,head_length=0.4",
+                         color="#888888", lw=0.8,
+                         connectionstyle="arc3,rad=0.25",
+                         shrinkA=0, shrinkB=0)
+    )
 
-    # No baked-in title; the markdown caption supplies the figure title in the report.
+    # ----- Lane label on left edge -------------------------------------
+    ax.text(0.05, 12.0, "Offline / one-time", fontsize=8,
+            color="#888888", family="serif", rotation=90,
+            ha="center", va="top")
+    ax.text(0.05, 7.5, "Per-query path", fontsize=8,
+            color="#888888", family="serif", rotation=90,
+            ha="center", va="center")
+
+    # Module-level note
+    ax.text(11.6, 0.1,
+            "Modules: src/policy_copilot/{ingest, retrieve, rerank, "
+            "abstain, generate, verify, contradiction}",
+            fontsize=7, color="#777777", family="serif",
+            ha="right", va="bottom")
+
     fig.savefig(OUT / "fig_data_flow.png", dpi=300, bbox_inches="tight",
                 facecolor="white", edgecolor="none")
     plt.close(fig)

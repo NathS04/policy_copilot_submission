@@ -17,11 +17,31 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 # Use matplotlib-only styling so core install stays lightweight.
-try:
-    plt.style.use("seaborn-v0_8-whitegrid")
-except OSError:
-    plt.style.use("ggplot")
-PALETTE = {"b1": "#4e79a7", "b2": "#f28e2b", "b3": "#e15759"}  # Tableau 10
+# Restrained dissertation palette: muted slate + warm copper + deep teal.
+# Avoids the "default seaborn rainbow" look while staying colour-blind friendly.
+plt.rcParams.update({
+    "font.family":   "serif",
+    "font.size":     10,
+    "axes.labelsize": 10,
+    "axes.titlesize": 11,
+    "axes.edgecolor": "#555555",
+    "axes.linewidth": 0.7,
+    "axes.grid":     True,
+    "grid.color":    "#dddddd",
+    "grid.linewidth": 0.5,
+    "grid.linestyle": "--",
+    "xtick.color":   "#333333",
+    "ytick.color":   "#333333",
+    "xtick.labelsize": 9,
+    "ytick.labelsize": 9,
+    "legend.frameon": False,
+    "legend.fontsize": 9,
+    "axes.spines.top":   False,
+    "axes.spines.right": False,
+    "figure.facecolor":  "white",
+    "savefig.facecolor": "white",
+})
+PALETTE = {"b1": "#7a8aa8", "b2": "#b87633", "b3": "#2f5d6e"}
 
 REQUIRED_RUNS = {
     "fig_baselines": [
@@ -55,7 +75,26 @@ def _variant_color(variant: str, idx: int) -> str:
     return cycle[idx % len(cycle)]
 
 
-def _plot_grouped_metrics(ax, plot_df: pd.DataFrame, metrics: list[str], variants: list[str]):
+METRIC_LABELS = {
+    "answer_rate":         "Answer rate",
+    "abstention_accuracy": "Abstention\naccuracy",
+    "ungrounded_rate":     "Ungrounded\nrate",
+    "evidence_recall":     "Evidence\nRecall@5",
+    "evidence_mrr":        "Evidence\nMRR",
+    "citation_precision":  "Citation\nprecision",
+    "citation_recall":     "Citation\nrecall",
+    "support_rate_mean":   "Support\nrate (mean)",
+}
+
+VARIANT_LABELS = {
+    "b1": "B1 — Prompt-Only",
+    "b2": "B2 — Naive RAG",
+    "b3": "B3 — Policy Copilot",
+}
+
+
+def _plot_grouped_metrics(ax, plot_df: pd.DataFrame, metrics: list[str], variants: list[str], *,
+                          annotate: bool = True):
     """Grouped bar chart with mean aggregation per variant/metric."""
     x = np.arange(len(metrics), dtype=float)
     width = 0.8 / max(1, len(variants))
@@ -68,16 +107,30 @@ def _plot_grouped_metrics(ax, plot_df: pd.DataFrame, metrics: list[str], variant
             values.append(float(series.mean()) if not series.empty else np.nan)
 
         offset = (idx - (len(variants) - 1) / 2.0) * width
-        ax.bar(
+        bars = ax.bar(
             x + offset,
             values,
             width=width,
-            label=variant,
+            label=VARIANT_LABELS.get(variant, variant),
             color=_variant_color(variant, idx),
+            edgecolor="white",
+            linewidth=0.5,
         )
 
+        if annotate:
+            for bar, v in zip(bars, values):
+                if np.isnan(v):
+                    continue
+                ax.text(bar.get_x() + bar.get_width() / 2,
+                        v + 0.015,
+                        f"{v:.2f}",
+                        ha="center", va="bottom",
+                        fontsize=7.5, color="#333333")
+
     ax.set_xticks(x)
-    ax.set_xticklabels(metrics)
+    ax.set_xticklabels([METRIC_LABELS.get(m, m) for m in metrics])
+    # Drop the vertical grid (only horizontal grid for bar charts)
+    ax.xaxis.grid(False)
 
 
 def load_run_data(runs_dir: Path, strict: bool = False):
@@ -300,14 +353,32 @@ def make_fig_tradeoff(df: pd.DataFrame, strict: bool, out_fig_dir: Path):
     )
 
     fig, ax = plt.subplots(figsize=(7, 5))
-    for variant in plot_df["variant"].unique():
+    for idx, variant in enumerate(plot_df["variant"].unique()):
         sub = plot_df[plot_df["variant"] == variant]
-        ax.scatter(sub["coverage"], sub["groundedness"], label=variant, s=120, alpha=0.85, edgecolors="white", linewidth=1)
-    ax.set_xlabel("Coverage (answer rate)")
-    ax.set_ylabel("Groundedness (1 - ungrounded rate)")
+        color = _variant_color(variant, idx)
+        ax.scatter(sub["coverage"], sub["groundedness"],
+                   label=VARIANT_LABELS.get(variant, variant),
+                   s=140, alpha=0.9, color=color,
+                   edgecolors="white", linewidth=1.2, zorder=3)
+        # Label each point with its variant short id
+        for _, row in sub.iterrows():
+            ax.annotate(variant.upper(),
+                        (row["coverage"], row["groundedness"]),
+                        textcoords="offset points",
+                        xytext=(8, -3), fontsize=8, color=color,
+                        family="serif", weight="bold")
+
+    # Reference: ideal corner
+    ax.scatter([1.0], [1.0], marker="*", s=180, color="#888888",
+               edgecolors="white", linewidth=1, zorder=2)
+    ax.text(1.0, 1.02, "ideal", fontsize=8, color="#888888",
+            ha="center", va="bottom", family="serif", style="italic")
+
+    ax.set_xlabel("Coverage  (answer rate)")
+    ax.set_ylabel("Groundedness  (1 \u2212 ungrounded rate)")
     ax.legend(loc="lower left")
-    ax.set_xlim(0, 1.05)
-    ax.set_ylim(0, 1.05)
+    ax.set_xlim(0, 1.08)
+    ax.set_ylim(0, 1.08)
     save_fig(fig, "fig_tradeoff", out_fig_dir)
 
 
