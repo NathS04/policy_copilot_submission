@@ -171,25 +171,51 @@ def build_pagemap_from_pdf(pdf_path: Path, entries: list[str]) -> dict:
         # Figure / table entries — search PDF text after the front matter
         # to skip TOC / List of Figures / List of Tables instances. We
         # start scanning from Chapter 1 onwards.
+        #
+        # Two-stage match (most-specific first):
+        #   1. The exact descriptor text from the LoF/LoT entry, e.g.
+        #      "Figure B.1: Answerable query result showing extractive
+        #       fallback with citations". This matches the italic caption
+        #       under the figure and ignores any earlier paragraph that
+        #       happens to begin "Figure B.1: Answerable query." (the
+        #       in-text introduction sentence used in Appendix B.7.3).
+        #   2. The bare label "Figure B.1:" / "Table 4.3:" as a fallback
+        #      for figures/tables whose body caption shortens or rephrases
+        #      the LoF descriptor.
         m_fig = re.match(r"^(Figure (?:\d+\.\d+|B\.\d+))\s+(.*)$", entry)
         m_tbl = re.match(r"^(Table (?:\d+\.\d+|B\.\d+))\s+(.*)$", entry)
-        label = None
         if m_fig:
-            label = f"{m_fig.group(1)}:"  # "Figure 1.1:"
+            num = m_fig.group(1)
+            descriptor = m_fig.group(2).strip().rstrip(".")
         elif m_tbl:
-            label = f"{m_tbl.group(1)}:"  # "Table 4.3:"
+            num = m_tbl.group(1)
+            descriptor = m_tbl.group(2).strip().rstrip(".")
         else:
             print(f"  WARNING: no outline entry and not a figure/table: '{entry}'")
             continue
 
+        full_label = f"{num}: {descriptor}"     # specific
+        bare_label = f"{num}:"                  # generic fallback
+
         search_start = chapter_one_abs if chapter_one_abs is not None else 0
         found_abs = None
+        # Pass 1: specific match against the full caption descriptor.
+        # Compare on whitespace-collapsed text so soft-hyphenation / line
+        # wrapping in the rendered PDF does not break the substring search.
+        normalised_full = re.sub(r"\s+", " ", full_label).lower()
         for i in range(search_start, n_pages):
-            if label in pages_text[i]:
+            page_norm = re.sub(r"\s+", " ", pages_text[i]).lower()
+            if normalised_full in page_norm:
                 found_abs = i
                 break
+        # Pass 2: bare-label fallback if the descriptor never matches.
         if found_abs is None:
-            print(f"  WARNING: no page found for '{entry}' (label '{label}')")
+            for i in range(search_start, n_pages):
+                if bare_label in pages_text[i]:
+                    found_abs = i
+                    break
+        if found_abs is None:
+            print(f"  WARNING: no page found for '{entry}'")
             continue
         pagemap[entry] = to_visible_page(found_abs)
 
