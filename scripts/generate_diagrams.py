@@ -5,7 +5,7 @@ os.environ.setdefault("MPLBACKEND", "Agg")
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
-from matplotlib.patches import FancyBboxPatch
+from matplotlib.patches import FancyBboxPatch, Polygon, Ellipse, Rectangle
 from pathlib import Path
 
 OUT = Path(__file__).resolve().parent.parent / "docs" / "report" / "figures"
@@ -202,6 +202,293 @@ def draw_gantt():
 
 
 def draw_dataflow():
+    """Policy Copilot end-to-end architecture as a horizontal-swimlane
+    systems diagram. Distinct shape language (cylinders for stores,
+    rectangles for processes, diamond for the decision gate, parallelogram
+    for the verified output), restrained palette, real module names from
+    ``src/policy_copilot/``."""
+    fig, ax = plt.subplots(figsize=(11.5, 11))
+    ax.set_xlim(0, 12)
+    ax.set_ylim(0, 14)
+    ax.axis("off")
+
+    # Palette --------------------------------------------------------
+    proc_face   = "#f7f7f7"
+    proc_edge   = "#3a3a3a"
+    store_face  = "#ebebeb"
+    store_edge  = "#555555"
+    decision_face = "#f3e9d2"
+    decision_edge = "#8a6a2e"
+    abstain_face  = "#f3e9d2"
+    abstain_edge  = "#8a6a2e"
+    verify_face = "#e8f0e9"
+    verify_edge = "#2f5d3a"
+    text_main   = "#1a1a1a"
+    arrow_color = "#2a2a2a"
+
+    # Lane bands -----------------------------------------------------
+    lanes = [
+        ("Output and audit",      0.6,  2.4,  "#fafafa"),
+        ("Decision and generation", 2.4,  6.6,  "#f4f4f4"),
+        ("Per-query retrieval",   6.6, 10.0, "#fafafa"),
+        ("Offline ingestion",    10.0, 13.4, "#f4f4f4"),
+    ]
+    for label, y0, y1, fill in lanes:
+        ax.add_patch(Rectangle(
+            (0, y0), 12, y1 - y0,
+            facecolor=fill, edgecolor="none", zorder=0,
+        ))
+        ax.plot([0, 12], [y0, y0], color="#cccccc", lw=0.5, zorder=0)
+        ax.text(0.20, (y0 + y1) / 2, label,
+                fontsize=10, weight="bold", color="#666666",
+                family="serif",
+                rotation=90, ha="center", va="center")
+    ax.plot([0, 12], [13.4, 13.4], color="#cccccc", lw=0.5, zorder=0)
+
+    # Helpers --------------------------------------------------------
+    def proc_box(x, y, w, h, title, sub="", *, face=proc_face, edge=proc_edge,
+                 title_size=10.5, sub_size=8.5, bold=True):
+        rect = FancyBboxPatch(
+            (x, y), w, h, boxstyle="round,pad=0.04,rounding_size=0.06",
+            facecolor=face, edgecolor=edge, linewidth=1.1, zorder=2,
+        )
+        ax.add_patch(rect)
+        if sub:
+            ax.text(x + w / 2, y + h * 0.66, title,
+                    ha="center", va="center",
+                    fontsize=title_size, weight="bold" if bold else "normal",
+                    color=text_main, family="serif")
+            ax.text(x + w / 2, y + h * 0.30, sub,
+                    ha="center", va="center", fontsize=sub_size,
+                    color="#3a3a3a", family="serif", style="italic",
+                    multialignment="center")
+        else:
+            ax.text(x + w / 2, y + h / 2, title,
+                    ha="center", va="center",
+                    fontsize=title_size, weight="bold" if bold else "normal",
+                    color=text_main, family="serif",
+                    multialignment="center")
+
+    def cylinder(cx, cy, w, h, title, sub=""):
+        # Stylised cylinder: a rectangle for the body, two ellipses for
+        # the top and bottom rims. Uses store palette.
+        ry = 0.18
+        # body
+        ax.add_patch(Rectangle(
+            (cx - w/2, cy - h/2 + ry), w, h - 2*ry,
+            facecolor=store_face, edgecolor=store_edge, linewidth=1.0, zorder=2,
+        ))
+        # bottom curve
+        ax.add_patch(Ellipse(
+            (cx, cy - h/2 + ry), width=w, height=2*ry,
+            facecolor=store_face, edgecolor=store_edge, linewidth=1.0, zorder=2,
+        ))
+        # top curve
+        ax.add_patch(Ellipse(
+            (cx, cy + h/2 - ry), width=w, height=2*ry,
+            facecolor=store_face, edgecolor=store_edge, linewidth=1.0, zorder=2,
+        ))
+        # mask the upper half of the bottom ellipse so we get the side wall look
+        ax.add_patch(Rectangle(
+            (cx - w/2 - 0.001, cy - h/2 + ry), w + 0.002, h - 2*ry,
+            facecolor=store_face, edgecolor="none", zorder=2.5,
+        ))
+        # re-draw side walls on top
+        ax.plot([cx - w/2, cx - w/2], [cy - h/2 + ry, cy + h/2 - ry],
+                color=store_edge, lw=1.0, zorder=2.6)
+        ax.plot([cx + w/2, cx + w/2], [cy - h/2 + ry, cy + h/2 - ry],
+                color=store_edge, lw=1.0, zorder=2.6)
+        # re-draw top ellipse on top of mask for the visible front rim
+        ax.add_patch(Ellipse(
+            (cx, cy + h/2 - ry), width=w, height=2*ry,
+            facecolor=store_face, edgecolor=store_edge, linewidth=1.0, zorder=2.7,
+        ))
+        # labels
+        if sub:
+            ax.text(cx, cy + 0.10, title, ha="center", va="center",
+                    fontsize=10.5, weight="bold", color=text_main,
+                    family="serif", zorder=3)
+            ax.text(cx, cy - 0.20, sub, ha="center", va="center",
+                    fontsize=8.5, color="#3a3a3a", family="serif",
+                    style="italic", zorder=3)
+        else:
+            ax.text(cx, cy, title, ha="center", va="center",
+                    fontsize=10.5, weight="bold", color=text_main,
+                    family="serif", zorder=3)
+
+    def diamond(cx, cy, w, h, title, sub=""):
+        pts = [(cx, cy + h/2), (cx + w/2, cy), (cx, cy - h/2), (cx - w/2, cy)]
+        poly = Polygon(pts, closed=True,
+                       facecolor=decision_face, edgecolor=decision_edge,
+                       linewidth=1.1, zorder=2)
+        ax.add_patch(poly)
+        if sub:
+            ax.text(cx, cy + 0.18, title, ha="center", va="center",
+                    fontsize=10.5, weight="bold", color=text_main,
+                    family="serif", zorder=3)
+            ax.text(cx, cy - 0.18, sub, ha="center", va="center",
+                    fontsize=8.5, color="#3a3a3a", family="serif",
+                    style="italic", zorder=3)
+        else:
+            ax.text(cx, cy, title, ha="center", va="center",
+                    fontsize=10.5, weight="bold", color=text_main,
+                    family="serif", zorder=3)
+
+    def parallelogram(x, y, w, h, title, sub=""):
+        skew = 0.3
+        pts = [
+            (x + skew, y), (x + w, y),
+            (x + w - skew, y + h), (x, y + h),
+        ]
+        poly = Polygon(pts, closed=True,
+                       facecolor=verify_face, edgecolor=verify_edge,
+                       linewidth=1.2, zorder=2)
+        ax.add_patch(poly)
+        if sub:
+            ax.text(x + w / 2, y + h * 0.66, title, ha="center", va="center",
+                    fontsize=11, weight="bold", color=text_main,
+                    family="serif", zorder=3)
+            ax.text(x + w / 2, y + h * 0.30, sub, ha="center", va="center",
+                    fontsize=8.5, color="#3a3a3a", family="serif",
+                    style="italic", zorder=3)
+        else:
+            ax.text(x + w / 2, y + h / 2, title, ha="center", va="center",
+                    fontsize=11, weight="bold", color=text_main,
+                    family="serif", zorder=3)
+
+    def arrow(x1, y1, x2, y2, *, color=arrow_color, lw=1.1,
+              label=None, label_offset=(0.1, 0.05), label_color=None):
+        ax.annotate(
+            "", xy=(x2, y2), xytext=(x1, y1),
+            arrowprops=dict(arrowstyle="-|>,head_width=0.25,head_length=0.5",
+                            color=color, lw=lw, shrinkA=0, shrinkB=0),
+            zorder=2.5,
+        )
+        if label:
+            mx, my = (x1 + x2) / 2, (y1 + y2) / 2
+            ax.text(mx + label_offset[0], my + label_offset[1], label,
+                    fontsize=8, color=label_color or "#555555",
+                    family="serif", style="italic", zorder=3)
+
+    # --- Offline ingestion lane (top, y in 10.0..13.4) -------------
+    cylinder(2.8, 11.7, 2.6, 1.5, "PDF corpus",
+             "policy handbook,\nIT addendum, etc.")
+    proc_box(5.0, 11.0, 3.2, 1.4,
+             "Ingestion",
+             "ingest.parse_pdf  \u2192  chunk\nstable IDs (SHA-256)")
+    cylinder(9.6, 11.7, 2.4, 1.5, "Paragraph store",
+             "doc::page::idx::hash")
+    arrow(4.1, 11.7, 5.0, 11.7)
+    arrow(8.2, 11.7, 8.4, 11.7)
+    arrow(9.6, 10.95, 9.6, 9.6, label="paragraphs", label_offset=(0.10, 0.05))
+
+    # --- Per-query retrieval lane (y in 6.6..10.0) -----------------
+    # Input shape: parallelogram (data flow input convention).
+    qpts = [
+        (1.0, 7.7), (3.4, 7.7), (3.1, 8.9), (0.7, 8.9),
+    ]
+    ax.add_patch(Polygon(qpts, closed=True,
+                         facecolor="#ebebeb", edgecolor=store_edge,
+                         linewidth=1.0, zorder=2))
+    ax.text(2.05, 8.45, "User query", ha="center", va="center",
+            fontsize=10.5, weight="bold", color=text_main,
+            family="serif", zorder=3)
+    ax.text(2.05, 8.10, "natural language", ha="center", va="center",
+            fontsize=8.5, color="#3a3a3a", family="serif",
+            style="italic", zorder=3)
+
+    proc_box(5.0, 7.6, 3.2, 1.4,
+             "Dense retrieval",
+             "all-MiniLM-L6-v2 + FAISS\ntop-20 candidates")
+    proc_box(8.6, 7.6, 3.0, 1.4,
+             "Cross-encoder rerank",
+             "ms-marco-MiniLM-L-6-v2\ntop-5 + score")
+    arrow(3.4, 8.3, 5.0, 8.3, label="NL question", label_offset=(0.10, 0.06))
+    arrow(8.2, 8.3, 8.6, 8.3)
+    arrow(9.6, 9.6, 6.6, 8.95, label="paragraphs", label_offset=(0.10, 0.05))
+
+    # --- Decision and generation lane (y in 2.4..6.6) -------------
+    diamond(5.5, 5.2, 2.4, 1.4,
+            "Abstention gate",
+            "score \u2265 0.30 ?")
+    arrow(6.6, 7.6, 6.0, 5.9, label="confidence",
+          label_offset=(0.04, 0.10))
+
+    # Abstention output (right of decision diamond)
+    proc_box(8.6, 4.7, 3.0, 1.0,
+             "INSUFFICIENT EVIDENCE",
+             "FALLBACK_RELEVANCE_FAIL",
+             face=abstain_face, edge=abstain_edge,
+             title_size=10.5, sub_size=8)
+    arrow(6.7, 5.2, 8.6, 5.2, color=abstain_edge,
+          label="below \u03c4", label_offset=(0.0, 0.10),
+          label_color=abstain_edge)
+
+    # Generation below the diamond
+    proc_box(4.0, 3.0, 3.2, 1.4,
+             "Answer generator",
+             "OpenAI \u00b7 Anthropic\nPydantic JSON schema")
+    arrow(5.5, 4.5, 5.5, 4.4, label="above \u03c4", label_offset=(0.05, 0.05))
+    arrow(5.5, 4.5, 5.5, 4.4)
+
+    # --- Verification + contradiction in same lane -----------------
+    proc_box(7.6, 3.0, 3.2, 1.4,
+             "Per-claim verifier",
+             "Jaccard \u2265 0.10  \u00b7  numeric\nsupport policy  \u00b7  pruning")
+    arrow(7.2, 3.7, 7.6, 3.7, label="claims+citations",
+          label_offset=(0.05, 0.10))
+
+    proc_box(0.5, 3.0, 3.0, 1.4,
+             "Contradiction detector",
+             "antonym \u00b7 numeric \u00b7 negation",
+             title_size=10, sub_size=8)
+    arrow(4.0, 3.7, 3.5, 3.7, label="claims",
+          label_offset=(-0.4, 0.10))
+
+    # --- Output and audit lane (y in 0.6..2.4) --------------------
+    parallelogram(3.5, 0.85, 5.0, 1.2,
+                  "Verified answer + audit trail",
+                  "answer \u00b7 citations \u00b7 contradiction notes")
+    # Single consolidated arrow from the verifier to the output. The
+    # abstention path is shown as a dashed connector that goes off the
+    # right edge of the diagram (outside the verifier), down, and back
+    # into the audit-trail parallelogram from the right.
+    arrow(9.2, 3.0, 7.5, 2.05, label="if all claims pass",
+          label_offset=(-1.5, -0.05))
+    # Right-routed dashed abstention connector (3 segments)
+    abstain_path = [
+        (10.1, 4.7),   # leaving INSUFFICIENT_EVIDENCE south edge
+        (11.6, 4.7),
+        (11.6, 1.45),
+        (8.5, 1.45),   # arriving at parallelogram east edge
+    ]
+    for (x0, y0), (x1, y1) in zip(abstain_path[:-1], abstain_path[1:]):
+        ax.plot([x0, x1], [y0, y1], color=abstain_edge,
+                lw=1.0, linestyle=(0, (4, 2)), zorder=2.4)
+    ax.annotate(
+        "", xy=(8.5, 1.45), xytext=(8.7, 1.45),
+        arrowprops=dict(arrowstyle="-|>,head_width=0.22,head_length=0.45",
+                        color=abstain_edge, lw=1.0, shrinkA=0, shrinkB=0),
+        zorder=2.5,
+    )
+    ax.text(11.7, 3.0, "if abstained",
+            fontsize=8, color=abstain_edge, family="serif", style="italic",
+            rotation=90, ha="center", va="center", zorder=3)
+
+    # Module-level note
+    ax.text(11.95, 0.05,
+            "Modules: src/policy_copilot/{ingest, retrieve, rerank, "
+            "abstain, generate, verify, contradiction}",
+            fontsize=7, color="#777777", family="serif",
+            ha="right", va="bottom")
+
+    fig.savefig(OUT / "fig_data_flow.png", dpi=300, bbox_inches="tight",
+                facecolor="white", edgecolor="none")
+    plt.close(fig)
+    print(f"Saved {OUT / 'fig_data_flow.png'}")
+
+
+def draw_dataflow_OLD():
     """End-to-end Policy Copilot architecture: top-to-bottom flow with
     sharp rectangles, restrained greys, and one accent for the abstention
     branch and one for the verified output. Project-specific labels with

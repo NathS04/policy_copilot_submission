@@ -174,7 +174,7 @@ FIGURE_MAP = [
     ("Figure 4.1: Grouped bar chart", "fig_baselines.png", 4.0),
     ("Figure 4.2: Retrieval quality", "fig_retrieval.png", 4.0),
     ("Figure 4.3: Groundedness", "fig_groundedness.png", 4.0),
-    ("Figure 4.4: Coverage", "fig_tradeoff.png", 3.5),
+    ("Figure 4.4: Operating curve", "fig_tradeoff.png", 4.0),
     ("Figure B.1: Answerable query result", "screenshot_answerable_query.png", 5.0),
     ("Figure B.2: Unanswerable query showing", "screenshot_unanswerable_query.png", 5.0),
     ("Figure B.3: Contradiction query showing", "screenshot_contradiction_query.png", 5.0),
