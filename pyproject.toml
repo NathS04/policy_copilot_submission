@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "policy_copilot"
 version = "0.1.0"
 authors = [
-  { name="Nathan S", email="sc21ns@leeds.ac.uk" },
+  { name="Nathaniel Sebastian", email="sc21ns@leeds.ac.uk" },
 ]
 description = "Audit-Ready Policy Copilot Dissertation Project"
 license = {text = "MIT"}
