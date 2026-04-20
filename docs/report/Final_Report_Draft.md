@@ -67,8 +67,9 @@ I would like to thank my supervisor for their guidance and feedback throughout t
   - [3.4 Answer Generation](#answer-generation)
   - [3.5 Citation Verification and Abstention](#citation-verification-and-abstention)
   - [3.6 Critic Mode](#critic-mode)
-  - [3.7 Engineering Challenges](#engineering-challenges)
-  - [3.8 Testing and Validation](#testing-and-validation)
+  - [3.7 Audit Workbench: UI and Reviewer Mode](#audit-workbench-ui-and-reviewer-mode)
+  - [3.8 Engineering Challenges](#engineering-challenges)
+  - [3.9 Testing and Validation](#testing-and-validation)
 - [Chapter 4: Results, Evaluation and Discussion](#chapter-4-results-evaluation-and-discussion)
   - [4.1 Experimental Setup](#experimental-setup)
   - [4.2 Headline Results: Baseline Comparison](#headline-results-baseline-comparison)
@@ -635,7 +636,15 @@ The module exports two detection functions: `detect_heuristic()`, which applies 
 
 Each label maps to one or more compiled regex patterns. The `detect_heuristic()` function iterates over every paragraph in the corpus, applies all patterns, and returns a list of `(paragraph_id, label, matched_text)` tuples. The evaluation of this module's precision and recall is reported in Section 4.6.
 
-### 3.7 Engineering Challenges
+### 3.7 Audit Workbench: UI and Reviewer Mode
+
+The Streamlit interface (`src/policy_copilot/ui/`) is intentionally designed not as a chat-only demo but as a multi-mode audit workbench. Six modes are exposed in the sidebar: **Ask** (chat-style query with inline citations), **Audit Trace** (claim-by-claim verification dossier), **Critic Lens** (Critic Mode UI with filterable findings), **Experiment Explorer** (browse and compare evaluation runs from `results/runs/`), **Reviewer Mode** (structured human-in-the-loop scoring), and **Help & Guide** (onboarding and glossary).
+
+**Reviewer Mode as a research instrument.** Reviewer Mode (`src/policy_copilot/service/reviewer_service.py`) implements an adjudication workflow modelled on the annotation-queue pattern used by trace-evaluation platforms (LangSmith, Langfuse, TruLens). The flow is: select a saved evaluation run → progress indicator shows reviewed/total → step through queries one by one → for each query, view the answer, citations, evidence, contradictions, and abstention reason → score on a three-axis rubric (groundedness, usefulness, citation correctness; each 1–5) → optionally add notes → submit and move to the next query → export the complete review session as JSON or CSV for downstream analysis. This positions Reviewer Mode as exportable evidence generation rather than a presentation feature: the JSON/CSV outputs slot directly into the appendix tables of any human-evaluation report.
+
+**One-click audit export.** Every answered query in the Ask mode produces an exportable audit packet via the `AuditReportService` (`src/policy_copilot/service/audit_report_service.py`). Three formats are offered (JSON, HTML, Markdown) plus a single ZIP bundle containing all three. The packet records: question, generated answer, full evidence rail with retrieval/rerank scores, claim-by-claim verification results, contradiction alerts, latency breakdown per pipeline stage, model and backend metadata, and timestamp. This matches the benchmark report's "audit packet" pattern and makes provenance reconstructible from a single download.
+
+### 3.8 Engineering Challenges
 
 Several non-trivial engineering problems were encountered during development. Documenting them serves both as evidence of the project's genuine complexity and as a practical guide for future work.
 
@@ -647,7 +656,7 @@ Several non-trivial engineering problems were encountered during development. Do
 
 **Challenge 4: Stable ID Collision.** During early testing, two short paragraphs from different documents produced identical content hashes (both were single-sentence headers reading "Overview"). The collision was resolved by incorporating the `doc_id` and `page_number` into the hash input, ensuring that identical text from different source locations receives distinct identifiers.
 
-### 3.8 Testing and Validation
+### 3.9 Testing and Validation
 
 The codebase is covered by a comprehensive test suite comprising **38 test files** and **186 individual test cases**, executed via `pytest`. The testing strategy follows a three-tier structure: **unit tests** validate individual functions in isolation, **integration tests** verify the interaction between pipeline stages, and **system tests** evaluate end-to-end behaviour on representative queries.
 
@@ -706,6 +715,8 @@ The dev split was used exclusively for threshold tuning (Section 4.5). All metri
 Evaluation was conducted in two modes:
 - **Generative Mode:** The full LLM-augmented pipeline (B1, B2, B3-Generative), where the language model produces a novel answer with inline citations.
 - **Extractive Mode:** The LLM is bypassed; the system returns the verbatim text of the highest-ranked paragraph (B3-Extractive only), guaranteeing 100% citation precision by construction.
+
+**Objective slice for deterministic verification.** A common criticism of RAG evaluation is that automated metrics depend on either gold-standard annotations (which can be debated) or LLM-as-judge scoring (which is known to be biased, per Zheng et al. 2024). To address this, an **objective slice** of 16 answerable golden-set queries was identified — queries whose correct answer is a specific number, named procedure, or yes/no obligation that can be verified deterministically against the source policy paragraph without LLM judgement (e.g., "What is the minimum password length?", "How often must passwords be changed?"). The slice is tagged in `eval/golden_set/golden_set.csv` via the `objective_slice` column; results are computed by `scripts/eval_objective_slice.py` and stored in `results/tables/objective_slice_results.csv`. This slice provides a subjectivity-free verification signal that complements the broader 63-query evaluation: B1 (no retrieval) answers all 16 with no grounding; B2 answers 13/16 with retrieval but no abstention; B3 answers 3/16 and abstains on 13/16, reflecting the conservative threshold's bias toward "cited or silent" behaviour. The objective-slice results are referenced where relevant in §4.2 and §4.6.
 
 ### 4.2 Headline Results: Baseline Comparison
 
@@ -849,9 +860,9 @@ The manual analysis examined every query where B3 produced an incorrect or subop
 
 ### 4.9 Latency Performance
 
-Non-functional requirement NFR1 specified that end-to-end P95 latency should remain under 10 seconds on standard hardware. Table 4.7a reports latency statistics for each baseline, measured on a consumer laptop (Apple M-series, 16 GB RAM) with API calls routed to OpenAI's `gpt-4o-mini` endpoint.
+Non-functional requirement NFR1 specified that end-to-end P95 latency should remain under 10 seconds on standard hardware. Table 4.8 reports latency statistics for each baseline, measured on a consumer laptop (Apple M-series, 16 GB RAM) with API calls routed to OpenAI's `gpt-4o-mini` endpoint.
 
-**Table 4.7a: End-to-end latency statistics by baseline (ms).**
+**Table 4.8: End-to-end latency statistics by baseline (ms).**
 
 | Baseline | P50 | P95 | Mean |
 | :--- | :--- | :--- | :--- |
@@ -873,7 +884,7 @@ Each query–response pair was rated on a 5-point Likert scale across three dime
 
 For abstention cases, Correctness was scored 5 if the abstention was appropriate (unanswerable query) or 1 if incorrect (answerable query). Groundedness was scored 5 for all abstentions (no ungrounded claims possible). Usefulness was scored 3 for correct abstentions (refusal is better than fabrication but still unhelpful) and 1 for incorrect abstentions.
 
-**Table 4.7b: Human evaluation results (self-administered, 20 queries).**
+**Table 4.9: Human evaluation results (self-administered, 20 queries).**
 
 | Category | N | Correctness | Groundedness | Usefulness |
 | :--- | :--- | :--- | :--- | :--- |
@@ -891,7 +902,7 @@ A limitation of this evaluation is that it relies on a single rater (the author)
 
 Given the modest sample size (63 queries), bootstrapped 95% confidence intervals were computed for key metrics using 2,000 resamples with replacement (seed = 42).
 
-**Table 4.7c: Bootstrapped 95% confidence intervals for B3-Generative headline metrics.**
+**Table 4.10: Bootstrapped 95% confidence intervals for B3-Generative headline metrics.**
 
 | Metric | Point Estimate | 95% CI |
 | :--- | :--- | :--- |
@@ -907,9 +918,9 @@ These intervals underscore a methodological point: with 63 queries, point estima
 
 #### 4.12.1 Achievement Against Objectives
 
-Table 4.8 summarises the project's achievement against each objective defined in Section 1.2.
+Table 4.11 summarises the project's achievement against each objective defined in Section 1.2.
 
-**Table 4.8: Objective achievement summary.**
+**Table 4.11: Objective achievement summary.**
 
 | Objective | Target | Achieved | Status |
 | :--- | :--- | :--- | :--- |
@@ -1193,7 +1204,7 @@ The following self-assessment addresses the ethical dimensions of this research,
 | 3 | Does the project use datasets that may contain biases? | **Mitigated.** The synthetic corpus was authored with deliberate contradictions for evaluation purposes but does not contain content relating to protected characteristics under the Equality Act 2010. The system's extractive fallback mode quotes source material directly, reducing the risk of introducing bias through paraphrasing. |
 | 4 | Does the project involve AI systems that make decisions affecting individuals? | **Not directly.** Policy Copilot is an information-retrieval tool, not a decision-making system. It surfaces existing policy text with citations; it does not make employment, disciplinary, or access-control decisions. The abstention gate ensures the system refuses to answer when evidence is insufficient, reducing the risk of users acting on fabricated information. |
 | 5 | Are there environmental considerations? | **Acknowledged.** The project uses large language models (GPT-4o-mini) for the generative baseline B3. Inference-time energy consumption is modest relative to model training. The offline baselines B1 and B2 require no LLM calls. The bi-encoder (MiniLM, 22M parameters) and cross-encoder (ms-marco-MiniLM, 22M parameters) are lightweight models chosen partly for their low computational footprint. |
-| 6 | Does the project raise intellectual property concerns? | **No.** All third-party libraries are open-source (see B.1). The synthetic corpus is original work. The system architecture is the author's own design. |
+| 6 | Does the project raise intellectual property concerns? | **No.** All third-party libraries are open-source (see B.1). The synthetic corpus is original work. The overall system architecture, integration decisions, and evaluation design are the author's own work, with development assistance from AI tools as documented in B.5. |
 | 7 | Has ethical approval been obtained? | **Not required.** The project does not involve human participants, personal data, or sensitive topics. This was confirmed with the project supervisor. |
 
 ---
