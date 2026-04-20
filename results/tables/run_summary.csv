@@ -27,6 +27,7 @@ b2_test_extractive_bm25_20260413_230621,b2,b2,test,extractive,bm25,bm25,bm25,1.0
 b3_generative_bm25_fallback_final,b3,b3,all,generative,dense,bm25,bm25,0.25,0.9412,0.7391,0.767,1.0,0.5556,0.0,0.2,0.3333,1.0
 b3_test_extractive_bm25_20260420_145104,b3,b3,test,extractive,bm25,bm25,bm25,0.88,0.5,0.7344,0.7562,1.0,0.4545,0.0,0.5714,0.2857,1.0
 b3_test_extractive_bm25_20260413_221828,b3,b3,test,extractive,bm25,bm25,bm25,0.88,0.5,0.7344,0.7562,1.0,0.4545,0.0,0.5714,0.2857,1.0
+b2_test_extractive_bm25_20260420_174931,b2,b2,test,extractive,bm25,bm25,bm25,1.0,0.0,0.7344,0.7562,1.0,0.32,,0.0,,
 b2_test_extractive_bm25_20260322_182520,b2,b2,test,extractive,bm25,bm25,bm25,1.0,0.0,0.7344,0.7562,1.0,0.32,,0.0,,
 b3_test_extractive_bm25_20260322_182521,b3,b3,test,extractive,bm25,bm25,bm25,0.88,0.5,0.7344,0.7562,1.0,0.4545,0.0,0.5714,0.2857,1.0
 b3_test_extractive_bm25_20260413_231551,b3,b3,test,extractive,bm25,bm25,bm25,0.88,0.5,0.7344,0.7562,1.0,0.4545,0.0,0.5714,0.2857,1.0
@@ -70,3 +71,4 @@ b2_test_extractive_bm25_20260413_224304,b2,b2,test,extractive,bm25,bm25,bm25,1.0
 b3_test_extractive_bm25_20260413_222941,b3,b3,test,extractive,bm25,bm25,bm25,0.88,0.5,0.7344,0.7562,1.0,0.4545,0.0,0.5714,0.2857,1.0
 b3_test_extractive_bm25_20260413_230622,b3,b3,test,extractive,bm25,bm25,bm25,0.88,0.5,0.7344,0.7562,1.0,0.4545,0.0,0.5714,0.2857,1.0
 b3_test_extractive_bm25_20260413_223036,b3,b3,test,extractive,bm25,bm25,bm25,0.88,0.5,0.7344,0.7562,1.0,0.4545,0.0,0.5714,0.2857,1.0
+b3_test_extractive_bm25_20260420_174932,b3,b3,test,extractive,bm25,bm25,bm25,0.88,0.5,0.7344,0.7562,1.0,0.4545,0.0,0.5714,0.2857,1.0
