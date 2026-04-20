@@ -1,0 +1,151 @@
+Bring your own device (BYOD) | National Cyber Security Centre     icons/chevron/16px/black
+
+Guidance
+
+Device security guidance
+
+Guidance for organisations on how to choose, configure and use devices securely.
+
+Pages
+
+Page 33 of 38
+
+Bring your own device (BYOD)
+
+iStock.com/joyimage
+
+Guidance for organisations on enabling staff to use their own smartphones, tablets, laptops and desktop PCs to access work information.
+
+Who is this guidance for?
+
+The primary audience for this guidance will be large and medium sized organisations considering, or already allowing, employees to use their personally owned device(s) for work purposes. However, the measures suggested will be useful for any technically adept organisation.
+
+The guide describes the key security issues that you will need to consider in balancing usability and risks in such a ‘Bring Your Own Device’ (BYOD) scenario. We also suggest measures which you can use to mitigate these risks.
+
+Information on alternate flexible working solutions can be found in Action 1 - Determine your objectives, user needs and risks.
+
+The Device management question
+
+Although we talk about device ownership as distinguishing BYOD from the more traditional IT management of flexible working solutions, it is really the concept of device management that is key.
+
+If your users are happy to allow traditional full-device management of devices that they own (which will effectively make them corporately issued), then you can follow our detailed Platform guides.
+
+Defining BYOD
+
+BYOD is the concept of employees using their personally owned device(s) for work purposes.
+
+With BYOD, an organisation has ownership of the corporate data and resources that may be accessed or stored on a device, but the device itself is the property of the user.
+
+As devices and platforms have become more capable of being used in a work context, the concept has matured from its initial roots and aims to:
+
+Give end-users the ability to use IT they feel comfortable with
+
+Reduce overheads for the organisation in terms of procurement and provisioning of corporate devices
+
+Enable flexible (including remote) working
+
+Increase productivity
+
+Provide redundancy to business and organisations when workers are unable to access their main places of work
+
+While BYOD shares some of the risks and mitigations inherent with other flexible working solutions, many of its challenges are unique.
+
+The effectiveness of BYOD data protection depends upon:
+
+How thoroughly the device can be managed (how much this is allowed by the owner).
+
+How well considerations of usability have been balanced with security.
+
+Drivers for BYOD
+
+The COVID-19 pandemic has seen more and more organisations focused on enabling remote and flexible working in whatever ways possible to ‘get the job done.’ BYOD has seen a surge in popularity.
+
+However, ensuring that these new ways of working can be sustained in the longer term will likely require some revision of practices that have been implemented hastily, particularly as the risks and rewards to an organisation become clearer.
+
+Although the conceptual aims of BYOD are an attractive prospect to most organisations, it comes with a conflicting set of security risks and challenges.
+
+BYOD challenges
+
+BYOD security challenges for organisations broadly include, but are not limited to:
+
+Ensuring personally owned devices and their owners comply with company policies and procedures
+
+Increased support for a wide range of device types and operating systems
+
+Protecting corporate data
+
+Protecting corporate infrastructure
+
+Protecting the personal privacy of the end-user/device owner
+
+Ensuring legal compliance and meeting contractual obligations
+
+The security challenges of BYOD should not be played down. However, with the right technical controls and policies in place, the risks inherent with BYOD can be minimised.
+
+Balancing your organisation’s need to protect and maintain control of its data and systems against the usability, and privacy expectations of the device owner can be difficult.
+
+Similarly, organisations should be mindful of the potential impact BYOD may have on the work/life balance of their employees. A BYOD scheme requires careful design in order to ensure that it works well for employees. If the system makes life difficult, or leads to a poor work/life balance, you could end up with your employees rejecting the approved approach for BYOD. They may even find other ways to do their job using 'shadow IT' that are likely to increase your security risk.
+
+Preparing for BYOD
+
+Before implementing BYOD, you should determine what approach will best suit your organisation (if any).
+
+Working through the five actions below will help you to choose and implement the right BYOD solution, in the right way.
+
+Action 1 - Determine your objectives, user needs and risks
+
+Action 2 - Develop the policy
+
+Action 3 - Understand additional costs and implications
+
+Action 4 - Deployment approaches
+
+Action 5 - Put technical controls in place
+
+Reviewed
+
+13 May 2025
+
+Version
+
+Written for
+
+Written for
+
+Public sector Large organisations Cyber security professionals
+
+Share and print this article
+
+Share   Share
+
+Close share options
+
+Share onFacebook
+
+Share onLinkedIn
+
+Share onX
+
+Copy Link
+
+Was this article helpful?
+
+Yes the article was helpful
+
+No the article was not helpful
+
+Close Feedback Form
+
+Back to top
+
+Share
+
+Close share options
+
+Share onFacebook
+
+Share onLinkedIn
+
+Share onX
+
+Copy Link
