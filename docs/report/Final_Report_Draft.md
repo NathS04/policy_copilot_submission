@@ -1,4 +1,4 @@
-<div align="center">
+<div class="title-page" align="center">
 
 # Audit-Ready Policy Copilot
 ## Evidence-Grounded Retrieval-Augmented Generation with Deterministic Reliability Controls
@@ -22,6 +22,8 @@
 **COMP3931 Individual Project — 2025/26**
 
 </div>
+
+<div class="preliminaries">
 
 ---
 
@@ -168,7 +170,9 @@ I would like to thank my supervisor for their guidance and feedback throughout t
 | Table 4.10 | Bootstrapped 95% confidence intervals |
 | Table 4.11 | Objective achievement summary |
 
----
+</div>
+
+<div class="body">
 
 ## Chapter 1: Introduction and Background Research
 
@@ -674,6 +678,8 @@ Three of six objectives are fully met. Objective 2 (Answer Rate) is the most sig
 #### 4.12.4 Future Work
 
 **F1: NLI-Based Verification** — supplement Jaccard with NLI models (FEVER; Thorne et al., 2018; SciFact; Wadden et al., 2020) classifying claim–evidence entailment, ideally as a borderline-case backstop to the heuristic to preserve speed and auditability. **F2: Domain-Adapted Embeddings** — fine-tune the bi-encoder on policy terminology pairs ("disposal"↔"shredding") via transfer from legal NLP corpora (Chalkidis et al., 2020). **F3: Multi-Model Evaluation** — evaluate across GPT-4, Claude 3, Llama 3, Mistral to establish model-dependence; informal early testing suggested smaller models produce more schema violations but similar hallucination rates. **F4: Larger Externally-Annotated Golden Set** — 200+ queries with independent annotators and Cohen's kappa for credibility. **F5: User Feedback Integration** — production feedback loops for dynamic threshold tuning. **F6: Transfer to Real-World Documents** — empirical validation on noisy organisational corpora is the ultimate test; an industry partner sharing a redacted corpus would be the ideal next step.
+
+</div>
 
 ## List of References
 
