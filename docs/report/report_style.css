@@ -21,6 +21,9 @@ th { background-color: #2c3e50; color: white; padding: 8px 10px; text-align: lef
 td { border: 1px solid #ddd; padding: 6px 10px; }
 tr:nth-child(even) { background-color: #f8f9fa; }
 img { max-width: 100%; height: auto; display: block; margin: 1em auto; page-break-inside: avoid; }
+div[align="center"] { text-align: center; margin: 1.5em auto; page-break-inside: avoid; }
+div[align="center"] img { display: block; margin: 0 auto 0.5em auto; }
+div[align="center"] em { display: block; font-size: 10pt; color: #555; margin-top: 0.3em; max-width: 90%; margin-left: auto; margin-right: auto; }
 blockquote { border-left: 4px solid #2c3e50; margin: 1em 0; padding: 0.5em 1em; background: #f8f9fa; font-style: italic; }
 code { background: #f4f4f4; padding: 2px 4px; font-size: 10pt; border-radius: 3px; }
 pre { background: #f4f4f4; padding: 1em; border-radius: 5px; font-size: 9pt; overflow-x: auto; page-break-inside: avoid; }
