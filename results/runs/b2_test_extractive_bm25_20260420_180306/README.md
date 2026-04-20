@@ -1,11 +1,11 @@
-# Run: test_allow_no_key_generates_llm_disabled
+# Run: b2_test_extractive_bm25_20260420_180306
 
 - **Baseline**: b2
 - **Queries processed**: 44
 - **Duration**: 0.0s
 - **Provider**: openai
 - **Model**: gpt-4o-mini
-- **Created**: 2026-04-20T17:03:05.657297+00:00
+- **Created**: 2026-04-20T17:03:06.992638+00:00
 
 ## Locked Targets (placeholders)
 - (T1) ≥30% reduction in ungrounded-claim rate vs B2

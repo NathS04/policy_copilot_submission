@@ -6,11 +6,11 @@ A self-administered human evaluation was conducted on 20 queries sampled from th
 
 ## Rater
 
-Single rater (the author). No inter-rater agreement metrics are reported. This is acknowledged as a limitation in the dissertation (Section 4.8b, Limitation L5).
+Single rater (the author). No inter-rater agreement metrics are reported. This is acknowledged as a limitation in the dissertation (Section 4.10, and Limitation L5 in §4.12.3).
 
 ## Artifact Status
 
-- `packs/b3_test_full_test_pack.jsonl` -- the exported annotation template (unfilled). The filled annotation was performed offline using a local copy and results are reported directly in the dissertation report (Table 4.7b).
+- `packs/b3_test_full_test_pack.jsonl` -- the exported annotation template (unfilled). The filled annotation was performed offline using a local copy and results are reported directly in the dissertation report (Table 4.9).
 - The tooling in `scripts/import_human_eval_pack.py` includes two-rater Cohen's kappa computation as future-work infrastructure. This capability was **not exercised** in the current evaluation — no second rater was recruited.
 
 ## Tooling

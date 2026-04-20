@@ -77,7 +77,9 @@ Beyond database search, the following doctoral-standard techniques were applied:
 
 **Metric lineage tracing:** For all evaluation metrics used in the dissertation (Citation Precision/Recall, Faithfulness, Abstention Accuracy, Support Rate, Jaccard similarity), the originating papers were identified and the metric's strengths, limitations, and known criticisms documented.
 
-## PRISMA-Style Flow
+## PRISMA-Style Flow (Broader Research Pack)
+
+This document records the **broader research pack** flow, which counts unique title-level candidates surviving title/abstract screening. The dissertation report's Chapter 1 PRISMA (Figure 1.1) records the **stricter scholarly-review** flow, which counts raw database hits across all queries before deduplication and applies tighter inclusion criteria. Both flows are valid and complementary: the report's 38 included core studies are a strict scholarly subset, while the 105 in this matrix add contextual, practitioner, standards, and benchmark sources that support the wider methodology and LSEP discussion. The two flows are reconciled in the count hierarchy below.
 
 ```
 Records identified through database searching: ~120
@@ -98,6 +100,21 @@ Direct comparator systems: 10
 ```
 
 *Note: Role categories are non-exclusive; some sources serve multiple roles (e.g., a review that also criticises, or a benchmark that is also foundational). The six role counts therefore sum to more than 105.*
+
+## Count Hierarchy (Single Source of Truth)
+
+| Tier | Count | Definition | Where Reported |
+|------|-------|------------|----------------|
+| Raw database hits (cross-database, with duplicates) | 584 | All matches across Google Scholar / ACM / IEEE / arXiv before deduplication | Report §1.3 PRISMA |
+| Records after deduplication (report flow) | 472 | Unique records screened by title/abstract | Report §1.3 PRISMA |
+| Full-text assessed (report flow) | 154 | Records passing title/abstract screening | Report §1.3 PRISMA |
+| **Core peer-reviewed studies (strict scholarly review)** | **38** | Pass strict scholarly inclusion criteria; form the literature review backbone | Report Chapter 1 |
+| Unique title-level candidates (matrix flow) | ~120 | Cross-cluster, deduplicated at title-screening step | This file (above) |
+| Citation-chain additions | ~55 | Backward + forward chaining beyond database search | This file |
+| **All sources in research pack matrix** | **105** | 38 core + 67 additional contextual/practitioner/standards sources | `literature_matrix.md` |
+| Direct comparator systems | 10 | Subset evaluated in Table 1.1 | `comparator_matrix.md` / Appendix B.8 |
+
+The 584 → 38 figures and the 120 → 105 figures are not contradictory: they describe two different flows over overlapping but distinct corpora. The strict 38 are the formal literature review; the broader 105 contextualise it.
 
 ## Saturation Assessment
 

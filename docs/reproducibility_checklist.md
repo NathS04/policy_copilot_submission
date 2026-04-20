@@ -25,7 +25,7 @@ python -c "import policy_copilot; print(policy_copilot.__version__)"
 
 # 4. Run tests
 pytest -q
-# Expected: 186 passed, 1 skipped
+# Expected: 188 passed, 1 skipped
 
 # 5. CLI health check
 python scripts/run_eval.py --help
@@ -71,7 +71,7 @@ python eval/analysis/make_figures.py --strict
 | Check | Command | Expected |
 |-------|---------|----------|
 | Package imports cleanly | `python -c "import policy_copilot"` | No error |
-| Tests pass | `pytest -q` | 186 passed, 1 skipped |
+| Tests pass | `pytest -q` | 188 passed, 1 skipped |
 | Golden set valid | `python scripts/validate_golden_set.py` | All checks pass |
 | Run artifacts present | `ls results/runs/b3_generative_bm25_fallback_final/summary.json` | File exists |
 | Manifest valid | `python scripts/verify_artifacts.py` | All checks pass |
