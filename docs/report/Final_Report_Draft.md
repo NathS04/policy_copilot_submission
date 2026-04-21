@@ -140,8 +140,9 @@ This report has been prepared in accordance with the University of Leeds proof-r
   - [4.8 Error Analysis](#error-analysis)
   - [4.9 Latency Performance](#latency-performance)
   - [4.10 Author-administered Qualitative Review](#author-administered-qualitative-review)
-  - [4.11 Statistical Confidence](#statistical-confidence)
-  - [4.12 Discussion: Achievement Against Objectives](#discussion-achievement-against-objectives)
+  - [4.11 Public Guidance Transfer Stress Test](#public-guidance-transfer-stress-test)
+  - [4.12 Statistical Confidence](#statistical-confidence)
+  - [4.13 Discussion: Achievement Against Objectives](#discussion-achievement-against-objectives)
 - [Chapter 5 Conclusions and Reflection](#chapter-5-conclusions-and-reflection)
   - [5.1 Conclusions](#conclusions)
   - [5.2 Limitations](#limitations)
@@ -162,6 +163,7 @@ This report has been prepared in accordance with the University of Leeds proof-r
   - [B.7 Evidence of Testing and Operation](#b.7-evidence-of-testing-and-operation)
   - [B.8 Comparative Analysis Table (referenced from §1.10)](#b.8-comparative-analysis-table-referenced-from-1.10)
   - [B.9 Test Suite Matrix (referenced from §3.9)](#b.9-test-suite-matrix-referenced-from-3.9)
+  - [B.11 Public Guidance Transfer Corpus Provenance (referenced from §4.11)](#b.11-public-guidance-transfer-corpus-provenance-referenced-from-4.11)
 
 ## List of Figures
 
@@ -190,10 +192,12 @@ This report has been prepared in accordance with the University of Leeds proof-r
 - [Table 4.7 Error taxonomy: B3 failure classification](#tbl-4-7)
 - [Table 4.8 End-to-end latency statistics by baseline](#tbl-4-8)
 - [Table 4.9 Author-administered qualitative review (20 queries)](#tbl-4-9)
-- [Table 4.10 Bootstrapped 95% confidence intervals](#tbl-4-10)
-- [Table 4.11 Objective achievement summary (Chapter 4 §4.12)](#tbl-4-11)
+- [Table 4.10 B3-Extractive: synthetic test split vs. Public Guidance Transfer Stress Test](#tbl-4-10)
+- [Table 4.11 Bootstrapped 95% confidence intervals](#tbl-4-11)
+- [Table 4.12 Objective achievement summary (Chapter 4 §4.13)](#tbl-4-12)
 - [Table B.1 Comparative analysis of retrieval-augmented and grounded generation systems](#tbl-b-1)
 - [Table B.2 Testing and validation matrix across 38 test files / 188 cases](#tbl-b-2)
+- [Table B.3 Public Guidance Transfer Corpus provenance](#tbl-b-3)
 
 </div>
 
@@ -377,7 +381,7 @@ A complementary system-level risk audit table (`docs/risk_audit_table.md`) docum
 | :--- | :--- | :--- | :--- |
 | LLM API unavailability or rate-limiting | Medium | High | Extractive Fallback Mode (FR4); exponential backoff and caching |
 | Heuristic verification misses semantically supported claims | High | Medium | Acknowledged limitation; ablation quantifies error rate (§4.6); NLI verification is future work |
-| Synthetic corpus lacks real-world PDF noise | Medium | Medium | Deliberate formatting inconsistencies; transfer to OCR documents is future work (§4.12.4) |
+| Synthetic corpus lacks real-world PDF noise | Medium | Medium | Deliberate formatting inconsistencies; the system's safety behaviour is also stress-tested on a small public-guidance transfer corpus (§4.11) |
 | Scope creep | Medium | High | Requirements priority rankings; low-priority NFR3 deferred when sprint tightened |
 | Reranker threshold poorly calibrated | Medium | High | Tuned on dev split; sensitivity analysis reported (§4.5) |
 
@@ -404,7 +408,7 @@ Answer Rate and Abstention Accuracy form a trade-off pair: abstaining on everyth
 
 The evaluation golden set comprises **63 queries** in three categories. **Answerable (36)** queries have answers explicit in one or more paragraphs. **Unanswerable (17)** queries are plausible but absent from the corpus and test the abstention path. **Contradiction (10)** queries trigger genuine conflicts between documents (for example, 90-day vs. 60-day password rotation in the Handbook vs. the IT Addendum), testing both contradiction detection and ambiguous-evidence behaviour.
 
-The size reflects a trade-off between statistical coverage and manual annotation burden (roughly 15 minutes per query for answer verification and paragraph alignment). A larger set would strengthen statistical power; this is acknowledged as a limitation in §4.12.3. The set is split into a **validation subset (19 queries)** for threshold tuning and a **test subset (44 queries)** for all reported metrics, ensuring no optimisation on test data.
+The size reflects a trade-off between statistical coverage and manual annotation burden (roughly 15 minutes per query for answer verification and paragraph alignment). A larger set would strengthen statistical power; this is acknowledged as a limitation in §5.2. The set is split into a **validation subset (19 queries)** for threshold tuning and a **test subset (44 queries)** for all reported metrics, ensuring no optimisation on test data.
 
 ## Chapter 3 Implementation and Validation
 
@@ -536,7 +540,7 @@ The pattern to notice in Figure 4.1 is the inverse relationship between B1's Ans
 
 **B1** answers every query but does no grounding, which is the standard hallucination baseline (Ji et al., 2023). For a compliance use-case it is not viable. **B2** reaches 76.5% Abstention Accuracy without any explicit gating, just below the 80% target (FR2). I attribute this to the LLM's own tendency to refuse on clearly irrelevant context, but its citations are not verified, so the abstention is more of a side effect than a designed behaviour. **B3-Generative** reports 0.0% Ungrounded Rate and 94.1% Abstention Accuracy (above the 80% target) at the cost of a 25.0% Answer Rate. The 0.0% figure should be read carefully: it does not mean the LLM never produced an unsupported claim. Whenever the LLM produces a response that fails the minimum support-rate check, the support-rate enforcement gate converts that response into an abstention. The intermediate per-claim ungrounded rate is 4% (Table 4.4) and is the more honest measure of what the verification layer itself is catching.
 
-**B3-Extractive** reaches 100% Abstention Accuracy and 89% Answer Rate. Its 0% Ungrounded Rate is true by construction: the returned text is the cited paragraph. Two caveats apply. First, an Extractive answer is a quoted evidence paragraph rather than a synthesised answer, so it is not directly comparable to the generative QA quality of B1, B2 or B3-Generative on the same queries. Second, the Extractive result is best read as a sanity check on the surrounding pipeline (retrieval, abstention, contradiction handling) rather than as an independent reliability result. Section 4.12 returns to the trade-off.
+**B3-Extractive** reaches 100% Abstention Accuracy and 89% Answer Rate. Its 0% Ungrounded Rate is true by construction: the returned text is the cited paragraph. Two caveats apply. First, an Extractive answer is a quoted evidence paragraph rather than a synthesised answer, so it is not directly comparable to the generative QA quality of B1, B2 or B3-Generative on the same queries. Second, the Extractive result is best read as a sanity check on the surrounding pipeline (retrieval, abstention, contradiction handling) rather than as an independent reliability result. Section 4.13 returns to the trade-off.
 
 ### 4.3 Retrieval Performance
 
@@ -585,7 +589,7 @@ The system's job is to make sure every surviving claim is backed by its cited ev
 *Figure 4.3: Groundedness, Ungrounded Rate and Citation Precision before and after verification.*
 </div>
 
-Verification reduces the claim-level Ungrounded Rate from 12% to 4% (roughly a two-thirds reduction) and pushes Citation Precision from 78% to 94%. Precision improves while average claims per response only drops from 3.2 to 2.8, indicating that pruning is mostly hitting weaker claims rather than removing material at random. The Jaccard threshold (0.10) was tuned on the dev split to balance two failure modes: too aggressive a threshold prunes legitimate paraphrases, and too permissive a threshold lets weakly-supported claims through. The threshold sweep used to pick this value is reported in §4.5, and the trade-off is revisited as a limitation in §4.12.
+Verification reduces the claim-level Ungrounded Rate from 12% to 4% (roughly a two-thirds reduction) and pushes Citation Precision from 78% to 94%. Precision improves while average claims per response only drops from 3.2 to 2.8, indicating that pruning is mostly hitting weaker claims rather than removing material at random. The Jaccard threshold (0.10) was tuned on the dev split to balance two failure modes: too aggressive a threshold prunes legitimate paraphrases, and too permissive a threshold lets weakly-supported claims through. The threshold sweep used to pick this value is reported in §4.5, and the trade-off is revisited as a limitation in §4.13.
 
 ### 4.5 Abstention Threshold Sensitivity
 
@@ -599,7 +603,7 @@ B3 has two abstention knobs: a pre-LLM cross-encoder gate (`abstain_threshold = 
 *Figure 4.4: Operating curve for B3-Generative, parameterised by the post-LLM support-rate threshold τ. Produced by replaying the gate over the stored `outputs.jsonl` (`scripts/sweep_abstention.py`); the shipped operating point at τ = 0.80 sits in the upper-left and the "ideal" corner is upper-right. The abrupt knee at τ ≈ 0.65 is what makes Abstention Accuracy ≥ 90% expensive in coverage terms.*
 </div>
 
-The curve falls into three regions. Below τ ≈ 0.30 the support-rate gate barely fires and B3 behaves close to B2 (high Answer Rate, mediocre Abstention Accuracy). Between 0.30 and 0.65 Abstention Accuracy improves while Answer Rate stays close to 80%. Above τ ≈ 0.65 the curve bends sharply: Abstention Accuracy rises from 82% to 94% but Answer Rate collapses from roughly 80% to 25%. The shipped value of **τ = 0.80** sits on the precision-favouring side of that knee, consistent with the project's "cited or silent" rule (Objective 2) and FR2's ≥ 80% target. The visible cost is the low Answer Rate; §4.12 returns to whether that trade-off is appropriate, and to the open question of how to recover coverage without weakening abstention.
+The curve falls into three regions. Below τ ≈ 0.30 the support-rate gate barely fires and B3 behaves close to B2 (high Answer Rate, mediocre Abstention Accuracy). Between 0.30 and 0.65 Abstention Accuracy improves while Answer Rate stays close to 80%. Above τ ≈ 0.65 the curve bends sharply: Abstention Accuracy rises from 82% to 94% but Answer Rate collapses from roughly 80% to 25%. The shipped value of **τ = 0.80** sits on the precision-favouring side of that knee, consistent with the project's "cited or silent" rule (Objective 2) and FR2's ≥ 80% target. The visible cost is the low Answer Rate; §4.13 returns to whether that trade-off is appropriate, and to the open question of how to recover coverage without weakening abstention.
 
 ### 4.6 Ablation Studies
 
@@ -657,7 +661,7 @@ Error analysis combines manual classification of B3 failures (`eval/analysis/err
 | **Incomplete Synthesis** | 1 | 9% | Multi-paragraph remote-work + security answer misses security half |
 | **Numeric Hallucination** | 1 | 9% | "Approximately 30 days" vs source "28 days", caught and pruned |
 
-**Over-Abstention dominates**, which is the "correct" failure mode for a safety-first system. All 4 cases retrieved correct evidence at ranks 2 to 5, but the top reranker score fell below threshold. Using the *mean* of top-3 scores rather than the *maximum* was tested in Sprint 6 but rejected because it degraded Abstention Accuracy on unanswerable queries. **Missed Retrieval** highlights vocabulary mismatch ("disposal" vs "shredding", "moonlighting" vs "secondary employment") that dense retrieval cannot bridge without domain-adapted fine-tuning (Karpukhin et al., 2020). **Verification False Positives** expose Jaccard's core limitation: paraphrased equivalences like "every 90 days" and "quarterly" pass semantically but fail token overlap, motivating NLI-based verification (§4.12.4).
+**Over-Abstention dominates**, which is the "correct" failure mode for a safety-first system. All 4 cases retrieved correct evidence at ranks 2 to 5, but the top reranker score fell below threshold. Using the *mean* of top-3 scores rather than the *maximum* was tested in Sprint 6 but rejected because it degraded Abstention Accuracy on unanswerable queries. **Missed Retrieval** highlights vocabulary mismatch ("disposal" vs "shredding", "moonlighting" vs "secondary employment") that dense retrieval cannot bridge without domain-adapted fine-tuning (Karpukhin et al., 2020). **Verification False Positives** expose Jaccard's core limitation: paraphrased equivalences like "every 90 days" and "quarterly" pass semantically but fail token overlap, motivating NLI-based verification (§5.3).
 
 ### 4.9 Latency Performance
 
@@ -693,13 +697,32 @@ A small author-administered qualitative review was conducted on 20 queries from 
 
 The most revealing pattern is the contrast between answered-and-answerable queries (high across all dimensions) and over-abstention cases (1.0 on Correctness and Usefulness). When B3 answers, it answers well; when it refuses, it refuses with certainty. The two answered-but-unanswerable cases, where the LLM produced plausible responses from tangentially relevant evidence, were caught by their low Groundedness scores. Single-rater design is a limitation; a production evaluation would use independent raters with formal adjudication (Es et al., 2023).
 
-### 4.11 Statistical Confidence
+### 4.11 Public Guidance Transfer Stress Test
 
-Bootstrapped 95% confidence intervals (2,000 resamples, seed = 42) were computed given the modest n = 63.
+A central limitation of the headline evaluation is that the corpus is synthetic: I authored it for this project, so retrieval and abstention behaviour are tested against text I controlled. To probe whether the system's safety properties survive on a corpus I did not author, I ran the same B3 system in Extractive Mode against a small **Public Guidance Transfer Corpus** built from Open Government Licence v3.0 material published by the National Cyber Security Centre, the Information Commissioner's Office, and ACAS. The transfer set is supplementary to the synthetic benchmark, not a replacement: it has 8 documents, 249 paragraphs, and a 20-query test set (12 answerable, 4 unanswerable, 4 ambiguous-evidence cases), with provenance, licence, and access dates recorded in Appendix B.11. Because no LLM API key was used in this run, only B3-Extractive is reported; a generative transfer test is listed as future work in §5.3.
 
 <a id="tbl-4-10"></a>
 
-**Table 4.10: 95% bootstrap CIs for B3-Generative headline metrics.**
+**Table 4.10: B3-Extractive on the synthetic test split versus the Public Guidance Transfer Stress Test.**
+
+| Metric | Synthetic test (B3-Ext) | Transfer set (B3-Ext) | Direction |
+| :--- | :---: | :---: | :--- |
+| Answer Rate | 89% | 91.7% | Coverage holds |
+| Abstention Accuracy (unanswerable) | 100% | 75% (3/4) | Drops one query |
+| Evidence Recall@5 | 85% | 52.1% | Halves on unfamiliar corpus |
+| Evidence MRR | 0.78 | 0.51 | Drops |
+| Citation Precision | 100% | 100% | True by construction in Extractive Mode |
+| Ungrounded Rate | 0% | 0% | Safety property survives |
+
+The headline observation is that the **safety properties survive transfer**: Citation Precision stays at 100% (by construction in Extractive Mode) and Ungrounded Rate stays at 0%, so the system never produced an answer that conflicts with its cited evidence on unfamiliar text. Coverage is broadly preserved (91.7% Answer Rate vs 89% on synthetic). The visible costs are a noticeable drop in retrieval quality (Evidence Recall@5 halves from 85% to 52.1%) and one over-confident answer on an unanswerable query (q_t16 about Cisco router configuration), where BM25 keyword overlap on the word "configure" matched NCSC device-security guidance. The broader pattern is consistent with §4.8: when the system fails on unfamiliar data, it fails by being **too confident on a borderline query** rather than by hallucinating new content. This is the conservative-failure-mode result that the design was aimed at, and §5.2 returns to it as a limitation that wider evaluation should target.
+
+### 4.12 Statistical Confidence
+
+Bootstrapped 95% confidence intervals (2,000 resamples, seed = 42) were computed given the modest n = 63.
+
+<a id="tbl-4-11"></a>
+
+**Table 4.11: 95% bootstrap CIs for B3-Generative headline metrics.**
 
 | Metric | Point Estimate | 95% CI |
 | :--- | :--- | :--- |
@@ -709,11 +732,11 @@ Bootstrapped 95% confidence intervals (2,000 resamples, seed = 42) were computed
 
 The wide Answer Rate CI reflects the small number of answered queries; Abstention Accuracy's upper bound at 100% indicates a ceiling effect. Abstention Accuracy is computed on only 12 unanswerable test queries, so each query is worth roughly 8 percentage points: the 94.1% point estimate is directionally meaningful but statistically fragile. With n = 63 across all categories, all point estimates in this chapter are indicative rather than definitive; an n = 200+ stratified evaluation is recommended for follow-up.
 
-### 4.12 Discussion: Achievement Against Objectives
+### 4.13 Discussion: Achievement Against Objectives
 
-<a id="tbl-4-11"></a>
+<a id="tbl-4-12"></a>
 
-**Table 4.11: Objective achievement summary.**
+**Table 4.12: Objective achievement summary.**
 
 | Objective | Target | Achieved | Status |
 | :--- | :--- | :--- | :--- |
@@ -746,9 +769,9 @@ Taken together, the results support a fairly narrow claim: combining confidence-
 
 An honest assessment of the project's limitations is essential to interpret the results in their proper scope.
 
-**L1: Synthetic Corpus.** The evaluation corpus was authored specifically for this project. While this enabled controlled injection of test cases (deliberate contradictions, vague language), the results may not transfer directly to real-world scanned PDFs with OCR noise, complex tables, headers, footers, and multi-language content. The synthetic paragraphs are unusually clean and well-structured, a best-case scenario for the ingestion pipeline.
+**L1: Primary Corpus is Synthetic.** The headline benchmark was authored specifically for this project, which enabled controlled injection of test cases (deliberate contradictions, vague language) but means the synthetic paragraphs are unusually clean compared with real-world scanned PDFs that carry OCR noise, complex tables, and inconsistent boilerplate. The Public Guidance Transfer Stress Test in §4.11 partially addresses this by running B3-Extractive against an unfamiliar OGL-licensed corpus authored by NCSC, ICO, and ACAS; the safety properties (citation precision and ungrounded rate) survived that test, but retrieval recall halved on the unfamiliar text. Wider transfer to noisier real-world documents and to a generative-mode test on the public corpus remains future work (§5.3).
 
-**L2: Golden Set Size.** At 63 queries (44 test, 19 dev), the golden set provides directional evidence but limited statistical power. Bootstrap confidence intervals (§4.11) are wide, particularly for Answer Rate, and a five-percentage-point shift in any headline metric would be within sampling variability. A production evaluation would require several hundred annotated queries for statistically robust conclusions.
+**L2: Golden Set Size.** At 63 queries (44 test, 19 dev), the golden set provides directional evidence but limited statistical power. Bootstrap confidence intervals (§4.12) are wide, particularly for Answer Rate, and a five-percentage-point shift in any headline metric would be within sampling variability. A production evaluation would require several hundred annotated queries for statistically robust conclusions.
 
 **L3: Heuristic Verification Ceiling.** Jaccard token overlap cannot detect semantic entailment, paraphrasing, or implicit support. The verification step's two-thirds hallucination-catch rate represents its ceiling under the current heuristic approach, and §4.8 documents two cases where correctly generated claims were pruned because the LLM paraphrased the source text below the overlap threshold.
 
@@ -920,7 +943,7 @@ Under the UK Data Protection Act 2018 and the General Data Protection Regulation
 
 **Generative AI Policy Compliance.** Under the University of Leeds Generative AI policy, this module (COMP3931/COMP3932) sits in the **Amber category**: Generative AI is permitted as a development, debugging, and limited drafting-support aid, but must not generate substantive academic content presented as the author's own. This project was developed in line with that policy. AI tools were used only in the capacities documented in the usage log (Appendix B.5), and the submitted report is the author's final work: all wording, technical claims, citations, edits, and submission decisions were reviewed, revised, and approved by the author. The University proof-reading policy was reviewed and followed.
 
-**Professional Standards.** The codebase follows professional software-engineering practices: version-controlled development with meaningful commit messages, automated testing with 188 test cases across 38 files, reproducible evaluation via scripted pipelines, and modular architecture with clean separation of concerns. In practical terms, the work was guided by the BCS Code of Conduct's emphasis on the public interest, professional competence, and integrity: the abstention behaviour was treated as a public-interest feature (the system should refuse rather than fabricate); limitations and trade-offs are made explicit in this report (Sections 4.12 and 5.2) rather than hidden; and any AI-assisted parts of the development workflow are disclosed in Appendix B.5 in line with the university's Generative AI policy.
+**Professional Standards.** The codebase follows professional software-engineering practices: version-controlled development with meaningful commit messages, automated testing with 188 test cases across 38 files, reproducible evaluation via scripted pipelines, and modular architecture with clean separation of concerns. In practical terms, the work was guided by the BCS Code of Conduct's emphasis on the public interest, professional competence, and integrity: the abstention behaviour was treated as a public-interest feature (the system should refuse rather than fabricate); limitations and trade-offs are made explicit in this report (Sections 4.13 and 5.2) rather than hidden; and any AI-assisted parts of the development workflow are disclosed in Appendix B.5 in line with the university's Generative AI policy.
 
 ---
 
@@ -1127,3 +1150,24 @@ The following screenshots demonstrate the application's behaviour across three r
 | `test_human_rubric.py` | System | Evaluation | Author-administered qualitative review schema validation |
 
 Additional files (`test_summary_metrics_non_answers.py`, `test_verify_artifacts_smoke.py`, etc.) cover further edge cases and infrastructure validation.
+
+### B.11 Public Guidance Transfer Corpus Provenance (referenced from §4.11)
+
+The Public Guidance Transfer Stress Test in §4.11 is run against a small corpus of public-sector guidance documents. Every source is published under the **Open Government Licence v3.0**, which permits reuse with attribution; no third-party copyrighted material is included. The downloader script `scripts/download_public_corpus.py` records each source's URL, retrieval date, included sections, and content hash, and writes them to `data/public_transfer_corpus/provenance.csv`. The licence statement, included sections, and reasons for inclusion for each source are reproduced below.
+
+<a id="tbl-b-3"></a>
+
+**Table B.3: Public Guidance Transfer Corpus provenance (8 documents, 249 paragraphs total).**
+
+| Source | Title | Theme | Reason for inclusion |
+| :--- | :--- | :--- | :--- |
+| NCSC | Password administration for system owners | cyber security | Closest analogue to synthetic IT Security Addendum password section |
+| NCSC | Bring your own device (BYOD) guidance | cyber security | Closest analogue to synthetic IT Security Addendum BYOD/device section |
+| ICO | Data protection principles | data protection | Closest analogue to synthetic Internal Policy Handbook data-handling section |
+| ICO | Lawful basis for processing (UK GDPR) | data protection | Closest analogue to synthetic handbook lawfulness section |
+| ICO | Individual rights (UK GDPR) | data protection | Closest analogue to synthetic handbook data-subject-rights section |
+| ACAS | Disciplinary procedure: step by step | employment | Closest analogue to synthetic Employee Handbook discipline section |
+| ACAS | Holiday entitlement and pay | employment | Closest analogue to synthetic handbook leave section |
+| ACAS | Working from home and hybrid working | employment | Closest analogue to synthetic handbook remote-work section |
+
+For each source the downloader keeps only the main article body and strips navigation, footer, related-content widgets, and cookie banners. The full URLs, retrieval timestamps, paragraph counts, and twelve-character content hashes are recorded in `data/public_transfer_corpus/provenance.csv`, which ships with the submission package. None of these sources contain personal data or identify any individual; ICO, NCSC, and ACAS terms each confirm Crown copyright with reuse permitted under OGL v3.0. The `scripts/run_transfer_eval.py` wrapper is the single entry point that re-runs the stress test deterministically against the cached corpus.
