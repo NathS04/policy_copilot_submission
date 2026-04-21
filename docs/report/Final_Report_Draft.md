@@ -695,7 +695,7 @@ A small author-administered qualitative review was conducted on 20 queries from 
 | Over-abstention | 4 | 1.0 | 5.0 | 1.0 |
 | **Overall mean** | **20** | **3.7** | **4.7** | **3.1** |
 
-The most revealing pattern is the contrast between answered-and-answerable queries (high across all dimensions) and over-abstention cases (1.0 on Correctness and Usefulness). When B3 answers, it answers well; when it refuses, it refuses with certainty. The two answered-but-unanswerable cases, where the LLM produced plausible responses from tangentially relevant evidence, were caught by their low Groundedness scores. Single-rater design is a limitation; a production evaluation would use independent raters with formal adjudication (Es et al., 2023).
+The most revealing pattern is the contrast between answered-and-answerable queries (high across all dimensions) and over-abstention cases (1.0 on Correctness and Usefulness). When B3 answers, it answers well; when it refuses, it refuses with certainty. The two answered-but-unanswerable cases, where the LLM produced plausible responses from tangentially relevant evidence, were caught by their low Groundedness scores. Single-rater design is a limitation; a production evaluation would use independent raters with formal adjudication (Es et al., 2023). To support that follow-up, a five-axis rubric (Correctness, Groundedness, Citation Usefulness, Usefulness, Trust Calibration) and a participant information / consent text are archived under `eval/human_eval/` so an independent peer-reviewer evaluation can be run against the same 20-query sample without redesign.
 
 ### 4.11 Public Guidance Transfer Stress Test
 
