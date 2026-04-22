@@ -47,6 +47,7 @@ Maps major claims made in the dissertation report to their backing artifacts in 
 | Claim | Report Section | Backing Artifact |
 |-------|---------------|------------------|
 | Risk audit table with 10 failure modes | Section 2.5 + `docs/risk_audit_table.md` | `docs/risk_audit_table.md` |
+| Conclusions and reflection (mapped to marking criterion) | Chapter 5 (§5.1 Conclusions, §5.2 Limitations, §5.3 Future Work, §5.4 Reflection) | `docs/report/Final_Report_Draft.md` |
 | 8-category failure-mode taxonomy with per-baseline counts | Section 4.8 | `eval/analysis/error_taxonomy.md`, `scripts/classify_errors.py`, `results/tables/failure_taxonomy.csv` |
 | 5-axis auditability rubric (evidence relevance, citation faithfulness, abstention correctness, contradiction correctness, failure mode) | Section 2.6 | `eval/rubrics/auditability_rubric.md`, `scripts/compute_auditability_scores.py`, `results/tables/auditability_scores.csv` |
 | Ablation comparison with metric deltas | Section 4.6 / Table 4.5 | `scripts/compare_ablations.py`, `results/tables/ablation_comparison.csv` |
