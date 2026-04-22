@@ -1,0 +1,7 @@
+participant_id,role,correctness,groundedness,citation_usefulness,usefulness,trust_calibration
+P1,MSc CS,5,5,4,4,5
+P2,BSc CS,4,5,5,3,4
+P3,MSc CS,5,4,4,4,5
+P4,BSc CS,4,5,5,4,5
+P5,MSc CS,5,5,4,3,4
+P6,BSc CS,5,5,5,4,5

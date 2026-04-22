@@ -1,0 +1,5 @@
+category,n_samples,correctness,groundedness,trust_calibration
+Direct answers (B3-Generative),8,4.8,4.9,4.5
+Correct abstentions,4,5.0,5.0,4.9
+Over-abstentions,4,3.2,5.0,3.8
+Contradiction probes,4,4.6,4.2,4.6
