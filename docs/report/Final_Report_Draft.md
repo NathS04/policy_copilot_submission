@@ -144,7 +144,23 @@ I would like to thank my supervisor for their guidance and feedback throughout t
   - [5.4 Reflection](#reflection)
 - [List of References](#list-of-references)
 - [Appendix A: Self-appraisal](#appendix-a-self-appraisal)
+  - [A.1 Critical self-evaluation](#a.1-critical-self-evaluation)
+  - [A.2 Personal reflection and lessons learned](#a.2-personal-reflection-and-lessons-learned)
+  - [A.3 Legal, social, ethical and professional issues](#a.3-legal-social-ethical-and-professional-issues)
+    - [A.3.1 Legal issues](#a.3.1-legal-issues)
+    - [A.3.2 Social issues](#a.3.2-social-issues)
+    - [A.3.3 Ethical issues](#a.3.3-ethical-issues)
+    - [A.3.4 Professional issues](#a.3.4-professional-issues)
 - [Appendix B: External Materials](#appendix-b-external-materials)
+  - [B.1 Third-Party Libraries](#b.1-third-party-libraries)
+  - [B.2 Licensing](#b.2-licensing)
+  - [B.3 External Datasets](#b.3-external-datasets)
+  - [B.4 Development Tools](#b.4-development-tools)
+  - [B.5 Generative AI Usage Declaration and Log](#b.5-generative-ai-usage-declaration-and-log)
+  - [B.6 Ethics Checklist](#b.6-ethics-checklist)
+  - [B.7 Evidence of Testing and Operation](#b.7-evidence-of-testing-and-operation)
+  - [B.8 Comparative Analysis Table](#b.8-comparative-analysis-table-referenced-from-1.10)
+  - [B.9 Test Suite Matrix](#b.9-test-suite-matrix-referenced-from-3.9)
 
 ## List of Figures
 
@@ -811,7 +827,7 @@ Zhong, H., Xiao, C., Tu, C., Zhang, T., Liu, Z. and Sun, M. (2020) 'How Does NLP
 
 ## Appendix A: Self-appraisal
 
-### A.1 Critical Reflection on Project Achievement
+### A.1 Critical self-evaluation
 
 This project set out to build a Retrieval-Augmented Generation system that enforces a strict "cited or silent" guarantee for enterprise policy question-answering — a deliberately constrained design philosophy that prioritises precision and auditability over the breadth and fluency that characterise most contemporary RAG deployments. Reflecting on the outcome, the system fulfils this ambition more aggressively than initially anticipated, revealing both the strengths and the costs of a precision-first approach.
 
@@ -823,7 +839,7 @@ B3-Extractive provided a more balanced operating point: 89% Answer Rate with 100
 
 The ablation studies provided the most valuable analytical insight of the project. Prior to running them, the author's working hypothesis was that the verification step would prove to be the most impactful component — after all, it directly implements the "cited or silent" guarantee. The data told a different story: cross-encoder reranking contributed more to every headline metric than verification did. This finding reframed the author's understanding of where reliability originates in a RAG pipeline: not at the verification stage (which catches errors after they occur) but at the retrieval stage (which prevents errors by ensuring high-quality evidence reaches the generator in the first place). This is, in retrospect, an obvious insight — but it was one that only emerged through systematic empirical measurement rather than architectural intuition.
 
-### A.2 Process and Skills Development
+### A.2 Personal reflection and lessons learned
 
 The project demanded competence across multiple technical domains that were, at the outset, unfamiliar to the author in combination: dense retrieval, cross-encoder reranking, LLM prompt engineering, and deterministic verification heuristics. While each of these topics had been encountered individually during the taught modules, integrating them into a single coherent pipeline required a level of systems-engineering thinking that the coursework modules did not fully prepare for.
 
@@ -835,11 +851,11 @@ Three skills developed substantially during the project:
 
 3. **Technical writing under constraint.** Producing a report that satisfies the university's marking criteria while accurately representing a complex system required iteration. Early drafts were either too implementation-focused (listing code without justification) or too abstract (discussing design philosophy without concrete evidence). The final report attempts to balance both registers — a skill that will serve the author well in future professional technical writing.
 
-### A.3 Legal, Social, Ethical, and Professional Issues
+### A.3 Legal, social, ethical and professional issues
 
 The LSEP framework requires consideration of the broader implications of the system beyond its technical performance. Each dimension is addressed individually below, in accordance with the School of Computing's self-assessment requirements.
 
-#### A.3.1 Legal Issues
+#### A.3.1 Legal issues
 
 **Privacy and Data Protection.** RAG architectures offer a structural privacy advantage over fine-tuning: because documents are retrieved at query time rather than embedded in model weights, access control can be implemented at the retrieval layer. An employee's query would only retrieve documents they are authorised to access. While this access-control mechanism is not implemented in the current prototype — all documents are accessible to all users — the architecture supports it without modification, since the `Retriever` class accepts a document-filter parameter that could restrict the search space per-user. This design choice was deliberate, anticipating a deployment scenario where different employees have different policy-access levels.
 
@@ -847,7 +863,7 @@ Under the UK Data Protection Act 2018 and the General Data Protection Regulation
 
 **Intellectual Property.** All third-party libraries used in this project are released under permissive open-source licences (MIT, Apache 2.0, BSD-3; see Appendix B.1). The synthetic corpus is original work generated for this project and raises no intellectual property concerns. The Computer Misuse Act 1990 is not directly applicable, as the system does not access any external systems without authorisation — all retrieval operates over a locally stored, self-contained corpus.
 
-#### A.3.2 Social Issues
+#### A.3.2 Social issues
 
 **Automation Bias and Over-Trust.** The most significant social concern is automation bias — the tendency for users to accept system-generated answers uncritically, particularly when those answers carry a "verified" label. Policy Copilot's verification mechanism could paradoxically increase this risk: by presenting answers as "citation-verified," the system may create a false sense of certainty that discourages users from consulting the source documents directly. To mitigate this, the Streamlit UI explicitly labels all answers as "AI-Generated — Verify Against Source" and displays the raw cited paragraphs alongside the generated answer, enabling the user to perform their own verification. The effectiveness of this mitigation depends, however, on user behaviour — a factor outside the system's control.
 
@@ -855,7 +871,7 @@ Under the UK Data Protection Act 2018 and the General Data Protection Regulation
 
 **Digital Equity.** Not all employees within an organisation may have equal access to AI-mediated policy tools. Deployment decisions should consider whether the system creates an information advantage for digitally literate employees at the expense of those less comfortable with technology-mediated information retrieval.
 
-#### A.3.3 Ethical Issues
+#### A.3.3 Ethical issues
 
 **Accountability and Auditability.** Every query processed by Policy Copilot generates a structured log entry containing the original question, the retrieved paragraphs, the reranker scores, the raw LLM output, the verification decisions (which claims were kept, which were pruned, and why), and the final response. This log-everything architecture enables post-hoc auditing of any answer the system has ever produced — a property that appears essential for compliance environments where decisions based on policy interpretations may later be challenged. The provenance chain is tested by `test_backend_provenance.py`, confirming that no response can be returned without an associated audit trail.
 
@@ -863,7 +879,7 @@ Under the UK Data Protection Act 2018 and the General Data Protection Regulation
 
 **Environmental Impact.** The environmental cost of large language model inference warrants acknowledgement. Strubell et al. (2019) estimate that the carbon footprint of training a single large NLP model is equivalent to approximately 242,231 miles driven by an average car. While the inference-time footprint of GPT-4o-mini is orders of magnitude smaller than training-time costs, energy consumption remains non-trivial at scale. The design of Policy Copilot partially mitigates this: the offline baselines (B2-Extractive, B3-Extractive) require no LLM calls whatsoever, and the bi-encoder (MiniLM, 22M parameters) and cross-encoder (ms-marco-MiniLM, 22M parameters) are both lightweight models chosen partly for their low computational footprint.
 
-#### A.3.4 Professional Issues
+#### A.3.4 Professional issues
 
 **Generative AI Policy Compliance.** Under the University of Leeds Generative AI policy, this module (COMP3931/COMP3932) sits in the **Amber category** — Generative AI is permitted as a development aid (e.g., for code debugging, syntax assistance, and brainstorming) but must not be used to generate substantive academic content presented as the author's own. This project was developed in line with that policy: AI tools were used in the limited capacities documented in the usage log (Appendix B.5); all prose in this report was written by the author and no sections were generated by an AI system and presented as the author's own work. The University proof-reading policy was reviewed and followed — proof-readers may identify errors but must not rewrite substantive content.
 
