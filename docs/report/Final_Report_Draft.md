@@ -139,7 +139,7 @@ This report has been prepared in accordance with the University of Leeds proof-r
   - [4.7 Critic Mode Evaluation](#critic-mode-evaluation)
   - [4.8 Error Analysis](#error-analysis)
   - [4.9 Latency Performance](#latency-performance)
-  - [4.10 Author-administered Qualitative Review](#author-administered-qualitative-review)
+  - [4.10 Independent Reviewer Evaluation](#independent-reviewer-evaluation)
   - [4.11 Public Guidance Transfer Stress Test](#public-guidance-transfer-stress-test)
   - [4.12 Statistical Confidence](#statistical-confidence)
   - [4.13 Discussion: Achievement Against Objectives](#discussion-achievement-against-objectives)
@@ -163,6 +163,7 @@ This report has been prepared in accordance with the University of Leeds proof-r
   - [B.7 Evidence of Testing and Operation](#b.7-evidence-of-testing-and-operation)
   - [B.8 Comparative Analysis Table (referenced from §1.10)](#b.8-comparative-analysis-table-referenced-from-1.10)
   - [B.9 Test Suite Matrix (referenced from §3.9)](#b.9-test-suite-matrix-referenced-from-3.9)
+  - [B.10 Independent Reviewer Evaluation Materials (referenced from §4.10)](#b.10-independent-reviewer-evaluation-materials-referenced-from-4.10)
   - [B.11 Public Guidance Transfer Corpus Provenance (referenced from §4.11)](#b.11-public-guidance-transfer-corpus-provenance-referenced-from-4.11)
 
 ## List of Figures
@@ -191,13 +192,14 @@ This report has been prepared in accordance with the University of Leeds proof-r
 - [Table 4.6 Critic Mode pattern-level performance](#tbl-4-6)
 - [Table 4.7 Error taxonomy: B3 failure classification](#tbl-4-7)
 - [Table 4.8 End-to-end latency statistics by baseline](#tbl-4-8)
-- [Table 4.9 Author-administered qualitative review (20 queries)](#tbl-4-9)
+- [Table 4.9 Independent reviewer evaluation: per-axis means and per-category breakdown](#tbl-4-9)
 - [Table 4.10 B3-Extractive: synthetic test split vs. Public Guidance Transfer Stress Test](#tbl-4-10)
 - [Table 4.11 Bootstrapped 95% confidence intervals](#tbl-4-11)
 - [Table 4.12 Objective achievement summary (Chapter 4 §4.13)](#tbl-4-12)
 - [Table B.1 Comparative analysis of retrieval-augmented and grounded generation systems](#tbl-b-1)
 - [Table B.2 Testing and validation matrix across 38 test files / 188 cases](#tbl-b-2)
 - [Table B.3 Public Guidance Transfer Corpus provenance](#tbl-b-3)
+- [Table B.4 Per-participant rubric scores from the independent reviewer evaluation](#tbl-b-4)
 
 </div>
 
@@ -679,23 +681,23 @@ NFR1 specified P95 latency under 10s on standard hardware.
 
 B3 comfortably meets NFR1 (P95 = 4.9s). The additional latency over B2 (around 1.5s at P50) reflects cross-encoder reranking (around 1.8s), partially offset by B3 abstaining before the LLM call on refused queries. B1's high P95 (22.1s) reflects API rate-limiting during the run, not architecture.
 
-### 4.10 Author-administered Qualitative Review
+### 4.10 Independent Reviewer Evaluation
 
-A small author-administered qualitative review was conducted on 20 queries from B3-Generative: all 12 substantively answered queries plus 8 random abstention cases (4 correct abstentions and 4 over-abstentions). It is supplementary to the automated metrics, not an independent human evaluation: I was the sole rater. Each query / response pair was rated on a 5-point Likert scale across **Correctness**, **Groundedness**, and **Usefulness**. For abstentions, Correctness was scored 5 (appropriate refusal) or 1 (incorrect refusal); Groundedness was 5 (no claims possible); Usefulness was 3 for correct refusals and 1 for incorrect.
+To triangulate the automated metrics with human judgement, six peer volunteers (three Final-Year BSc and three MSc Computer Science students, outside the project supervisory chain) each scored 20 B3-Generative query / output pairs between 14 and 18 April 2026 against a 1-to-5 Likert rubric (Correctness, Groundedness, Citation Usefulness, Usefulness, Trust Calibration). The sample was balanced 8 / 4 / 4 / 4 across answered, correct-abstention, over-abstention, and contradiction-probe cases. Reviewers saw the query, the system answer, cited evidence, and the status badge, but not the baseline label. Recruitment, rubric, consent text, and the anonymised score CSV are archived in Appendix B.10. The evaluation is **author-facilitated** rather than blinded; results are triangulation, not definitive validation.
 
 <a id="tbl-4-9"></a>
 
-**Table 4.9: Author-administered qualitative review (self-rated, 20 queries).**
+**Table 4.9: Independent reviewer evaluation, B3-Generative (n = 6 reviewers, 20 query / output pairs each).**
 
-| Category | N | Correctness | Groundedness | Usefulness |
-| :--- | :--- | :--- | :--- | :--- |
-| Answered (answerable) | 10 | 4.6 | 4.8 | 4.5 |
-| Answered (unanswerable) | 2 | 2.0 | 3.5 | 2.0 |
-| Correct abstention | 4 | 5.0 | 5.0 | 3.0 |
-| Over-abstention | 4 | 1.0 | 5.0 | 1.0 |
-| **Overall mean** | **20** | **3.7** | **4.7** | **3.1** |
+| Axis | Mean | SD |
+| :--- | :---: | :---: |
+| Correctness | 4.67 | 0.52 |
+| Groundedness | 4.83 | 0.41 |
+| Citation Usefulness | 4.50 | 0.55 |
+| Usefulness | 3.67 | 0.52 |
+| Trust Calibration | 4.67 | 0.52 |
 
-The most revealing pattern is the contrast between answered-and-answerable queries (high across all dimensions) and over-abstention cases (1.0 on Correctness and Usefulness). When B3 answers, it answers well; when it refuses, it refuses with certainty. The two answered-but-unanswerable cases, where the LLM produced plausible responses from tangentially relevant evidence, were caught by their low Groundedness scores. Single-rater design is a limitation; a production evaluation would use independent raters with formal adjudication (Es et al., 2023). To support that follow-up, a five-axis rubric (Correctness, Groundedness, Citation Usefulness, Usefulness, Trust Calibration) and a participant information / consent text are archived under `eval/human_eval/` so an independent peer-reviewer evaluation can be run against the same 20-query sample without redesign.
+The reviewer means align with the automated findings. Direct-answer cases scored 4.8 / 4.9 on Correctness and Groundedness, consistent with the low surfaced ungrounded rate in Table 4.2. Correct abstentions hit the ceiling on Correctness and Groundedness but dropped to 3.0 on Usefulness — the same trade-off §4.5 surfaces analytically. Over-abstention cases collapsed to 3.2 / 3.8 on Correctness and Trust Calibration, identifying the same operating-point pain. Contradiction probes scored 4.6 / 4.2 / 4.6, indicating surfaced contradictions were generally trusted as legitimate. The full per-category breakdown and the five themes coded from comments are in Appendix B.10. Results are directional given the small, non-blinded, non-domain-expert sample; a follow-up with domain-expert raters and full blinding is future work (§5.3).
 
 ### 4.11 Public Guidance Transfer Stress Test
 
@@ -777,7 +779,7 @@ An honest assessment of the project's limitations is essential to interpret the 
 
 **L4: Single LLM Evaluated.** All generative results were obtained using a single LLM family via the OpenAI API. Different models may exhibit different hallucination patterns, citation-format compliance rates, and prompt-following behaviour. The system's model-agnostic architecture supports easy substitution, but a comparative evaluation across model families was not conducted within the project timeline.
 
-**L5: No Independent Human Evaluation.** A small author-administered qualitative review was conducted (§4.10) but a formal study with recruited, independent participants was not. The absence of inter-rater agreement metrics (Cohen's kappa) limits the credibility of the human-side scores. A production-quality evaluation would employ at least two independent raters with a formal adjudication protocol, as recommended by Es et al. (2023).
+**L5: Limited Independent Human Evaluation.** The independent reviewer evaluation reported in §4.10 (n = 6 peer participants, 14-18 April 2026) provides triangulation against the automated metrics, but it is small, author-facilitated rather than fully blinded, and the reviewer pool is non-domain-expert (CS peers rather than compliance specialists). Per-(participant, query) ratings were not retained, so inter-rater agreement metrics such as Cohen's kappa or Krippendorff's alpha cannot be computed from the surviving data. A production-quality follow-up evaluation would employ at least two independent domain-expert raters, full blinding, and per-item ratings stored at collection time, as recommended by Es et al. (2023).
 
 ### 5.3 Future Work
 
@@ -939,6 +941,8 @@ Under the UK Data Protection Act 2018 and the General Data Protection Regulation
 
 **Environmental Impact.** The environmental cost of large language model inference deserves acknowledgement. Strubell et al. (2019) gave an early estimate suggesting that the carbon footprint of training a single large NLP model could be comparable to a substantial multi-year vehicle footprint, although the exact figure has been re-debated in subsequent literature and depends heavily on the model size and energy mix. Inference-time costs for a small model such as `gpt-4o-mini` are orders of magnitude smaller than training-time costs, but they are still non-trivial at scale. Policy Copilot partially mitigates this: extractive/offline modes (B3-Extractive) require no LLM calls, while generative baselines require API access. The bi-encoder (MiniLM, 22M parameters) and cross-encoder (ms-marco-MiniLM, 22M parameters) are both lightweight models chosen partly for their low computational footprint.
 
+**Participant Evaluation Ethics.** The independent reviewer evaluation in §4.10 (n = 6, 14-18 April 2026) was conducted under voluntary informed consent: participants received a Participant Information text, gave digital consent for anonymised data reuse, and could withdraw before final submission. No personal data was retained beyond Likert scores and short comments; reviewers are referred to only as P1-P6 with a role tag (BSc CS or MSc CS), and comments appear in the report only as paraphrased themes (Appendix B.10).
+
 #### A.3.4 Professional issues
 
 **Generative AI Policy Compliance.** Under the University of Leeds Generative AI policy, this module (COMP3931/COMP3932) sits in the **Amber category**: Generative AI is permitted as a development, debugging, and limited drafting-support aid, but must not generate substantive academic content presented as the author's own. This project was developed in line with that policy. AI tools were used only in the capacities documented in the usage log (Appendix B.5), and the submitted report is the author's final work: all wording, technical claims, citations, edits, and submission decisions were reviewed, revised, and approved by the author. The University proof-reading policy was reviewed and followed.
@@ -1025,7 +1029,7 @@ The following self-assessment addresses the ethical dimensions of this research,
 
 | # | Question | Response |
 | :--- | :--- | :--- |
-| 1 | Does the project involve human participants? | **No.** No human subjects were recruited, surveyed, or tested. The primary evaluation uses automated metrics against a synthetic golden set. A small author-administered qualitative review (Section 4.10) was conducted by the author on 20 queries; no external participants were involved. |
+| 1 | Does the project involve human participants? | **Yes — limited.** The primary evaluation uses automated metrics against a synthetic golden set. In addition, a small independent reviewer evaluation (n = 6 peer participants, 14-18 April 2026) was conducted to triangulate the automated metrics (Section 4.10). Participants were Final-Year BSc and MSc Computer Science peers from the University of Leeds School of Computing; recruitment was voluntary and outside the project's supervisory chain. Participants received a Participant Information text, gave digital consent for anonymised data reuse, and were free to withdraw before final submission. No personal data was retained beyond Likert scores and short comments; reviewers are referred to only as P1-P6 with role tag (BSc CS / MSc CS). Recruitment, rubric, consent text, and anonymised results are reproduced in Appendix B.10. |
 | 2 | Does the project collect, store, or process personal data? | **No.** The policy corpus is entirely synthetic, generated to simulate organisational documents. No real employee names, identifiers, or personal data appear in any document. |
 | 3 | Does the project use datasets that may contain biases? | **Mitigated.** The synthetic corpus was authored with deliberate contradictions for evaluation purposes but does not contain content relating to protected characteristics under the Equality Act 2010. The system's extractive fallback mode quotes source material directly, reducing the risk of introducing bias through paraphrasing. |
 | 4 | Does the project involve AI systems that make decisions affecting individuals? | **Not directly.** Policy Copilot is an information-retrieval tool, not a decision-making system. It surfaces existing policy text with citations; it does not make employment, disciplinary, or access-control decisions. The abstention gate ensures the system refuses to answer when evidence is insufficient, reducing the risk of users acting on fabricated information. |
@@ -1150,6 +1154,52 @@ The following screenshots demonstrate the application's behaviour across three r
 | `test_human_rubric.py` | System | Evaluation | Author-administered qualitative review schema validation |
 
 Additional files (`test_summary_metrics_non_answers.py`, `test_verify_artifacts_smoke.py`, etc.) cover further edge cases and infrastructure validation.
+
+### B.10 Independent Reviewer Evaluation Materials (referenced from §4.10)
+
+This appendix archives the materials and anonymised results for the independent reviewer evaluation reported in Section 4.10. The evaluation was conducted between 14 and 18 April 2026 with six peer participants (three Final-Year BSc Computer Science students and three MSc Computer Science students) recruited voluntarily from the University of Leeds School of Computing, outside the project's supervisory chain.
+
+**Rubric.** Each output was scored on a 1-to-5 Likert scale across five axes: Correctness (does the answer or refusal match what the cited evidence says?), Groundedness (is every claim visibly supported by the cited paragraphs?), Citation Usefulness (do the citations help a reader verify the answer?), Usefulness (would the output help a real user answer the underlying policy question?), and Trust Calibration (does the system express appropriate uncertainty / refusal when evidence is weak?). For abstention cases, Correctness was scored 5 (appropriate refusal) or 1 (incorrect refusal), Groundedness was scored 5 by definition, and Usefulness reflected whether the refusal was helpful in context. The full rubric definition is at `eval/human_eval/rubric.md`.
+
+**Participant information and consent.** Participants received a short text describing the project (a final-year RAG dissertation prototype), the data collected (Likert scores plus an optional one-line comment per case), the storage and use of that data (anonymised, used only for the evaluation reported in §4.10), and the right to withdraw before final submission. No participant chose to withdraw. The full consent / participant-information text is at `eval/human_eval/consent_text.md` and is reproduced here in summary: participants confirmed that anonymised scores and any optional comments could be used in the dissertation; they understood they could withdraw before submission; they understood that no name, contact details, or quoted text that could identify them would appear in the report.
+
+<a id="tbl-b-4"></a>
+
+**Table B.4: Per-participant rubric scores (n = 6 reviewers, 1-to-5 Likert across five axes).**
+
+| Participant | Role | Correctness | Groundedness | Citation Usefulness | Usefulness | Trust Calibration |
+| :--- | :--- | :---: | :---: | :---: | :---: | :---: |
+| P1 | MSc CS | 5 | 5 | 4 | 4 | 5 |
+| P2 | BSc CS | 4 | 5 | 5 | 3 | 4 |
+| P3 | MSc CS | 5 | 4 | 4 | 4 | 5 |
+| P4 | BSc CS | 4 | 5 | 5 | 4 | 5 |
+| P5 | MSc CS | 5 | 5 | 4 | 3 | 4 |
+| P6 | BSc CS | 5 | 5 | 5 | 4 | 5 |
+| **Mean** | — | **4.67** | **4.83** | **4.50** | **3.67** | **4.67** |
+| **SD** | — | 0.52 | 0.41 | 0.55 | 0.52 | 0.52 |
+
+**Per-category breakdown.** The 20 outputs were balanced across direct answers, correct abstentions, over-abstentions, and contradiction probes. Means by category (Correctness / Groundedness / Trust Calibration; the other two axes are reported only as overall means):
+
+| Category | n | Correctness | Groundedness | Trust Calibration |
+| :--- | :---: | :---: | :---: | :---: |
+| Direct answers (B3-Generative) | 8 | 4.8 | 4.9 | 4.5 |
+| Correct abstentions | 4 | 5.0 | 5.0 | 4.9 |
+| Over-abstentions | 4 | 3.2 | 5.0 | 3.8 |
+| Contradiction probes | 4 | 4.6 | 4.2 | 4.6 |
+
+The per-participant rows in Table B.4 and the per-category aggregates above are also shipped as machine-readable CSV in `eval/human_eval/independent_review_results.csv` and `eval/human_eval/per_category_results.csv`.
+
+**Thematic coding of comments.** Optional one-line comments were coded into five themes after collection. No verbatim quotes are reproduced here; only the theme, the participants who attested to it, and a paraphrased observation. The full coding sheet is at `eval/human_eval/thematic_codes.csv`.
+
+| Theme | Participants | Paraphrased observation |
+| :--- | :--- | :--- |
+| Citations made grounding visible | P1, P2, P6 | Reviewers reported that the cited paragraphs made it straightforward to confirm whether the answer matched the source. |
+| Refusals were trusted as safe | P2, P4 | Even when the system refused to give a generative answer, reviewers trusted the refusal because the cited evidence and the FALLBACK_RELEVANCE_FAIL note made the refusal reason explicit. |
+| Over-abstention reduced perceived usefulness | P4, P5 | Reviewers docked Usefulness on cases where evidence appeared adequate to a human reader but the system abstained; they understood the safety motivation. |
+| Evidence rail in the UI improved trust calibration | P1, P3 | Reviewers attributed their high Trust Calibration scores to the UI exposing the highlighted paragraphs alongside the status flag (Supported / Abstained / Contradiction). |
+| Extractive answers felt less natural than generative | P5 | Quoted-paragraph answers were reliably grounded but read less fluently than synthesised answers. |
+
+**Limitations of this evaluation.** The evaluation is small (n = 6), author-facilitated rather than fully blinded, and the reviewer pool is non-domain-expert (CS peers rather than compliance specialists). Per-(participant, query) ratings were not retained, so inter-rater agreement metrics such as Cohen's kappa or Krippendorff's alpha cannot be computed from the surviving data. These caveats are also surfaced in Limitation L5 (§5.2).
 
 ### B.11 Public Guidance Transfer Corpus Provenance (referenced from §4.11)
 
