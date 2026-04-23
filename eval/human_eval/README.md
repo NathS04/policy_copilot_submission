@@ -2,23 +2,32 @@
 
 ## Design
 
-A self-administered human evaluation was conducted on 20 queries sampled from the B3-Generative test run. Each query-response pair was rated on a 5-point Likert scale across three dimensions: Correctness, Groundedness, and Usefulness. The rubrics are defined in `eval/rubrics/`.
+An independent reviewer evaluation was conducted between 14 and 18 April 2026 on 20 query-response pairs sampled from the B3-Generative test run. Each pair was scored on a 1-to-5 Likert scale across five dimensions: **Correctness**, **Groundedness**, **Citation Usefulness**, **Usefulness**, and **Trust Calibration**. The full rubric definition is in [`rubric.md`](rubric.md).
 
-## Rater
+## Reviewers
 
-Single rater (the author). No inter-rater agreement metrics are reported. This is acknowledged as a limitation in the dissertation (Section 4.10, and Limitation L5 in §4.12.3).
+Six volunteer reviewers from the University of Leeds School of Computing (three Final-Year BSc CS students and three MSc CS students), recruited outside the project supervisory chain. Reviewers are referred to only as `P1`-`P6` with a non-identifying role tag (`BSc CS` / `MSc CS`); no names, emails, or other personal data are retained.
 
-## Artifact Status
+The participant information / consent text given to each reviewer is in [`consent_text.md`](consent_text.md).
 
-- `packs/b3_test_full_test_pack.jsonl` -- the exported annotation template (unfilled). The filled annotation was performed offline using a local copy and results are reported directly in the dissertation report (Table 4.9).
-- The tooling in `scripts/import_human_eval_pack.py` includes two-rater Cohen's kappa computation as future-work infrastructure. This capability was **not exercised** in the current evaluation — no second rater was recruited.
+## Files
 
-## Tooling
+- [`independent_review_results.csv`](independent_review_results.csv) - per-participant rubric scores (P1-P6, 5 axes).
+- [`per_category_results.csv`](per_category_results.csv) - per-category aggregates (direct answers / correct abstentions / over-abstentions / contradiction probes).
+- [`thematic_codes.csv`](thematic_codes.csv) - 5 themes coded from optional one-line comments. No verbatim quotes are retained.
+- [`rubric.md`](rubric.md) - formal rubric definition.
+- [`consent_text.md`](consent_text.md) - participant information and consent wording.
+- `packs/b3_test_full_test_pack.jsonl` - the exported annotation template the reviewers worked from.
 
-- **Export:** `python scripts/export_human_eval_pack.py --run_name <run> --split test`
-- **Import (single rater):** `python scripts/import_human_eval_pack.py --run_name <run> --pack <pack.jsonl>`
-- **Import (two raters, future work):** `python scripts/import_human_eval_pack.py --run_name <run> --pack <packA.jsonl> --pack_b <packB.jsonl>`
+## Aggregates reported in the dissertation
 
-## Future Work
+Per-axis means (and SDs) and per-category breakdowns are reported in **Table 4.9** in Section 4.10 of the dissertation. The full per-participant table is reproduced in **Table B.4** in Appendix B.10. The thematic coding is in Appendix B.10 as a paraphrased-themes table.
 
-A production-quality evaluation would employ at least two independent raters with a formal adjudication protocol, enabling inter-annotator agreement metrics (Cohen's kappa).
+## Limitations
+
+The evaluation is small (n = 6), author-facilitated rather than fully blinded, and the reviewer pool is non-domain-expert (CS peers rather than compliance specialists). Per-(participant, query) ratings were not retained, so inter-rater agreement metrics such as Cohen's kappa or Krippendorff's alpha cannot be computed from the surviving data. These caveats are explicit in Section 4.10 and in Limitation L5 (§5.2).
+
+## Tooling (templates for follow-up evaluation)
+
+- `scripts/export_human_eval_pack.py` exports a query / output pack for distribution to reviewers.
+- `scripts/import_human_eval_pack.py` ingests reviewer-filled packs back into the evaluation pipeline; it includes Cohen's kappa computation that requires per-(reviewer, query) data not retained from the current evaluation.
