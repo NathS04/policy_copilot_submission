@@ -1,0 +1,6 @@
+axis,n,mean,stdev,min,max
+correctness,6,4.67,0.52,4,5
+groundedness,6,4.83,0.41,4,5
+citation_usefulness,6,4.5,0.55,4,5
+usefulness,6,3.67,0.52,3,4
+trust_calibration,6,4.67,0.52,4,5
