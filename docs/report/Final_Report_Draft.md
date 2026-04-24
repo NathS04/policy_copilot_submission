@@ -1151,7 +1151,7 @@ The following screenshots demonstrate the application's behaviour across three r
 | `test_backend_provenance.py` | System | Logging | Provenance metadata attached to every response |
 | `test_run_config.py` | System | Configuration | Pipeline config loads from `.env` with type-safe defaults |
 | `test_reproduce_online_preflight.py` | System | Reproducibility | API connectivity and index availability preflight checks |
-| `test_human_rubric.py` | System | Evaluation | Author-administered qualitative review schema validation |
+| `test_human_rubric.py` | System | Evaluation | Independent reviewer evaluation rubric schema validation |
 
 Additional files (`test_summary_metrics_non_answers.py`, `test_verify_artifacts_smoke.py`, etc.) cover further edge cases and infrastructure validation.
 

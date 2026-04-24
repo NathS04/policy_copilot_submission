@@ -1,7 +1,7 @@
 # Evaluator Instructions: Policy Copilot
 
 This repository has been hardened for reproducibility and auditability.
-Follow these steps to verify the "Codebase 100/100" status.
+Follow these steps to verify the final reproducibility contract.
 
 ## 1. System Requirements
 - Python 3.10+
