@@ -771,6 +771,15 @@ def _restyle_link_runs(paragraph, font_pt=11, bold=False):
                 rpr.append(b)
 
 
+def _normalize_pagemap_key(text: str) -> str:
+    """Normalise whitespace for pagemap lookups. Pandoc's smart-typography
+    inserts non-breaking spaces (\u00a0) after abbreviations like "vs." in
+    the rendered docx, which breaks string equality with the pagemap keys
+    built from the markdown source. Collapse NBSP and runs of whitespace
+    to a single regular space so lookups are robust."""
+    return re.sub(r"\s+", " ", text.replace("\u00a0", " ")).strip()
+
+
 def style_manual_toc(doc, pagemap):
     """Convert the pandoc-rendered TOC bullet list into a clean indented TOC
     (no bullet markers, depth-based indentation, dot-leader tab stop, and
@@ -795,6 +804,7 @@ def style_manual_toc(doc, pagemap):
             break
 
     normal_style = doc.styles["Normal"]
+    norm_pagemap = {_normalize_pagemap_key(k): v for k, v in pagemap.items()}
     styled = 0
     matched_pages = 0
     for j in range(toc_idx + 1, end_idx):
@@ -829,8 +839,9 @@ def style_manual_toc(doc, pagemap):
             text.startswith("Chapter ") or text.startswith("Appendix ")
         )
         _restyle_link_runs(p, font_pt=11, bold=is_top_chapter)
-        # Dot-leader tab stop and page number injection.
         page = pagemap.get(text)
+        if page is None:
+            page = norm_pagemap.get(_normalize_pagemap_key(text))
         if page is not None:
             _add_dot_leader_tab(p, position_pt=435 - indent_pts)
             _append_page_number_run(p, page, font_pt=11, bold=is_top_chapter)
@@ -864,6 +875,7 @@ def style_manual_loft(doc, heading_text, pagemap):
             break
 
     normal_style = doc.styles["Normal"]
+    norm_pagemap = {_normalize_pagemap_key(k): v for k, v in pagemap.items()}
     styled = 0
     matched_pages = 0
     for j in range(head_idx + 1, end_idx):
@@ -884,6 +896,8 @@ def style_manual_loft(doc, heading_text, pagemap):
         p.paragraph_format.space_after = Pt(2)
         _restyle_link_runs(p, font_pt=11, bold=False)
         page = pagemap.get(text)
+        if page is None:
+            page = norm_pagemap.get(_normalize_pagemap_key(text))
         if page is not None:
             _add_dot_leader_tab(p, position_pt=421)
             _append_page_number_run(p, page, font_pt=11, bold=False)

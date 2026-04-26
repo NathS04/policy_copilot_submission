@@ -6,7 +6,7 @@ An independent reviewer evaluation was conducted between 14 and 18 April 2026 on
 
 ## Reviewers
 
-Six volunteer reviewers from the University of Leeds School of Computing (three Final-Year BSc CS students and three MSc CS students), recruited outside the project supervisory chain. Reviewers are referred to only as `P1`-`P6` with a non-identifying role tag (`BSc CS` / `MSc CS`); no names, emails, or other personal data are retained.
+Six volunteer reviewers from the University of Leeds School of Computer Science (three Final-Year BSc CS students and three MSc CS students), recruited outside the project supervisory chain. Reviewers are referred to only as `P1`-`P6` with a non-identifying role tag (`BSc CS` / `MSc CS`); no names, emails, or other personal data are retained.
 
 The participant information / consent text given to each reviewer is in [`consent_text.md`](consent_text.md).
 

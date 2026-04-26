@@ -193,13 +193,13 @@ This report has been prepared in accordance with the University of Leeds proof-r
 - [Table 4.7 Error taxonomy: B3 failure classification](#tbl-4-7)
 - [Table 4.8 End-to-end latency statistics by baseline](#tbl-4-8)
 - [Table 4.9 Independent reviewer evaluation: per-axis means and per-category breakdown](#tbl-4-9)
-- [Table 4.10 B3-Extractive: synthetic test split vs. Public Guidance Transfer Stress Test](#tbl-4-10)
+- [Table 4.10 B3-Extractive: synthetic test split versus Public Guidance Transfer Stress Test](#tbl-4-10)
 - [Table 4.11 Bootstrapped 95% confidence intervals](#tbl-4-11)
 - [Table 4.12 Objective achievement summary (Chapter 4 §4.13)](#tbl-4-12)
 - [Table B.1 Comparative analysis of retrieval-augmented and grounded generation systems](#tbl-b-1)
 - [Table B.2 Testing and validation matrix across 38 test files / 188 cases](#tbl-b-2)
-- [Table B.3 Public Guidance Transfer Corpus provenance](#tbl-b-3)
-- [Table B.4 Per-participant rubric scores from the independent reviewer evaluation](#tbl-b-4)
+- [Table B.3 Per-participant rubric scores from the independent reviewer evaluation](#tbl-b-3)
+- [Table B.4 Public Guidance Transfer Corpus provenance](#tbl-b-4)
 
 </div>
 
@@ -915,7 +915,7 @@ Three skills developed substantially during the project:
 
 ### A.3 Legal, social, ethical and professional issues
 
-The LSEP framework requires consideration of the broader implications of the system beyond its technical performance. Each dimension is addressed individually below, in accordance with the School of Computing's self-assessment requirements.
+The LSEP framework requires consideration of the broader implications of the system beyond its technical performance. Each dimension is addressed individually below, in accordance with the School of Computer Science's self-assessment requirements.
 
 #### A.3.1 Legal issues
 
@@ -1025,11 +1025,11 @@ AI tools were used for development assistance, debugging, structuring support, a
 
 ### B.6 Ethics Checklist
 
-The following self-assessment addresses the ethical dimensions of this research, in accordance with the School of Computing's framework for software engineering projects.
+The following self-assessment addresses the ethical dimensions of this research, in accordance with the School of Computer Science's framework for software engineering projects.
 
 | # | Question | Response |
 | :--- | :--- | :--- |
-| 1 | Does the project involve human participants? | **Yes — limited.** The primary evaluation uses automated metrics against a synthetic golden set. In addition, a small independent reviewer evaluation (n = 6 peer participants, 14-18 April 2026) was conducted to triangulate the automated metrics (Section 4.10). Participants were Final-Year BSc and MSc Computer Science peers from the University of Leeds School of Computing; recruitment was voluntary and outside the project's supervisory chain. Participants received a Participant Information text, gave digital consent for anonymised data reuse, and were free to withdraw before final submission. No personal data was retained beyond Likert scores and short comments; reviewers are referred to only as P1-P6 with role tag (BSc CS / MSc CS). Recruitment, rubric, consent text, and anonymised results are reproduced in Appendix B.10. |
+| 1 | Does the project involve human participants? | **Yes — limited.** The primary evaluation uses automated metrics against a synthetic golden set. In addition, a small independent reviewer evaluation (n = 6 peer participants, 14-18 April 2026) was conducted to triangulate the automated metrics (Section 4.10). Participants were Final-Year BSc and MSc Computer Science peers from the University of Leeds School of Computer Science; recruitment was voluntary and outside the project's supervisory chain. Participants received a Participant Information text, gave digital consent for anonymised data reuse, and were free to withdraw before final submission. No personal data was retained beyond Likert scores and short comments; reviewers are referred to only as P1-P6 with role tag (BSc CS / MSc CS). Recruitment, rubric, consent text, and anonymised results are reproduced in Appendix B.10. |
 | 2 | Does the project collect, store, or process personal data? | **No.** The policy corpus is entirely synthetic, generated to simulate organisational documents. No real employee names, identifiers, or personal data appear in any document. |
 | 3 | Does the project use datasets that may contain biases? | **Mitigated.** The synthetic corpus was authored with deliberate contradictions for evaluation purposes but does not contain content relating to protected characteristics under the Equality Act 2010. The system's extractive fallback mode quotes source material directly, reducing the risk of introducing bias through paraphrasing. |
 | 4 | Does the project involve AI systems that make decisions affecting individuals? | **Not directly.** Policy Copilot is an information-retrieval tool, not a decision-making system. It surfaces existing policy text with citations; it does not make employment, disciplinary, or access-control decisions. The abstention gate ensures the system refuses to answer when evidence is insufficient, reducing the risk of users acting on fabricated information. |
@@ -1157,7 +1157,7 @@ Additional files (`test_summary_metrics_non_answers.py`, `test_verify_artifacts_
 
 ### B.10 Independent Reviewer Evaluation Materials (referenced from §4.10)
 
-This appendix archives the materials and anonymised results for the independent reviewer evaluation reported in Section 4.10. The evaluation was conducted between 14 and 18 April 2026 with six peer participants (three Final-Year BSc Computer Science students and three MSc Computer Science students) recruited voluntarily from the University of Leeds School of Computing, outside the project's supervisory chain. A single discoverable copy of the materials and results lives at `docs/evidence/human_eval/` (`README.md`, `participant_info.md`, `consent_text.md`, `rubric.md`, `anonymised_scores.csv`, `summary_stats.csv`, `thematic_summary.md`); that folder is the entry point an examiner is expected to use.
+This appendix archives the materials and anonymised results for the independent reviewer evaluation reported in Section 4.10. The evaluation was conducted between 14 and 18 April 2026 with six peer participants (three Final-Year BSc Computer Science students and three MSc Computer Science students) recruited voluntarily from the University of Leeds School of Computer Science, outside the project's supervisory chain. A single discoverable copy of the materials and results lives at `docs/evidence/human_eval/` (`README.md`, `participant_info.md`, `consent_text.md`, `rubric.md`, `anonymised_scores.csv`, `summary_stats.csv`, `thematic_summary.md`); that folder is the entry point an examiner is expected to use.
 
 **Anonymisation statement.** Anonymisation was applied at collection time, not retrospectively. Participants were assigned the labels `P1`-`P6` and a coarse role tag (`BSc CS` or `MSc CS`) before any data was stored. No name, email, course code, or other personal identifier was ever written to the dataset. Optional free-text comments were coded into themes after the evaluation closed and are not retained verbatim.
 
@@ -1165,9 +1165,9 @@ This appendix archives the materials and anonymised results for the independent 
 
 **Participant information and consent.** Participants received a short text describing the project (a final-year RAG dissertation prototype), the data collected (Likert scores plus an optional one-line comment per case), the storage and use of that data (anonymised, used only for the evaluation reported in §4.10), and the right to withdraw before final submission. No participant chose to withdraw. The full consent / participant-information text is at `eval/human_eval/consent_text.md` and is reproduced here in summary: participants confirmed that anonymised scores and any optional comments could be used in the dissertation; they understood they could withdraw before submission; they understood that no name, contact details, or quoted text that could identify them would appear in the report.
 
-<a id="tbl-b-4"></a>
+<a id="tbl-b-3"></a>
 
-**Table B.4: Per-participant rubric scores (n = 6 reviewers, 1-to-5 Likert across five axes).**
+**Table B.3: Per-participant rubric scores (n = 6 reviewers, 1-to-5 Likert across five axes).**
 
 | Participant | Role | Correctness | Groundedness | Citation Usefulness | Usefulness | Trust Calibration |
 | :--- | :--- | :---: | :---: | :---: | :---: | :---: |
@@ -1189,7 +1189,7 @@ This appendix archives the materials and anonymised results for the independent 
 | Over-abstentions | 4 | 3.2 | 5.0 | 3.8 |
 | Contradiction probes | 4 | 4.6 | 4.2 | 4.6 |
 
-The per-participant rows in Table B.4 and the per-category aggregates above are also shipped as machine-readable CSV in `eval/human_eval/independent_review_results.csv` and `eval/human_eval/per_category_results.csv`.
+The per-participant rows in Table B.3 and the per-category aggregates above are also shipped as machine-readable CSV in `eval/human_eval/independent_review_results.csv` and `eval/human_eval/per_category_results.csv`.
 
 **Thematic coding of comments.** Optional one-line comments were coded into five themes after collection. No verbatim quotes are reproduced here; only the theme, the participants who attested to it, and a paraphrased observation. The full coding sheet is at `eval/human_eval/thematic_codes.csv`.
 
@@ -1207,9 +1207,9 @@ The per-participant rows in Table B.4 and the per-category aggregates above are 
 
 The Public Guidance Transfer Stress Test in §4.11 is run against a small corpus of public-sector guidance documents. Every source is published under the **Open Government Licence v3.0**, which permits reuse with attribution; no third-party copyrighted material is included. The downloader script `scripts/download_public_corpus.py` records each source's URL, retrieval date, included sections, and content hash, and writes them to `data/public_transfer_corpus/provenance.csv`. The licence statement, included sections, and reasons for inclusion for each source are reproduced below.
 
-<a id="tbl-b-3"></a>
+<a id="tbl-b-4"></a>
 
-**Table B.3: Public Guidance Transfer Corpus provenance (8 documents, 249 paragraphs total).**
+**Table B.4: Public Guidance Transfer Corpus provenance (8 documents, 249 paragraphs total).**
 
 | Source | Title | Theme | Reason for inclusion |
 | :--- | :--- | :--- | :--- |
