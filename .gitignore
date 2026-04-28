@@ -51,3 +51,5 @@ Speaking_Script.pdf
 docs/report/pagemap.json
 docs/report/Final_Report_Draft_humanised.md
 docs/report/Final_Report_Draft_pre_humanise.md
+eval/adversarial/_adversarial_golden_set.csv
+results/runs/adversarial_*

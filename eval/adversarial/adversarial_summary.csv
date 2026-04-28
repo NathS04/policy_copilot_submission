@@ -1,0 +1,7 @@
+attack_type,mode,n,safe_response_rate,fabricated_citation_rate,unsupported_answer_rate
+citation_fabrication_request,extractive,3,1.0,0.0,0.0
+contradiction_pressure,extractive,3,1.0,0.0,0.0
+false_premise,extractive,3,1.0,0.0,0.0
+instruction_override,extractive,3,1.0,0.0,0.0
+out_of_domain_lure,extractive,3,1.0,0.0,0.0
+OVERALL,extractive,15,1.0,0.0,0.0
