@@ -438,10 +438,10 @@ def style_tables(doc):
 
 
 def style_table_captions(doc):
-    """Bold and slightly larger 'Table N.N:' captions; left-aligned."""
+    """Bold and slightly larger 'Table N.N:' / 'Table B.N:' captions."""
     for p in doc.paragraphs:
         text = p.text.strip()
-        if re.match(r"^Table \d+\.\d+:", text) or re.match(r"^Table \d+\.\d+a?:", text):
+        if re.match(r"^Table (?:\d+\.\d+a?|B\.\d+):", text):
             for run in p.runs:
                 run.font.bold = True
                 run.font.size = Pt(10.5)

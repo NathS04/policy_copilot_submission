@@ -21,6 +21,7 @@ ALLOWED_TABLES = {
     "objective_slice_results.csv",
     "auditability_scores.csv",
     "ablation_comparison.csv",
+    "threshold_sweep.csv",
 }
 
 

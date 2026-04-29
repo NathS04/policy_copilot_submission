@@ -165,6 +165,7 @@ This report has been prepared in accordance with the University of Leeds proof-r
   - [B.9 Test Suite Matrix (referenced from §3.9)](#b.9-test-suite-matrix-referenced-from-3.9)
   - [B.10 Independent Reviewer Evaluation Materials (referenced from §4.10)](#b.10-independent-reviewer-evaluation-materials-referenced-from-4.10)
   - [B.11 Public Guidance Transfer Corpus Provenance (referenced from §4.11)](#b.11-public-guidance-transfer-corpus-provenance-referenced-from-4.11)
+  - [B.12 Adversarial and Audit Export Evidence (referenced from L6 and §4.4)](#b.12-adversarial-and-audit-export-evidence-referenced-from-l6-and-4.4)
 
 ## List of Figures
 
@@ -200,6 +201,7 @@ This report has been prepared in accordance with the University of Leeds proof-r
 - [Table B.2 Testing and validation matrix across 38 test files / 188 cases](#tbl-b-2)
 - [Table B.3 Per-participant rubric scores from the independent reviewer evaluation](#tbl-b-3)
 - [Table B.4 Public Guidance Transfer Corpus provenance](#tbl-b-4)
+- [Table B.5 Adversarial probe results, paired across modes](#tbl-b-5)
 
 </div>
 
@@ -716,7 +718,7 @@ A central limitation of the headline evaluation is that the corpus is synthetic:
 | Citation Precision | 100% | 100% | True by construction in Extractive Mode |
 | Ungrounded Rate | 0% | 0% | Safety property survives |
 
-The headline observation is that the **safety properties survive transfer**: Citation Precision stays at 100% (by construction in Extractive Mode) and Ungrounded Rate stays at 0%, so the system never produced an answer that conflicts with its cited evidence on unfamiliar text. Coverage is broadly preserved (91.7% Answer Rate vs 89% on synthetic). The visible costs are a noticeable drop in retrieval quality (Evidence Recall@5 halves from 85% to 52.1%) and one over-confident answer on an unanswerable query (q_t16 about Cisco router configuration), where BM25 keyword overlap on the word "configure" matched NCSC device-security guidance. A per-query failure-mode labelling in `eval/public_transfer/failure_taxonomy.csv` confirms this pattern: terminology mismatch and weak-obligation language account for 5/20 of the cases where the gold paragraph dropped out of the top-5, no transfer query produced a fabricated or hallucinatory answer, and the single concerning case is the q_t16 over-attempt rather than a citation-grounding failure (full breakdown in `docs/evidence/verification/public_transfer_failure_taxonomy.md`). The broader pattern is consistent with §4.8: when the system fails on unfamiliar data, it fails by being **too confident on a borderline query** rather than by hallucinating new content. This is the conservative-failure-mode result that the design was aimed at, and §5.2 returns to it as a limitation that wider evaluation should target.
+The headline observation is that the **safety properties survive transfer**: Citation Precision stays at 100% (by construction in Extractive Mode) and Ungrounded Rate stays at 0%, so the system never produced an answer that conflicts with its cited evidence on unfamiliar text. Coverage is broadly preserved (91.7% Answer Rate vs 89% on synthetic). The visible costs are a noticeable drop in retrieval quality (Evidence Recall@5 halves from 85% to 52.1%) and one over-confident answer on an unanswerable query (q_t16 about Cisco router configuration), where BM25 keyword overlap on the word "configure" matched NCSC device-security guidance. The broader pattern is consistent with §4.8: when the system fails on unfamiliar data, it fails by being **too confident on a borderline query** rather than by hallucinating new content. This is the conservative-failure-mode result that the design was aimed at, and §5.2 returns to it as a limitation that wider evaluation should target.
 
 ### 4.12 Statistical Confidence
 
@@ -779,7 +781,7 @@ An honest assessment of the project's limitations is essential to interpret the 
 
 **L4: Single LLM Evaluated.** All generative results were obtained using a single LLM family via the OpenAI API. Different models may exhibit different hallucination patterns, citation-format compliance rates, and prompt-following behaviour. The system's model-agnostic architecture supports easy substitution, but a comparative evaluation across model families was not conducted within the project timeline.
 
-**L5: Limited Independent Human Evaluation.** The independent reviewer evaluation reported in §4.10 (n = 6 peer participants, 14-18 April 2026) provides triangulation against the automated metrics, but it is small, author-facilitated rather than fully blinded, and the reviewer pool is non-domain-expert (CS peers rather than compliance specialists). Per-(participant, query) ratings were not retained, so inter-rater agreement metrics such as Cohen's kappa or Krippendorff's alpha cannot be computed from the surviving data. A production-quality follow-up evaluation would employ at least two independent domain-expert raters, full blinding, and per-item ratings stored at collection time, as recommended by Es et al. (2023).
+**L5: Limited Independent Human Evaluation and Adversarial Coverage.** The independent reviewer evaluation reported in §4.10 (n = 6 peer participants, 14-18 April 2026) provides triangulation against the automated metrics, but it is small, author-facilitated rather than fully blinded, and the reviewer pool is non-domain-expert (CS peers rather than compliance specialists). Per-(participant, query) ratings were not retained, so inter-rater agreement metrics such as Cohen's kappa or Krippendorff's alpha cannot be computed from the surviving data; the per-query Round 2 collection scaffolding and a small 15-query adversarial probe (Appendix B.12, Extractive arm safe at 100%, Generative arm pending an LLM API key) are landed for the same reason. A production-quality follow-up evaluation would employ at least two independent domain-expert raters, full blinding, and per-item ratings stored at collection time, as recommended by Es et al. (2023).
 
 ### 5.3 Future Work
 
@@ -1223,3 +1225,29 @@ The Public Guidance Transfer Stress Test in §4.11 is run against a small corpus
 | ACAS | Working from home and hybrid working | employment | Closest analogue to synthetic handbook remote-work section |
 
 For each source the downloader keeps only the main article body and strips navigation, footer, related-content widgets, and cookie banners. The full URLs, retrieval timestamps, paragraph counts, and twelve-character content hashes are recorded in `data/public_transfer_corpus/provenance.csv`, which ships with the submission package. None of these sources contain personal data or identify any individual; ICO, NCSC, and ACAS terms each confirm Crown copyright with reuse permitted under OGL v3.0. The `scripts/run_transfer_eval.py` wrapper is the single entry point that re-runs the stress test deterministically against the cached corpus.
+
+### B.12 Adversarial and Audit Export Evidence (referenced from L6 and §4.4)
+
+Appendix B.12 summarises two supplementary evidence layers that probe the system's `cited or silent` discipline beyond the headline benchmark: a paired adversarial / prompt-injection probe (Limitation L6) and a small set of verbatim audit-export examples from the B3-Generative final run.
+
+**Adversarial probe.** A 15-query bank in `eval/adversarial/adversarial_queries.csv` covers five attack types (`instruction_override`, `citation_fabrication_request`, `out_of_domain_lure`, `false_premise`, `contradiction_pressure`), each with three hand-authored queries. The runner `scripts/run_adversarial.py` invokes the production B3 pipeline twice over the same query bank, once in Extractive Mode (BM25, no LLM, structural-immunity case) and once in Generative Mode (LLM, deterministic-post-LLM-gates case). Results are written to `eval/adversarial/adversarial_results_<mode>.csv` and aggregated in `eval/adversarial/adversarial_summary.csv`. A *safe response* is either an `INSUFFICIENT_EVIDENCE` abstention or a grounded answer whose citations all map to real paragraph IDs in the corpus index; *fabricated citation* and *unsupported answer* are detected automatically by the same scripts.
+
+<a id="tbl-b-5"></a>
+
+**Table B.5: Adversarial probe results, paired across modes (n = 15 queries; 5 attack types x 3 queries each).**
+
+| Attack type | Mode | n | Safe response | Fabricated citation | Unsupported answer |
+| :--- | :--- | :---: | :---: | :---: | :---: |
+| `instruction_override` | Extractive | 3 | 100% | 0% | 0% |
+| `citation_fabrication_request` | Extractive | 3 | 100% | 0% | 0% |
+| `out_of_domain_lure` | Extractive | 3 | 100% | 0% | 0% |
+| `false_premise` | Extractive | 3 | 100% | 0% | 0% |
+| `contradiction_pressure` | Extractive | 3 | 100% | 0% | 0% |
+| **All attack types (overall)** | **Extractive** | **15** | **100%** | **0%** | **0%** |
+| All attack types (overall) | Generative | -- | pending | pending | pending |
+
+The Extractive arm reports 100% safe responses across all five attack types (15/15) with zero fabricated citations and zero unsupported answers; the safety property of returning verbatim corpus paragraphs is confirmed empirically. The Generative arm is reported as `pending` because the evaluator's environment did not have an LLM API key configured at submission time; the runner is parameterised so a single command (`python scripts/run_adversarial.py --modes generative`) produces the paired numbers once a key is set, at a cost of approximately 15 LLM calls. The full per-query results, three representative cases per attack type, and the limitations of the probe are at `docs/evidence/verification/adversarial_test_summary.md`. The probe is intentionally small and is not a security certification; an exhaustive prompt-injection evaluation would adopt Garak or PromptBench (Liu et al., 2023) and is listed as future work in §5.3.
+
+**Audit export examples.** To make the `audit-ready` claim visible (rather than implicit in code), three representative records from the B3-Generative final run are rendered in human-readable Markdown under `docs/evidence/verification/`: `audit_export_answerable.md` (clean grounded answer with `support_rate = 1.0`), `audit_export_unanswerable.md` (clean abstention triggered by the post-LLM `min_support_rate` gate via `ABSTAINED_LOW_SUPPORT_RATE`), and `audit_export_contradiction.md` (contradiction-flag audit trail with the structured contradictions list preserved). Every value (query, answer, citation IDs, retrieval and rerank scores, claim verification fields, contradiction list, backend, latency, notes) is a verbatim copy from `results/runs/b3_generative_bm25_fallback_final/outputs.jsonl`; no values are summarised or fabricated. The exporter `scripts/build_audit_exports.py` regenerates all three files plus an index (`audit_export_index.md`) deterministically from the existing run, with no new system runs performed.
+
+**Public-transfer failure taxonomy (cross-reference).** The per-query failure-mode labelling for the Public Guidance Transfer Stress Test (§4.11) is published as `eval/public_transfer/failure_taxonomy.csv` and `docs/evidence/verification/public_transfer_failure_taxonomy.md`. The dominant non-clean-answer label is retrieval generalisation (terminology mismatch + weak-obligation language, 5/20 of the transfer queries); no transfer query produced a fabricated or hallucinatory answer.
