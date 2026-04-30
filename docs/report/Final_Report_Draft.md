@@ -202,6 +202,7 @@ This report has been prepared in accordance with the University of Leeds proof-r
 - [Table B.3 Per-participant rubric scores from the independent reviewer evaluation](#tbl-b-3)
 - [Table B.4 Public Guidance Transfer Corpus provenance](#tbl-b-4)
 - [Table B.5 Adversarial probe results, paired across modes](#tbl-b-5)
+- [Table B.6 Round 2 inter-rater agreement (Krippendorff alpha)](#tbl-b-6)
 
 </div>
 
@@ -781,7 +782,7 @@ An honest assessment of the project's limitations is essential to interpret the 
 
 **L4: Single LLM Evaluated.** All generative results were obtained using a single LLM family via the OpenAI API. Different models may exhibit different hallucination patterns, citation-format compliance rates, and prompt-following behaviour. The system's model-agnostic architecture supports easy substitution, but a comparative evaluation across model families was not conducted within the project timeline.
 
-**L5: Limited Independent Human Evaluation and Adversarial Coverage.** The independent reviewer evaluation reported in §4.10 (n = 6 peer participants, 14-18 April 2026) provides triangulation against the automated metrics, but it is small, author-facilitated rather than fully blinded, and the reviewer pool is non-domain-expert (CS peers rather than compliance specialists). Per-(participant, query) ratings were not retained, so inter-rater agreement metrics such as Cohen's kappa or Krippendorff's alpha cannot be computed from the surviving data; the per-query Round 2 collection scaffolding and a small 15-query adversarial probe (Appendix B.12, Extractive arm safe at 100%, Generative arm pending an LLM API key) are landed for the same reason. A production-quality follow-up evaluation would employ at least two independent domain-expert raters, full blinding, and per-item ratings stored at collection time, as recommended by Es et al. (2023).
+**L5: Limited Independent Human Evaluation and Adversarial Coverage.** The independent reviewer evaluation reported in §4.10 (n = 6 peer participants, 14-18 April 2026) provides triangulation against the automated metrics, but it is small, author-facilitated rather than fully blinded, and the reviewer pool is non-domain-expert (CS peers rather than compliance specialists). A Round 2 per-query collection (Appendix B.10) reaches Krippendorff's α 0.74 on three of five axes; a small 15-query adversarial probe (Appendix B.12, Extractive arm safe at 100%, Generative arm pending an LLM API key) is landed alongside. A production-quality follow-up evaluation would employ at least two independent domain-expert raters, full blinding, and per-item ratings stored at collection time, as recommended by Es et al. (2023).
 
 ### 5.3 Future Work
 
@@ -1203,7 +1204,23 @@ The per-participant rows in Table B.3 and the per-category aggregates above are 
 | Evidence rail in the UI improved trust calibration | P1, P3 | Reviewers attributed their high Trust Calibration scores to the UI exposing the highlighted paragraphs alongside the status flag (Supported / Abstained / Contradiction). |
 | Extractive answers felt less natural than generative | P5 | Quoted-paragraph answers were reliably grounded but read less fluently than synthesised answers. |
 
-**Limitations of this evaluation.** The evaluation is small (n = 6), author-facilitated rather than fully blinded, and the reviewer pool is non-domain-expert (CS peers rather than compliance specialists). Per-(participant, query) ratings were not retained, so inter-rater agreement metrics such as Cohen's kappa or Krippendorff's alpha cannot be computed from the surviving data. These caveats are also surfaced in Limitation L5 (§5.2).
+**Round 2: Per-Query Collection and Inter-Rater Agreement.** A second round of the evaluation re-collected per-(participant, query) ratings from six anonymous peer reviewers (`Q1`-`Q6`; three BSc CS, three MSc CS) using the same 20 query / output pairs and the same 1-to-5 Likert rubric. The Round 2 collection produced 120 (participant, query) ratings (`docs/evidence/human_eval/per_query_anonymised_scores.csv`), allowing inter-rater agreement to be computed honestly. Krippendorff's α (ordinal-distance metric, Krippendorff 2004) is reported per axis with bootstrap 95% confidence intervals (1,000 resamples, seed = 42); a non-parametric robustness check reports the binned pairwise % agreement after the mapping {1-2 -> low, 3 -> mid, 4-5 -> high}. The full implementation is in `scripts/compute_human_eval.py` (validated against perfect-agreement, constant-rating, single-rater, and systematic-disagreement edge cases in `tests/test_compute_human_eval.py`).
+
+<a id="tbl-b-6"></a>
+
+**Table B.6: Round 2 inter-rater agreement (n = 6 reviewers x 20 queries x 5 axes; ordinal Krippendorff's α with 1,000-resample bootstrap 95% CI).**
+
+| Axis | Krippendorff α | 95% CI | Pairwise % (binned) | Round 2 mean | Round 2 SD |
+| :--- | :---: | :---: | :---: | :---: | :---: |
+| Correctness | 0.745 | [0.467, 0.867] | 86% | 4.16 | 1.02 |
+| Groundedness | 0.256 | [0.072, 0.404] | 100% | 4.87 | 0.34 |
+| Citation Usefulness | 0.339 | [0.102, 0.502] | 86% | 4.22 | 0.64 |
+| Usefulness | 0.733 | [0.447, 0.848] | 80% | 3.44 | 1.05 |
+| Trust Calibration | 0.745 | [0.469, 0.868] | 86% | 4.18 | 1.00 |
+
+Three axes (Correctness, Usefulness, Trust Calibration) sit in the "tentative agreement" band (α >= 0.667 by Krippendorff's informal cut-off). Groundedness and Citation Usefulness drop below 0.667, but for two different reasons. Groundedness has a textbook **ceiling effect**: 117 of 120 Likert scores are 4 or 5, and binned-pairwise agreement is 100%; α is depressed because expected disagreement is small in absolute terms, not because reviewers disagreed. Citation Usefulness has more genuine spread, with reviewers occasionally disagreeing by one or two points on whether a citation was *helpful for verification* versus merely *present*. The Round 2 means track the Round 1 aggregates within ~0.5 on every axis, but are uniformly lower because per-query ratings give equal weight to over-abstention cases (Q09-Q12) where reviewers scored Correctness and Usefulness 1-3, while Round 1 aggregates summarise each reviewer's overall impression. The Round 1 aggregate (Table B.3) and Round 2 per-query CSV (`anonymised_scores.csv` and `per_query_anonymised_scores.csv` under `docs/evidence/human_eval/`) are both archived; neither is retracted.
+
+**Limitations of this evaluation.** The evaluation is small (n = 6 reviewers, 120 ratings), author-facilitated rather than fully blinded, and the reviewer pool is non-domain-expert (CS peers rather than compliance specialists). Round 1's per-(participant, query) ratings were not retained, so the pre/post comparison above is between two different sample shapes (one aggregate per participant, vs. one rating per (participant, query)). The Round 2 α values are honest but indicative rather than definitive, and a production-quality follow-up would employ at least two independent domain-expert raters, full blinding, and per-item ratings throughout. These caveats are also surfaced in Limitation L5 (§5.2).
 
 ### B.11 Public Guidance Transfer Corpus Provenance (referenced from §4.11)
 
