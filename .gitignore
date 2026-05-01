@@ -56,6 +56,8 @@ docs/report/Final_Report_Draft_pre_humanise.md
 # ── Eval intermediate / per-run scratch ────────
 eval/adversarial/_adversarial_golden_set.csv
 results/runs/adversarial_*
+results/runs/b2_test_extractive_bm25_2*
+results/runs/b3_test_extractive_bm25_2*
 
 # ── Misc ───────────────────────────────────────
 *.tmp

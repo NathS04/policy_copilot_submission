@@ -1,10 +1,15 @@
 {
   "source": "make_figures.py",
   "verified_by": "verify_artifacts.py",
-  "verified_at": "2026-04-22T20:01:40.857313+00:00",
+  "verified_at": "2026-05-07T18:27:24.620300+00:00",
   "strict": false,
   "allow_backend_mismatch": false,
   "runs": [
+    "adversarial_extractive_bm25_20260506_012551",
+    "adversarial_extractive_bm25_20260506_012609",
+    "adversarial_extractive_bm25_20260506_192048",
+    "adversarial_generative_bm25_20260506_191807",
+    "adversarial_generative_bm25_20260506_192049",
     "b1_generative_final",
     "b2_generative_bm25_fallback_final",
     "b2_test_extractive_bm25_20260322_173800",
@@ -47,6 +52,9 @@
     "b2_test_extractive_bm25_20260422_193520",
     "b2_test_extractive_bm25_20260422_202732",
     "b2_test_extractive_bm25_20260422_210137",
+    "b2_test_extractive_bm25_20260507_192719",
+    "b2_test_extractive_bm25_20260507_192723",
+    "b3_extractive_public_transfer",
     "b3_generative_bm25_fallback_final",
     "b3_test_extractive_bm25_20260322_173801",
     "b3_test_extractive_bm25_20260322_182521",
@@ -88,10 +96,57 @@
     "b3_test_extractive_bm25_20260422_193521",
     "b3_test_extractive_bm25_20260422_202732",
     "b3_test_extractive_bm25_20260422_210138",
+    "b3_test_extractive_bm25_20260507_192720",
+    "b3_test_extractive_bm25_20260507_192723",
     "test_allow_no_key_generates_llm_disabled",
     "test_b2_extractive_bm25_integration"
   ],
   "run_hashes": {
+    "adversarial_extractive_bm25_20260506_012551": {
+      "run_config_sha256": "5f6eb0e17e90f60fdb60816381c72af7499a410b39d67055fce4f13048c817db",
+      "summary_sha256": "6bbcb81660de01a827db6e2dae2942585e756d13fdad253455d653b317397f4c",
+      "baseline": "b3",
+      "split": "all",
+      "mode": "extractive",
+      "backend_requested": "bm25",
+      "backend_used": "bm25"
+    },
+    "adversarial_extractive_bm25_20260506_012609": {
+      "run_config_sha256": "3e86595fbe94b39c74abf2706cce87d644e185b11c912cb1366ebf645fca67d2",
+      "summary_sha256": "6bbcb81660de01a827db6e2dae2942585e756d13fdad253455d653b317397f4c",
+      "baseline": "b3",
+      "split": "all",
+      "mode": "extractive",
+      "backend_requested": "bm25",
+      "backend_used": "bm25"
+    },
+    "adversarial_extractive_bm25_20260506_192048": {
+      "run_config_sha256": "01f5d1749c2633a1e12521e584a22a3a439467113ddbc81276a1c1aa3c10f2fe",
+      "summary_sha256": "6bbcb81660de01a827db6e2dae2942585e756d13fdad253455d653b317397f4c",
+      "baseline": "b3",
+      "split": "all",
+      "mode": "extractive",
+      "backend_requested": "bm25",
+      "backend_used": "bm25"
+    },
+    "adversarial_generative_bm25_20260506_191807": {
+      "run_config_sha256": "d53a2b578f093469be6d75aa446ad9f4fc593db55f94fb54f50398593ea0e65d",
+      "summary_sha256": "8811db208d9e6f7fe6b8758832540f568e2475179543f5b263023ff7a61fc2a4",
+      "baseline": "b3",
+      "split": "all",
+      "mode": "generative",
+      "backend_requested": "bm25",
+      "backend_used": "bm25"
+    },
+    "adversarial_generative_bm25_20260506_192049": {
+      "run_config_sha256": "55f8d6e008d9f1b3035a97a5e3686d82afcf416958273e5a6c32aae81f429919",
+      "summary_sha256": "8811db208d9e6f7fe6b8758832540f568e2475179543f5b263023ff7a61fc2a4",
+      "baseline": "b3",
+      "split": "all",
+      "mode": "generative",
+      "backend_requested": "bm25",
+      "backend_used": "bm25"
+    },
     "b1_generative_final": {
       "run_config_sha256": "2dbe61a96cb135830cbca0aa13a166fdab881253160cf651beb723ca656339e1",
       "summary_sha256": "c089169f44a7a05042fb15b323597632bef764950ed806d1e2fd938cf40da3ee",
@@ -470,6 +525,33 @@
       "backend_requested": "bm25",
       "backend_used": "bm25"
     },
+    "b2_test_extractive_bm25_20260507_192719": {
+      "run_config_sha256": "00f4cbb93b628c0b6fd765abf2fc3d515871f2fde64f21462d13e340ea14c88f",
+      "summary_sha256": "497b27203b536b32d234b81349d758f281436346e98e8d497de2384714ce0164",
+      "baseline": "b2",
+      "split": "test",
+      "mode": "extractive",
+      "backend_requested": "bm25",
+      "backend_used": "bm25"
+    },
+    "b2_test_extractive_bm25_20260507_192723": {
+      "run_config_sha256": "c44921bea013a785dc30122bdebc2bce547ed3f39bc190769eb0b48c0b98d776",
+      "summary_sha256": "497b27203b536b32d234b81349d758f281436346e98e8d497de2384714ce0164",
+      "baseline": "b2",
+      "split": "test",
+      "mode": "extractive",
+      "backend_requested": "bm25",
+      "backend_used": "bm25"
+    },
+    "b3_extractive_public_transfer": {
+      "run_config_sha256": "50d3d3c8961a7df99fdbacd9863019198284a2a3edf9c88c50fccc8fae9c2cc3",
+      "summary_sha256": "b6e1f7a4d3cee93d394e5a4aba7866dea84aa4370b96a6841e0ce33739433935",
+      "baseline": "b3",
+      "split": "test",
+      "mode": "extractive",
+      "backend_requested": "bm25",
+      "backend_used": "bm25"
+    },
     "b3_generative_bm25_fallback_final": {
       "run_config_sha256": "4e52a17d879dbace9e48bf01f1b9b3aa6c162343bd54d5c6b044dac5bfe1dbcf",
       "summary_sha256": "b775d78d38fb8d272ada36e61c1b9e7b31975a41e20c0d69d818ffea198f82f1",
@@ -839,6 +921,24 @@
       "backend_requested": "bm25",
       "backend_used": "bm25"
     },
+    "b3_test_extractive_bm25_20260507_192720": {
+      "run_config_sha256": "da728e15833840a24465daa349292798f5d81badd86b56377f058f0564ed842b",
+      "summary_sha256": "4084eee95aa7399f757323f4570a35d0bc269d2878d595d6c1e86f46ee23f362",
+      "baseline": "b3",
+      "split": "test",
+      "mode": "extractive",
+      "backend_requested": "bm25",
+      "backend_used": "bm25"
+    },
+    "b3_test_extractive_bm25_20260507_192723": {
+      "run_config_sha256": "196857e12bc0f640e55805d28adbec65aa1167359290f1675cc737944ca4091e",
+      "summary_sha256": "4084eee95aa7399f757323f4570a35d0bc269d2878d595d6c1e86f46ee23f362",
+      "baseline": "b3",
+      "split": "test",
+      "mode": "extractive",
+      "backend_requested": "bm25",
+      "backend_used": "bm25"
+    },
     "test_allow_no_key_generates_llm_disabled": {
       "run_config_sha256": "5efa865609e6f35726a196029c44cd6a9e2e4956546169cb4a6dafc0d086373a",
       "summary_sha256": "e1260349ddf96b834516efade4024eb5a86521992dce185fd6a53869b5474e1e",
@@ -849,7 +949,7 @@
       "backend_used": "bm25"
     },
     "test_b2_extractive_bm25_integration": {
-      "run_config_sha256": "1b3e6c43e808c4c2382e10780c39fb84dfe4d968421cb81b459cfccf20af31ff",
+      "run_config_sha256": "f7d9ee77e416a772dcfdc1e40438388cbfd67c28948e01aa511ba1ae8d881b5c",
       "summary_sha256": "497b27203b536b32d234b81349d758f281436346e98e8d497de2384714ce0164",
       "baseline": "b2",
       "split": "test",
@@ -869,6 +969,7 @@
     "auditability_scores.csv",
     "failure_taxonomy.csv",
     "objective_slice_results.csv",
-    "run_summary.csv"
+    "run_summary.csv",
+    "threshold_sweep.csv"
   ]
 }

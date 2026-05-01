@@ -2,10 +2,10 @@
 
 - **Baseline**: b2
 - **Queries processed**: 44
-- **Duration**: 0.0s
+- **Duration**: 0.1s
 - **Provider**: openai
 - **Model**: gpt-4o-mini
-- **Created**: 2026-04-22T20:01:34.696448+00:00
+- **Created**: 2026-05-07T18:27:17.000008+00:00
 
 ## Locked Targets (placeholders)
 - (T1) ≥30% reduction in ungrounded-claim rate vs B2

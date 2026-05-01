@@ -1,6 +1,7 @@
 run_id,baseline,variant,split,mode,backend_requested,backend_used,backend,answer_rate,abstention_accuracy,evidence_recall,evidence_mrr,citation_precision,citation_recall,ungrounded_rate,contradiction_recall,contradiction_precision,support_rate_mean
 b2_test_extractive_bm25_20260422_193520,b2,b2,test,extractive,bm25,bm25,bm25,1.0,0.0,0.7344,0.7562,1.0,0.32,,0.0,,
 b3_test_extractive_bm25_20260322_173801,b3,b3,test,extractive,bm25,bm25,bm25,0.88,0.5,0.7344,0.7562,1.0,0.4545,0.0,0.5714,0.2857,1.0
+b3_test_extractive_bm25_20260507_192720,b3,b3,test,extractive,bm25,bm25,bm25,0.88,0.5,0.7344,0.7562,1.0,0.4545,0.0,0.5714,0.2857,1.0
 b3_test_extractive_bm25_20260422_210138,b3,b3,test,extractive,bm25,bm25,bm25,0.88,0.5,0.7344,0.7562,1.0,0.4545,0.0,0.5714,0.2857,1.0
 b2_test_extractive_bm25_20260413_221804,b2,b2,test,extractive,bm25,bm25,bm25,1.0,0.0,0.7344,0.7562,1.0,0.32,,0.0,,
 b2_test_extractive_bm25_20260420_183850,b2,b2,test,extractive,bm25,bm25,bm25,1.0,0.0,0.7344,0.7562,1.0,0.32,,0.0,,
@@ -16,6 +17,7 @@ b3_test_extractive_bm25_20260322_184549,b3,b3,test,extractive,bm25,bm25,bm25,0.8
 b2_test_extractive_bm25_20260322_182532,b2,b2,test,extractive,bm25,bm25,bm25,1.0,0.0,0.7344,0.7562,1.0,0.32,,0.0,,
 b2_test_extractive_bm25_20260422_210137,b2,b2,test,extractive,bm25,bm25,bm25,1.0,0.0,0.7344,0.7562,1.0,0.32,,0.0,,
 b2_test_extractive_bm25_20260413_223045,b2,b2,test,extractive,bm25,bm25,bm25,1.0,0.0,0.7344,0.7562,1.0,0.32,,0.0,,
+b2_test_extractive_bm25_20260507_192719,b2,b2,test,extractive,bm25,bm25,bm25,1.0,0.0,0.7344,0.7562,1.0,0.32,,0.0,,
 b3_test_extractive_bm25_20260322_233440,b3,b3,test,extractive,bm25,bm25,bm25,0.88,0.5,0.7344,0.7562,1.0,0.4545,0.0,0.5714,0.2857,1.0
 b3_test_extractive_bm25_20260422_193521,b3,b3,test,extractive,bm25,bm25,bm25,0.88,0.5,0.7344,0.7562,1.0,0.4545,0.0,0.5714,0.2857,1.0
 b2_test_extractive_bm25_20260322_173800,b2,b2,test,extractive,bm25,bm25,bm25,1.0,0.0,0.7344,0.7562,1.0,0.32,,0.0,,
@@ -34,8 +36,10 @@ b2_test_extractive_bm25_20260413_230621,b2,b2,test,extractive,bm25,bm25,bm25,1.0
 b3_generative_bm25_fallback_final,b3,b3,all,generative,dense,bm25,bm25,0.25,0.9412,0.7391,0.767,1.0,0.5556,0.0,0.2,0.3333,1.0
 b3_test_extractive_bm25_20260420_145104,b3,b3,test,extractive,bm25,bm25,bm25,0.88,0.5,0.7344,0.7562,1.0,0.4545,0.0,0.5714,0.2857,1.0
 b3_test_extractive_bm25_20260413_221828,b3,b3,test,extractive,bm25,bm25,bm25,0.88,0.5,0.7344,0.7562,1.0,0.4545,0.0,0.5714,0.2857,1.0
+b3_extractive_public_transfer,b3,b3,test,extractive,bm25,bm25,bm25,0.9167,0.75,0.5208,0.5104,1.0,0.4848,0.0,,0.0,1.0
 b2_test_extractive_bm25_20260420_174931,b2,b2,test,extractive,bm25,bm25,bm25,1.0,0.0,0.7344,0.7562,1.0,0.32,,0.0,,
 b2_test_extractive_bm25_20260322_182520,b2,b2,test,extractive,bm25,bm25,bm25,1.0,0.0,0.7344,0.7562,1.0,0.32,,0.0,,
+adversarial_extractive_bm25_20260506_012551,b3,b3,all,extractive,bm25,bm25,bm25,,0.3077,,,,,0.0,,0.0,
 b3_test_extractive_bm25_20260322_182521,b3,b3,test,extractive,bm25,bm25,bm25,0.88,0.5,0.7344,0.7562,1.0,0.4545,0.0,0.5714,0.2857,1.0
 b3_test_extractive_bm25_20260413_231551,b3,b3,test,extractive,bm25,bm25,bm25,0.88,0.5,0.7344,0.7562,1.0,0.4545,0.0,0.5714,0.2857,1.0
 b1_generative_final,b1,b1,all,generative,dense,dense,dense,1.0,0.0,0.0,0.0,0.0,0.0,,0.0,,
@@ -49,8 +53,12 @@ b2_test_extractive_bm25_20260413_221828,b2,b2,test,extractive,bm25,bm25,bm25,1.0
 b3_test_extractive_bm25_20260322_182545,b3,b3,test,extractive,bm25,bm25,bm25,0.88,0.5,0.7344,0.7562,1.0,0.4545,0.0,0.5714,0.2857,1.0
 b2_test_extractive_bm25_20260420_145104,b2,b2,test,extractive,bm25,bm25,bm25,1.0,0.0,0.7344,0.7562,1.0,0.32,,0.0,,
 b3_test_extractive_bm25_20260413_230617,b3,b3,test,extractive,bm25,bm25,bm25,0.88,0.5,0.7344,0.7562,1.0,0.4545,0.0,0.5714,0.2857,1.0
+adversarial_extractive_bm25_20260506_012609,b3,b3,all,extractive,bm25,bm25,bm25,,0.3077,,,,,0.0,,0.0,
 b3_test_extractive_bm25_20260420_180307,b3,b3,test,extractive,bm25,bm25,bm25,0.88,0.5,0.7344,0.7562,1.0,0.4545,0.0,0.5714,0.2857,1.0
+adversarial_extractive_bm25_20260506_192048,b3,b3,all,extractive,bm25,bm25,bm25,,0.3077,,,,,0.0,,0.0,
+adversarial_generative_bm25_20260506_191807,b3,b3,all,generative,bm25,bm25,bm25,,0.0,,,,,,,,
 b3_test_extractive_bm25_20260414_184024,b3,b3,test,extractive,bm25,bm25,bm25,0.88,0.5,0.7344,0.7562,1.0,0.4545,0.0,0.5714,0.2857,1.0
+b3_test_extractive_bm25_20260507_192723,b3,b3,test,extractive,bm25,bm25,bm25,0.88,0.5,0.7344,0.7562,1.0,0.4545,0.0,0.5714,0.2857,1.0
 b3_test_extractive_bm25_20260413_223041,b3,b3,test,extractive,bm25,bm25,bm25,0.88,0.5,0.7344,0.7562,1.0,0.4545,0.0,0.5714,0.2857,1.0
 b2_test_extractive_bm25_20260413_221837,b2,b2,test,extractive,bm25,bm25,bm25,1.0,0.0,0.7344,0.7562,1.0,0.32,,0.0,,
 b2_test_extractive_bm25_20260413_232616,b2,b2,test,extractive,bm25,bm25,bm25,1.0,0.0,0.7344,0.7562,1.0,0.32,,0.0,,
@@ -58,10 +66,12 @@ b3_test_extractive_bm25_20260413_223046,b3,b3,test,extractive,bm25,bm25,bm25,0.8
 b2_test_extractive_bm25_20260413_224917,b2,b2,test,extractive,bm25,bm25,bm25,1.0,0.0,0.7344,0.7562,1.0,0.32,,0.0,,
 b3_test_extractive_bm25_20260420_145059,b3,b3,test,extractive,bm25,bm25,bm25,0.88,0.5,0.7344,0.7562,1.0,0.4545,0.0,0.5714,0.2857,1.0
 b2_test_extractive_bm25_20260413_230918,b2,b2,test,extractive,bm25,bm25,bm25,1.0,0.0,0.7344,0.7562,1.0,0.32,,0.0,,
+adversarial_generative_bm25_20260506_192049,b3,b3,all,generative,bm25,bm25,bm25,,0.0,,,,,,,,
 b3_test_extractive_bm25_20260414_184014,b3,b3,test,extractive,bm25,bm25,bm25,0.88,0.5,0.7344,0.7562,1.0,0.4545,0.0,0.5714,0.2857,1.0
 test_allow_no_key_generates_llm_disabled,b2,b2,test,generative,bm25,bm25,bm25,0.0,0.0,0.7344,0.7562,,,,0.0,,
 b2_test_extractive_bm25_20260414_184023,b2,b2,test,extractive,bm25,bm25,bm25,1.0,0.0,0.7344,0.7562,1.0,0.32,,0.0,,
 b3_test_extractive_bm25_20260413_230919,b3,b3,test,extractive,bm25,bm25,bm25,0.88,0.5,0.7344,0.7562,1.0,0.4545,0.0,0.5714,0.2857,1.0
+b2_test_extractive_bm25_20260507_192723,b2,b2,test,extractive,bm25,bm25,bm25,1.0,0.0,0.7344,0.7562,1.0,0.32,,0.0,,
 b3_test_extractive_bm25_20260413_221838,b3,b3,test,extractive,bm25,bm25,bm25,0.88,0.5,0.7344,0.7562,1.0,0.4545,0.0,0.5714,0.2857,1.0
 b3_test_extractive_bm25_20260413_224918,b3,b3,test,extractive,bm25,bm25,bm25,0.88,0.5,0.7344,0.7562,1.0,0.4545,0.0,0.5714,0.2857,1.0
 b2_test_extractive_bm25_20260414_184014,b2,b2,test,extractive,bm25,bm25,bm25,1.0,0.0,0.7344,0.7562,1.0,0.32,,0.0,,
