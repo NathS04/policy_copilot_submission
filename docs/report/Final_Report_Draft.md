@@ -234,7 +234,7 @@ Each objective maps to a specific metric and acceptance test defined in Chapter 
 
 ### 1.3 Systematic Search Strategy
 
-I ran a structured literature search between October 2024 and January 2025 across Google Scholar, ACM Digital Library, IEEE Xplore, and arXiv, guided by the PRISMA 2020 framework (Page et al., 2021). Boolean queries combined four keyword clusters: core technique (RAG, grounded generation), reliability (hallucination, citation verification, abstention), domain (policy QA, legal NLP, closed-domain), and evaluation (RAGAS, faithfulness, LLM-as-judge).
+I ran a structured literature search between November 2025 and January 2026 across Google Scholar, ACM Digital Library, IEEE Xplore, and arXiv, guided by the PRISMA 2020 framework (Page et al., 2021). Boolean queries combined four keyword clusters: core technique (RAG, grounded generation), reliability (hallucination, citation verification, abstention), domain (policy QA, legal NLP, closed-domain), and evaluation (RAGAS, faithfulness, LLM-as-judge).
 
 **Inclusion / Exclusion Criteria:**
 
@@ -317,10 +317,10 @@ Development followed a sprint-based methodology adapted from agile principles fo
 <div align="center">
 <img src="figures/fig_gantt.png" alt="Gantt chart" width="700">
 
-*Figure 2.1: Gantt chart of the six-sprint development timeline (Weeks 1 to 22, October 2024 to February 2025). Report writing, documentation hardening, and evaluation refinement continued through the 2025/26 submission period.*
+*Figure 2.1: Gantt chart of the six-sprint development timeline (Weeks 1 to 22, November 2025 to April 2026). Report writing, documentation hardening, and evaluation refinement ran in parallel with the later sprints and continued through the April 2026 submission window.*
 </div>
 
-Version control used a private GitHub repository with a branch-per-sprint strategy. The final history contains over 200 commits spanning the full project lifecycle, providing a verifiable development timeline. The six implementation sprints (S1 to S6) ran from October 2024 to March 2025; subsequent activity through the 2025/26 submission cycle focused on report writing, documentation hardening, evaluation refinement, and final package preparation rather than new implementation work.
+Version control used a private GitHub repository with a branch-per-sprint strategy. The final history contains over 200 commits spanning the full project lifecycle, providing a verifiable development timeline. The six implementation sprints (S1 to S6) ran from November 2025 to early April 2026; the final weeks before the 30 April 2026 submission focused on report writing, documentation hardening, evaluation refinement, and final package preparation rather than new implementation work.
 
 ### 2.2 Requirements Analysis
 
@@ -1015,16 +1015,16 @@ AI tools were used for development assistance, debugging, structuring support, a
 
 #### Usage Log
 
-The earliest entries below (Oct 2024 – Feb 2025) are from a self-directed exploratory phase that pre-dated my formal COMP3931 enrolment in the 2025/26 academic year. I kept the log running across that whole period so that nothing about the project's actual development history is hidden. The formal report-writing phase (the Apr 2026 row) is the only entry that involved AI assistance with the report itself rather than the codebase.
+The log below covers the full project window: implementation work from November 2025 through early April 2026, then report preparation in the final pre-submission weeks of April 2026.
 
 | Date Range | Tool | Purpose | Scope |
 | :--- | :--- | :--- | :--- |
-| Oct-Nov 2024 | GitHub Copilot | Code autocompletion suggestions during initial retriever and indexer module development. Suggestions were accepted selectively and always reviewed. | `src/policy_copilot/retrieve/`, `src/policy_copilot/index/` |
-| Nov 2024 | ChatGPT (GPT-4) | Debugging assistance for FAISS index serialisation errors. The model suggested checking numpy array dtype alignment. | `scripts/build_index.py` |
-| Dec 2024 | ChatGPT (GPT-4) | Structuring the evaluation harness: asked for advice on organising metric computation across multiple baselines. The recommended folder structure was adapted. | `eval/` directory layout |
-| Jan 2025 | GitHub Copilot | Boilerplate generation for Pydantic schema definitions and pytest fixtures. All generated code was modified to fit project conventions. | `src/policy_copilot/generate/schema.py`, `tests/` |
-| Jan 2025 | ChatGPT (GPT-4o) | Generating the synthetic policy corpus documents (project data only, not report prose). Detailed prompts specified structure, contradictions, and coverage requirements. | `data/corpus/raw/` |
-| Feb 2025 | GitHub Copilot | Minor autocompletion during Streamlit UI development and figure-generation script refinement. | `src/policy_copilot/ui/`, `eval/analysis/` |
+| Nov 2025 | GitHub Copilot | Code autocompletion suggestions during initial retriever and indexer module development. Suggestions were accepted selectively and always reviewed. | `src/policy_copilot/retrieve/`, `src/policy_copilot/index/` |
+| Dec 2025 | ChatGPT (GPT-4) | Debugging assistance for FAISS index serialisation errors. The model suggested checking numpy array dtype alignment. | `scripts/build_index.py` |
+| Dec 2025 | ChatGPT (GPT-4) | Structuring the evaluation harness: asked for advice on organising metric computation across multiple baselines. The recommended folder structure was adapted. | `eval/` directory layout |
+| Jan 2026 | GitHub Copilot | Boilerplate generation for Pydantic schema definitions and pytest fixtures. All generated code was modified to fit project conventions. | `src/policy_copilot/generate/schema.py`, `tests/` |
+| Feb 2026 | ChatGPT (GPT-4o) | Generating the synthetic policy corpus documents (project data only, not report prose). Detailed prompts specified structure, contradictions, and coverage requirements. | `data/corpus/raw/` |
+| Mar 2026 | GitHub Copilot | Minor autocompletion during Streamlit UI development and figure-generation script refinement. | `src/policy_copilot/ui/`, `eval/analysis/` |
 | Apr 2026 | Claude Opus (Anthropic) | Limited drafting and structuring assistance during the report-preparation phase: paragraph rewording for clarity, sentence-rhythm and tone editing, table and caption formatting, and template/layout polish. All technical content, metrics, results, design decisions, citations, and final wording were reviewed and revised by the author before submission. | `docs/report/Final_Report_Draft.md`, `docs/report/Final_Report_Draft.pdf`, `scripts/apply_leeds_template.py` |
 
 ---

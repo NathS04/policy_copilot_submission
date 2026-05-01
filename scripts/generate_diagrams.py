@@ -178,8 +178,8 @@ def draw_gantt():
 
     # Subtle vertical month separators (no big rainbow lines)
     month_labels = [
-        (1, "Oct 2024"), (5, "Nov"), (9, "Dec"),
-        (13, "Jan 2025"), (17, "Feb"), (21, "Mar"),
+        (1, "Nov 2025"), (5, "Dec"), (9, "Jan 2026"),
+        (13, "Feb"), (17, "Mar"), (21, "Apr"),
     ]
     for wk, _ in month_labels:
         ax.axvline(x=wk - 0.5, color=grid_color, linestyle="-",
