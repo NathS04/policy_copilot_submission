@@ -22,7 +22,8 @@ htmlcov/
 # ── Environment ────────────────────────────────
 .env
 .env.local
-.env.*.local
+.env.*
+!.env.example
 
 # ── OS ─────────────────────────────────────────
 .DS_Store
@@ -51,5 +52,12 @@ Speaking_Script.pdf
 docs/report/pagemap.json
 docs/report/Final_Report_Draft_humanised.md
 docs/report/Final_Report_Draft_pre_humanise.md
+
+# ── Eval intermediate / per-run scratch ────────
 eval/adversarial/_adversarial_golden_set.csv
 results/runs/adversarial_*
+
+# ── Misc ───────────────────────────────────────
+*.tmp
+*.bak
+*.zip
