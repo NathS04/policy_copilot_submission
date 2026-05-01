@@ -1025,7 +1025,7 @@ The earliest entries below (Oct 2024 – Feb 2025) are from a self-directed expl
 | Jan 2025 | GitHub Copilot | Boilerplate generation for Pydantic schema definitions and pytest fixtures. All generated code was modified to fit project conventions. | `src/policy_copilot/generate/schema.py`, `tests/` |
 | Jan 2025 | ChatGPT (GPT-4o) | Generating the synthetic policy corpus documents (project data only, not report prose). Detailed prompts specified structure, contradictions, and coverage requirements. | `data/corpus/raw/` |
 | Feb 2025 | GitHub Copilot | Minor autocompletion during Streamlit UI development and figure-generation script refinement. | `src/policy_copilot/ui/`, `eval/analysis/` |
-| Apr 2026 | LLM-based writing assistant | Limited drafting and structuring assistance during the report-preparation phase: paragraph rewording for clarity, sentence-rhythm and tone editing, table and caption formatting, and template/layout polish. All technical content, metrics, results, design decisions, citations, and final wording were reviewed and revised by the author before submission. | `docs/report/Final_Report_Draft.md`, `docs/report/Final_Report_Draft.pdf`, `scripts/apply_leeds_template.py` |
+| Apr 2026 | Claude Opus (Anthropic) | Limited drafting and structuring assistance during the report-preparation phase: paragraph rewording for clarity, sentence-rhythm and tone editing, table and caption formatting, and template/layout polish. All technical content, metrics, results, design decisions, citations, and final wording were reviewed and revised by the author before submission. | `docs/report/Final_Report_Draft.md`, `docs/report/Final_Report_Draft.pdf`, `scripts/apply_leeds_template.py` |
 
 ---
 
