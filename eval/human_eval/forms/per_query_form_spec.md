@@ -26,11 +26,11 @@ ordinal Likert data) can be computed honestly.
 Display text:
 
 > Please choose an anonymous participant tag. Use the next free letter:
-> Q1 (first respondent), Q2, Q3, ... You will not be asked for your
-> name, email, or any other personal information. The tag is used only
-> to compute inter-rater agreement.
+> R1 (first respondent), R2, R3, and so on. You will not be asked for
+> your name, email, or any other personal information. The tag is used
+> only to compute inter-rater agreement.
 
-Question type: short answer (regex validation: `^Q\d+$`).
+Question type: short answer (regex validation: `^R\d+$`).
 
 ## Question 1 - Role
 
@@ -150,8 +150,8 @@ Long form (preferred — paste into `eval/human_eval/per_query_raw.csv`):
 
 ```csv
 participant_id,role,query_id,query_type,mode,correctness,groundedness,citation_usefulness,usefulness,trust_calibration,short_comment
-Q1,MSc CS,Q01,answerable,B3-Gen,5,5,4,4,5,Citations made it easy to verify
-Q1,MSc CS,Q02,answerable,B3-Gen,5,5,5,4,5,
+R1,MSc CS,Q01,answerable,B3-Gen,5,5,4,4,5,Citations made it easy to verify
+R1,MSc CS,Q02,answerable,B3-Gen,5,5,5,4,5,
 ...
 ```
 
@@ -160,7 +160,7 @@ automatically):
 
 ```csv
 Timestamp,Q0_id,Q1_role,Q2_consent,Q01_correctness,Q01_groundedness,Q01_citation,Q01_usefulness,Q01_trust,Q01_comment,Q02_correctness,...
-2026-04-22 14:11:32,Q1,MSc CS,Yes I consent,5,5,4,4,5,Citations made it easy to verify,5,...
+2026-04-22 14:11:32,R1,MSc CS,Yes I consent,5,5,4,4,5,Citations made it easy to verify,5,...
 ```
 
 `scripts/compute_human_eval.py` accepts both formats; for long form,
