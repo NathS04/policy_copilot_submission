@@ -43,30 +43,46 @@ Outputs are scored automatically by
 
 ## Results
 
-| Attack type | Mode | n | Safe response rate | Fabricated citation rate | Unsupported answer rate |
-| :--- | :--- | :---: | :---: | :---: | :---: |
-| citation_fabrication_request | extractive | 3 | 100.0% | 0.0% | 0.0% |
-| contradiction_pressure | extractive | 3 | 100.0% | 0.0% | 0.0% |
-| false_premise | extractive | 3 | 100.0% | 0.0% | 0.0% |
-| instruction_override | extractive | 3 | 100.0% | 0.0% | 0.0% |
-| out_of_domain_lure | extractive | 3 | 100.0% | 0.0% | 0.0% |
-| OVERALL | extractive | 15 | 100.0% | 0.0% | 0.0% |
+`n_eval` is the number of queries actually evaluated (LLM call
+succeeded for the generative arm; always equals `n` for the
+extractive arm). Rate columns are computed over `n_eval`, not
+`n`. `API error` rows are queries where the LLM call failed
+outright (e.g. quota / network) and the system was therefore
+not exercised on that query.
 
-## Generative arm: status
+| Attack type | Mode | n | n_eval | API error | Safe response | Fabricated citation | Unsupported answer |
+| :--- | :--- | :---: | :---: | :---: | :---: | :---: | :---: |
+| citation_fabrication_request | extractive | 3 | 3 | 0 | 100.0% | 0.0% | 0.0% |
+| citation_fabrication_request | generative | 3 | 0 | 3 | n/a | n/a | n/a |
+| contradiction_pressure | extractive | 3 | 3 | 0 | 100.0% | 0.0% | 0.0% |
+| contradiction_pressure | generative | 3 | 0 | 3 | n/a | n/a | n/a |
+| false_premise | extractive | 3 | 3 | 0 | 100.0% | 0.0% | 0.0% |
+| false_premise | generative | 3 | 0 | 3 | n/a | n/a | n/a |
+| instruction_override | extractive | 3 | 3 | 0 | 100.0% | 0.0% | 0.0% |
+| instruction_override | generative | 3 | 0 | 3 | n/a | n/a | n/a |
+| out_of_domain_lure | extractive | 3 | 3 | 0 | 100.0% | 0.0% | 0.0% |
+| out_of_domain_lure | generative | 3 | 0 | 3 | n/a | n/a | n/a |
+| OVERALL | extractive | 15 | 15 | 0 | 100.0% | 0.0% | 0.0% |
+| OVERALL | generative | 15 | 0 | 15 | n/a | n/a | n/a |
 
-The B3-Generative arm has not yet been executed in this
-evidence pass because no LLM API key is configured in the
-evaluator's environment. The runner
-(`scripts/run_adversarial.py`) is parameterised so the
-generative pass becomes a single command
-(`python scripts/run_adversarial.py --modes generative`)
-once `OPENAI_API_KEY` (or `ANTHROPIC_API_KEY`) is set;
-the cost is approximately 15 LLM calls.
+## Generative arm: API error
 
-The generative arm is therefore reported here as **pending**
-rather than fabricated. The dissertation surfaces this in
-Limitation L5 and Appendix B.12 alongside the extractive
-results.
+The generative arm was attempted (the
+key authenticated successfully) but every LLM call returned
+an API-level error (most commonly `insufficient_quota`,
+HTTP 429 from OpenAI), so the system was never actually
+exercised on the adversarial queries. The full error notes
+are preserved per-query in
+`eval/adversarial/adversarial_results_generative.csv`.
+
+These rows are *not* counted as safe responses. The
+summary table above shows `n_eval = 0` and
+`safe_response_rate = n/a` for the generative arm; the
+rates would only become valid after a re-run against an
+account with available API credit
+(`python scripts/run_adversarial.py --modes generative`
+after topping up). The extractive arm's structural-
+immunity result (100% safe) is unaffected.
 
 ## Representative cases
 
@@ -133,4 +149,4 @@ results.
   query; the present test treats any real paragraph ID as
   non-fabricated.
 
-Generated: 2026-05-06T00:26:09.077488+00:00
+Generated: 2026-05-06T18:21:19.403578+00:00

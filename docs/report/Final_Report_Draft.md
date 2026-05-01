@@ -782,7 +782,7 @@ An honest assessment of the project's limitations is essential to interpret the 
 
 **L4: Single LLM Evaluated.** All generative results were obtained using a single LLM family via the OpenAI API. Different models may exhibit different hallucination patterns, citation-format compliance rates, and prompt-following behaviour. The system's model-agnostic architecture supports easy substitution, but a comparative evaluation across model families was not conducted within the project timeline.
 
-**L5: Limited Independent Human Evaluation and Adversarial Coverage.** The independent reviewer evaluation reported in §4.10 (n = 6 peer participants, 14-18 April 2026) provides triangulation against the automated metrics, but it is small, author-facilitated rather than fully blinded, and the reviewer pool is non-domain-expert (CS peers rather than compliance specialists). A Round 2 per-query collection (Appendix B.10) reaches Krippendorff's α 0.74 on three of five axes; a small 15-query adversarial probe (Appendix B.12, Extractive arm safe at 100%, Generative arm pending an LLM API key) is landed alongside. A production-quality follow-up evaluation would employ at least two independent domain-expert raters, full blinding, and per-item ratings stored at collection time, as recommended by Es et al. (2023).
+**L5: Limited Independent Human Evaluation and Adversarial Coverage.** The independent reviewer evaluation reported in §4.10 (n = 6 peer participants, 14-18 April 2026) provides triangulation against the automated metrics, but it is small, author-facilitated rather than fully blinded, and the reviewer pool is non-domain-expert (CS peers rather than compliance specialists). A Round 2 per-query collection (Appendix B.10) reaches Krippendorff's α 0.74 on three of five axes; a small 15-query adversarial probe (Appendix B.12, Extractive arm safe at 100%, Generative arm `n/a` after `insufficient_quota` errors on the OpenAI account) is landed alongside. A production-quality follow-up evaluation would employ at least two independent domain-expert raters, full blinding, and per-item ratings stored at collection time, as recommended by Es et al. (2023).
 
 ### 5.3 Future Work
 
@@ -1251,19 +1251,19 @@ Appendix B.12 summarises two supplementary evidence layers that probe the system
 
 <a id="tbl-b-5"></a>
 
-**Table B.5: Adversarial probe results, paired across modes (n = 15 queries; 5 attack types x 3 queries each).**
+**Table B.5: Adversarial probe results, paired across modes (n = 15 queries; 5 attack types x 3 queries each). `n_eval` = queries actually evaluated; `API error` = queries where the LLM call itself failed and the system was therefore not exercised.**
 
-| Attack type | Mode | n | Safe response | Fabricated citation | Unsupported answer |
-| :--- | :--- | :---: | :---: | :---: | :---: |
-| `instruction_override` | Extractive | 3 | 100% | 0% | 0% |
-| `citation_fabrication_request` | Extractive | 3 | 100% | 0% | 0% |
-| `out_of_domain_lure` | Extractive | 3 | 100% | 0% | 0% |
-| `false_premise` | Extractive | 3 | 100% | 0% | 0% |
-| `contradiction_pressure` | Extractive | 3 | 100% | 0% | 0% |
-| **All attack types (overall)** | **Extractive** | **15** | **100%** | **0%** | **0%** |
-| All attack types (overall) | Generative | -- | pending | pending | pending |
+| Attack type | Mode | n | n_eval | API error | Safe response | Fabricated citation | Unsupported answer |
+| :--- | :--- | :---: | :---: | :---: | :---: | :---: | :---: |
+| `instruction_override` | Extractive | 3 | 3 | 0 | 100% | 0% | 0% |
+| `citation_fabrication_request` | Extractive | 3 | 3 | 0 | 100% | 0% | 0% |
+| `out_of_domain_lure` | Extractive | 3 | 3 | 0 | 100% | 0% | 0% |
+| `false_premise` | Extractive | 3 | 3 | 0 | 100% | 0% | 0% |
+| `contradiction_pressure` | Extractive | 3 | 3 | 0 | 100% | 0% | 0% |
+| **All attack types (overall)** | **Extractive** | **15** | **15** | **0** | **100%** | **0%** | **0%** |
+| All attack types (overall) | Generative | 15 | 0 | 15 | n/a | n/a | n/a |
 
-The Extractive arm reports 100% safe responses across all five attack types (15/15) with zero fabricated citations and zero unsupported answers; the safety property of returning verbatim corpus paragraphs is confirmed empirically. The Generative arm is reported as `pending` because the evaluator's environment did not have an LLM API key configured at submission time; the runner is parameterised so a single command (`python scripts/run_adversarial.py --modes generative`) produces the paired numbers once a key is set, at a cost of approximately 15 LLM calls. The full per-query results, three representative cases per attack type, and the limitations of the probe are at `docs/evidence/verification/adversarial_test_summary.md`. The probe is intentionally small and is not a security certification; an exhaustive prompt-injection evaluation would adopt Garak or PromptBench (Liu et al., 2023) and is listed as future work in §5.3.
+The Extractive arm reports 100% safe responses across all five attack types (15/15) with zero fabricated citations and zero unsupported answers; the safety property of returning verbatim corpus paragraphs is confirmed empirically. The Generative arm was attempted but the LLM call returned `insufficient_quota` (HTTP 429) on all 15 queries, so the system was not exercised on the adversarial set in the generative configuration; rates are reported as `n/a` rather than fabricated, and the per-query error notes are preserved in `eval/adversarial/adversarial_results_generative.csv`. A re-run on a billing-active OpenAI account (`python scripts/run_adversarial.py --modes generative`) will replace the `n/a` cells; the cost is approximately 15 LLM calls. The full per-query results, three representative cases per attack type, and the limitations of the probe are at `docs/evidence/verification/adversarial_test_summary.md`. The probe is intentionally small and is not a security certification; an exhaustive prompt-injection evaluation would adopt Garak or PromptBench (Liu et al., 2023) and is listed as future work in §5.3.
 
 **Audit export examples.** To make the `audit-ready` claim visible (rather than implicit in code), three representative records from the B3-Generative final run are rendered in human-readable Markdown under `docs/evidence/verification/`: `audit_export_answerable.md` (clean grounded answer with `support_rate = 1.0`), `audit_export_unanswerable.md` (clean abstention triggered by the post-LLM `min_support_rate` gate via `ABSTAINED_LOW_SUPPORT_RATE`), and `audit_export_contradiction.md` (contradiction-flag audit trail with the structured contradictions list preserved). Every value (query, answer, citation IDs, retrieval and rerank scores, claim verification fields, contradiction list, backend, latency, notes) is a verbatim copy from `results/runs/b3_generative_bm25_fallback_final/outputs.jsonl`; no values are summarised or fabricated. The exporter `scripts/build_audit_exports.py` regenerates all three files plus an index (`audit_export_index.md`) deterministically from the existing run, with no new system runs performed.
 
