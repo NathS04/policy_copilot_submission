@@ -477,7 +477,7 @@ def main() -> int:
 
     failed = False
     if top_levels != {"policy_copilot_submission"}:
-        print(f"FAIL: top-level folders must be exactly {{'policy_copilot_submission'}}")
+        print("FAIL: top-level folders must be exactly {'policy_copilot_submission'}")
         failed = True
 
     if bad:

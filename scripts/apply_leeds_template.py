@@ -27,12 +27,11 @@ import re
 import sys
 from pathlib import Path
 from docx import Document
-from docx.shared import Pt, Cm, Emu, Inches, RGBColor
-from docx.enum.text import WD_BREAK, WD_ALIGN_PARAGRAPH, WD_LINE_SPACING, WD_TAB_ALIGNMENT, WD_TAB_LEADER
+from docx.shared import Pt, Cm, Inches, RGBColor
+from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.enum.table import WD_TABLE_ALIGNMENT
 from docx.oxml.ns import qn
 from docx.oxml import OxmlElement
-from copy import deepcopy
 
 REPORT = Path(__file__).resolve().parent.parent / "docs" / "report"
 # Pandoc renders the intermediate docx into build_assets/; this script post-processes it in place.
@@ -913,7 +912,6 @@ def insert_leeds_logo(doc, logo_path):
     if not logo_path.exists():
         print(f"  WARNING: Leeds logo not found at {logo_path}, skipping")
         return False
-    body = doc.element.body
     first_para = doc.paragraphs[0]
     new_p = first_para.insert_paragraph_before("")
     new_p.alignment = WD_ALIGN_PARAGRAPH.CENTER

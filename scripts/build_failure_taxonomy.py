@@ -35,7 +35,7 @@ import argparse
 import csv
 import json
 import re
-from collections import Counter, defaultdict
+from collections import Counter
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -96,10 +96,8 @@ def _doc_paragraph_count(paragraphs: dict[str, dict]) -> dict[str, int]:
 def auto_label(record: dict, gold: dict, doc_lengths: dict[str, int],
                long_doc_threshold: int = 60) -> tuple[str, str]:
     """Return (auto_label, short_explanation)."""
-    qid = record["query_id"]
     cat = record.get("category") or gold.get("category", "")
     is_abstained = bool(record.get("is_abstained"))
-    is_answerable = bool(record.get("is_answerable"))
     evidence = record.get("evidence") or []
     top_pids = [(e or {}).get("paragraph_id", "") for e in evidence[:5]]
     gold_pids = gold.get("gold_paragraph_ids", []) or []
@@ -294,7 +292,7 @@ def main() -> int:
     if not outputs.exists():
         raise SystemExit(f"missing {outputs}; run scripts/run_transfer_eval.py first")
 
-    records = [json.loads(l) for l in outputs.open() if l.strip()]
+    records = [json.loads(line) for line in outputs.open() if line.strip()]
     gold = _load_gold(gold_path)
     paragraphs = _load_paragraphs(paragraphs_path)
 

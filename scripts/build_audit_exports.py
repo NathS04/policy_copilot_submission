@@ -23,7 +23,6 @@ Usage:
 from __future__ import annotations
 
 import argparse
-import csv
 import json
 from datetime import datetime, timezone
 from pathlib import Path
@@ -41,7 +40,7 @@ def _load_records(run_dir: Path) -> list[dict]:
     p = run_dir / "outputs.jsonl"
     if not p.exists():
         raise SystemExit(f"missing {p}")
-    return [json.loads(l) for l in p.open() if l.strip()]
+    return [json.loads(line) for line in p.open() if line.strip()]
 
 
 def _pick_answerable(records: list[dict]) -> dict | None:

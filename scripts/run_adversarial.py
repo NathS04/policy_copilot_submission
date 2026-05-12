@@ -26,8 +26,6 @@ import csv
 import json
 import os
 import sys
-import time
-from collections import Counter, defaultdict
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -205,7 +203,7 @@ def _run_mode(mode: str, golden_path: Path, valid_pids: set[str]) -> list[dict]:
     outputs = run_dir / "outputs.jsonl"
     if not outputs.exists():
         return []
-    records = [json.loads(l) for l in outputs.open() if l.strip()]
+    records = [json.loads(line) for line in outputs.open() if line.strip()]
     return records, run_dir
 
 

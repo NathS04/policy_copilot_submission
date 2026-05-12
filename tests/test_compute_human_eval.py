@@ -87,7 +87,6 @@ def test_main_with_three_raters_writes_alpha(tmp_path, monkeypatch):
     monkeypatch.setattr(che, "SUMMARY_OUT", fake_evidence / "per_query_summary_stats.csv")
     monkeypatch.setattr(che, "AGREEMENT_OUT", fake_evidence / "inter_rater_agreement.md")
     raw = tmp_path / "raw.csv"
-    rows = []
     # 3 raters, 4 items, mostly-high agreement
     ratings = [
         ("Q1", "BSc CS", "Q01", "answerable", "B3-Gen", 5, 5, 4, 4, 5, ""),

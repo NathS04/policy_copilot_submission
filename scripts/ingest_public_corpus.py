@@ -23,8 +23,8 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(HERE / "src"))
 
-from policy_copilot.ingest.chunking import chunk_text_to_paragraphs
-from policy_copilot.ingest.paragraph_ids import generate_paragraph_id
+from policy_copilot.ingest.chunking import chunk_text_to_paragraphs  # noqa: E402
+from policy_copilot.ingest.paragraph_ids import generate_paragraph_id  # noqa: E402
 
 
 RAW_DIR = HERE / "data" / "public_transfer_corpus" / "raw"

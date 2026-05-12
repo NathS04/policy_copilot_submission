@@ -28,13 +28,10 @@ from __future__ import annotations
 
 import argparse
 import csv
-import json
-import math
 import random
 import statistics
 from collections import defaultdict
 from pathlib import Path
-from typing import Iterable
 
 ROOT = Path(__file__).resolve().parent.parent
 RAW_DEFAULT = ROOT / "eval" / "human_eval" / "per_query_raw.csv"

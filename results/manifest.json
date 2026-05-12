@@ -1,7 +1,7 @@
 {
   "source": "make_figures.py",
   "verified_by": "verify_artifacts.py",
-  "verified_at": "2026-05-12T22:04:48.516743+00:00",
+  "verified_at": "2026-05-12T22:13:37.440215+00:00",
   "strict": false,
   "allow_backend_mismatch": false,
   "runs": [

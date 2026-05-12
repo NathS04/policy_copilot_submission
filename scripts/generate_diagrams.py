@@ -144,7 +144,6 @@ def draw_gantt():
     bar_color    = "#3b6c8b"   # muted slate blue
     docs_color   = "#a8a8a8"   # warm grey for the parallel docs strip
     grid_color   = "#dddddd"
-    text_main    = "#1a1a1a"
 
     rows = list(range(len(sprints), 0, -1))  # 6,5,4,3,2,1 (top → bottom)
     docs_row = 0  # parallel documentation strip below sprint rows
