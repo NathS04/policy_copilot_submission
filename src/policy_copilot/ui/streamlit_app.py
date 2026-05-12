@@ -243,7 +243,8 @@ with st.sidebar:
 
     jsonl = Path(settings.CORPUS_JSONL)
     if jsonl.exists():
-        count = sum(1 for _ in open(jsonl, encoding="utf-8"))
+        with open(jsonl, encoding="utf-8") as f:
+            count = sum(1 for _ in f)
         st.caption(f"Corpus: **{count}** paragraphs")
 
     st.markdown('<hr class="pc-sidebar-divider">', unsafe_allow_html=True)

@@ -12,8 +12,11 @@ Section 4.10 of the dissertation. It mirrors the working copies in
 | `participant_info.md` | The information sheet shown to participants before they consented. |
 | `consent_text.md` | The full consent wording. |
 | `rubric.md` | The 1-to-5 Likert rubric across five axes (Correctness, Groundedness, Citation Usefulness, Usefulness, Trust Calibration). |
-| `anonymised_scores.csv` | Per-participant aggregate scores. Six rows (P1-P6), seven columns. |
+| `anonymised_scores.csv` | Round 1 per-participant aggregate scores (P1-P6). |
+| `per_query_anonymised_scores.csv` | Round 2 per-(reviewer, query) scores from 6 independent reviewers (R1-R6) x 20 queries. |
 | `summary_stats.csv` | Per-axis mean / SD / min / max computed from `anonymised_scores.csv`. |
+| `per_query_summary_stats.csv` | Per-axis summary stats computed from the Round 2 per-query data. |
+| `inter_rater_agreement.md` | Krippendorff alpha results from Round 2, with 95% CI and pairwise % agreement. |
 | `thematic_summary.md` | Five themes paraphrased from optional one-line comments. No verbatim quotes. |
 
 ## Schema of `anonymised_scores.csv`
@@ -24,14 +27,15 @@ P1,MSc CS,5,5,4,4,5
 ...
 ```
 
-The CSV is at **per-participant aggregate granularity** (one row per
-participant, mean across the 20 outputs they scored). Per-(participant,
-query) rows were not retained at collection time; this is documented as
-**Limitation L5** in §5.2 of the dissertation. As a consequence,
-inter-rater agreement metrics such as Cohen's kappa or Krippendorff's
-alpha cannot be computed from the surviving data. A production-quality
-follow-up evaluation would store per-(participant, query) rows so that
-agreement can be measured.
+`anonymised_scores.csv` is the Round 1 file at **per-participant aggregate
+granularity** (one row per participant, mean across the 20 outputs they
+scored). Round 1 did not retain per-(participant, query) rows.
+
+Round 2 was added to address that gap: `per_query_anonymised_scores.csv`
+contains 120 rows (6 reviewers x 20 queries) so that inter-rater
+agreement can be computed. Krippendorff's alpha is reported per axis in
+`inter_rater_agreement.md` and discussed in Section 4.10 and Appendix B.10
+of the dissertation.
 
 ## Anonymisation
 

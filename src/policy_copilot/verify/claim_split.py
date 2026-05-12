@@ -1,5 +1,7 @@
-"""
-Splits an answer into atomic claims and extracts per-claim citations.
+"""Split an answer into sentence-level claims and lift the inline citations.
+
+The trick is that ``[CITATION: pid]`` markers must not break sentence-splitting,
+so we substitute placeholders for them, split on punctuation, then re-attach.
 """
 import re
 from typing import List, Dict

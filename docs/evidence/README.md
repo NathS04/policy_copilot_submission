@@ -59,5 +59,5 @@ so that an examiner only has to look in one place.
   corpus and its provenance file (referenced from Appendix B.11).
 - `eval/golden_set/golden_set.csv` and `public_transfer_set.csv` -
   the synthetic and transfer query sets.
-- `tests/` - the 188 automated tests that validate the reproducibility
+- `tests/` - the 195 automated tests that validate the reproducibility
   contract.

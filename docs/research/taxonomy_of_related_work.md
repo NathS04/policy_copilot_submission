@@ -77,7 +77,7 @@ The field is moving toward LLM-based evaluation (RAGAS, ARES), but systematic ev
 
 ### 2.4 Key Limitation
 
-**No gold-standard evaluation exists for RAG.** Human evaluation remains the most reliable approach but is expensive and itself subject to rater disagreement. The dissertation's single-rater evaluation is honest about this limitation.
+**No gold-standard evaluation exists for RAG.** Human evaluation remains the most reliable approach but is expensive and itself subject to rater disagreement. The dissertation's Round 2 independent reviewer evaluation (6 reviewers, Krippendorff alpha per axis) is honest about the small pool size and non-domain-expert composition as limitations.
 
 ---
 

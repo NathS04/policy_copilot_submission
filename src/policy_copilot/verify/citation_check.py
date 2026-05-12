@@ -1,35 +1,17 @@
-"""
-Per-claim citation verification — the core of the "cited or silent" guarantee.
+"""Per-claim citation verification — the deterministic backbone of the
+"cited or silent" rule.
 
-Purpose:
-    Implements the deterministic verification layer that operates after LLM generation.
-    Each claim in the generated answer is checked against its cited evidence paragraphs
-    using a Jaccard token-overlap heuristic. Claims that fail verification are either
-    pruned from the response or trigger full abstention (see enforce_support_policy).
+Each claim in a generated answer is checked against its cited paragraphs
+using Jaccard token overlap. Claims that fail are either pruned, or — if
+the overall support rate drops below the configured floor — the whole
+answer is replaced with INSUFFICIENT_EVIDENCE. Jaccard is used (not
+embedding cosine) so that the decision is fully reproducible across
+machines; the trade-off is that paraphrases sometimes slip through.
 
-Design decisions:
-    - Jaccard token overlap was chosen over dense embedding similarity (cosine) because
-      it is fully deterministic: the same inputs always produce the same verification
-      decision. Dense embeddings introduce model-dependent variance and would make
-      verification results non-reproducible across environments. The trade-off is that
-      Jaccard cannot detect paraphrasing (e.g., "quarterly" vs "every 90 days"), which
-      causes occasional false positives — see Section 4.8 Error Analysis.
-    - The overlap threshold (default 0.10) was tuned on the validation split to balance
-      false positives (pruning correct claims) against false negatives (passing
-      hallucinated claims). Lower thresholds catch more hallucinations but also prune
-      more legitimate paraphrases. The current value represents a conservative choice
-      that prioritises precision over recall.
-    - Numeric consistency is checked separately because policy facts often hinge on
-      exact numbers (days, percentages, thresholds). Even a single shared number
-      between claim and evidence is treated as supporting evidence, reflecting the
-      observation that numeric hallucinations are particularly damaging in compliance
-      contexts — a policy that requires 12-character passwords must not be reported as
-      requiring 8-character passwords.
-
-# Considered NLI-based verification (e.g., using a fine-tuned DeBERTa-v3 model)
-# as Tier 1.5 between heuristic and LLM-based verification. Rejected due to
-# model size (~400MB) and inference cost (~200ms/claim). Would be the recommended
-# upgrade path for production deployment — see Future Work in Section 4.9.
+Numbers get a separate check: a single shared number between a claim and
+its evidence counts as support, because policy facts often hinge on exact
+numeric values and silently swapping "8" for "12" is the worst kind of
+hallucination in this domain.
 """
 import re
 from typing import List, Dict, Set
@@ -38,21 +20,25 @@ from policy_copilot.logging_utils import setup_logging
 logger = setup_logging()
 
 
+_STOPWORDS = frozenset({
+    "the", "a", "an", "is", "are", "was", "were", "be", "been",
+    "being", "have", "has", "had", "do", "does", "did", "will",
+    "would", "could", "should", "may", "might", "shall", "can",
+    "to", "of", "in", "for", "on", "with", "at", "by", "from",
+    "as", "into", "through", "during", "before", "after", "and",
+    "but", "or", "nor", "not", "so", "yet", "both", "either",
+    "neither", "each", "every", "all", "any", "few", "more",
+    "most", "other", "some", "such", "no", "only", "own",
+    "same", "than", "too", "very", "it", "its", "this", "that",
+    "these", "those", "i", "me", "my", "we", "our", "you", "your",
+    "he", "him", "his", "she", "her", "they", "them", "their",
+})
+
+
 def _tokenise(text: str) -> Set[str]:
-    """Simple whitespace + punctuation tokeniser, lowercased, no stopwords."""
-    STOPWORDS = {"the", "a", "an", "is", "are", "was", "were", "be", "been",
-                 "being", "have", "has", "had", "do", "does", "did", "will",
-                 "would", "could", "should", "may", "might", "shall", "can",
-                 "to", "of", "in", "for", "on", "with", "at", "by", "from",
-                 "as", "into", "through", "during", "before", "after", "and",
-                 "but", "or", "nor", "not", "so", "yet", "both", "either",
-                 "neither", "each", "every", "all", "any", "few", "more",
-                 "most", "other", "some", "such", "no", "only", "own",
-                 "same", "than", "too", "very", "it", "its", "this", "that",
-                 "these", "those", "i", "me", "my", "we", "our", "you", "your",
-                 "he", "him", "his", "she", "her", "they", "them", "their"}
+    """Whitespace + punctuation tokeniser, lowercased, stopwords removed."""
     words = set(re.findall(r'\b\w+\b', text.lower()))
-    return words - STOPWORDS
+    return words - _STOPWORDS
 
 
 def _extract_numbers(text: str) -> Set[str]:

@@ -35,13 +35,13 @@ from docx.oxml import OxmlElement
 from copy import deepcopy
 
 REPORT = Path(__file__).resolve().parent.parent / "docs" / "report"
-# Pandoc renders the intermediate docx; this script post-processes it in place.
-SRC = REPORT / "Final_Report_Draft_template.docx"
-DST = REPORT / "Final_Report_Draft_template.docx"
+# Pandoc renders the intermediate docx into build_assets/; this script post-processes it in place.
+SRC = REPORT / "build_assets" / "Final_Report_Template.docx"
+DST = REPORT / "build_assets" / "Final_Report_Template.docx"
 # Optional page-number map written by build_report.py after the first PDF pass.
 PAGEMAP_PATH = REPORT / "pagemap.json"
 # Final PDF is rendered from the docx into the canonical primary path
-# Final_Report_Draft.pdf (no separate _template.pdf duplicate).
+# Final_Report_Nathaniel_Sebastian_201715051.pdf (no separate _template.pdf duplicate).
 
 
 # Patterns that should be Heading 1 (chapter-level).

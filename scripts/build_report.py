@@ -25,11 +25,12 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 REPORT = ROOT / "docs" / "report"
-SRC_MD = REPORT / "Final_Report_Draft.md"
-DOCX = REPORT / "Final_Report_Draft_template.docx"
-PDF = REPORT / "Final_Report_Draft.pdf"
+REPORT_STEM = "Final_Report_Nathaniel_Sebastian_201715051"
+SRC_MD = REPORT / f"{REPORT_STEM}.md"
+DOCX = REPORT / "build_assets" / "Final_Report_Template.docx"
+PDF = REPORT / f"{REPORT_STEM}.pdf"
 PAGEMAP = REPORT / "pagemap.json"
-TEMPLATE = REPORT / "leeds_template.docx"
+TEMPLATE = REPORT / "build_assets" / "leeds_template.docx"
 
 PANDOC = "pandoc"
 SOFFICE = "/opt/homebrew/bin/soffice"
@@ -81,8 +82,8 @@ def render_pdf():
         str(DOCX),
     ]
     run(cmd, timeout=180)
-    # soffice writes Final_Report_Draft_template.pdf; rename to canonical PDF.
-    template_pdf = REPORT / "Final_Report_Draft_template.pdf"
+    # soffice writes <DOCX-stem>.pdf into --outdir; rename to canonical PDF.
+    template_pdf = REPORT / (DOCX.stem + ".pdf")
     if template_pdf.exists():
         template_pdf.replace(PDF)
 

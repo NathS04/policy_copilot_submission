@@ -91,7 +91,7 @@ class CriticFinding(BaseModel):
 # ------------------------------------------------------------------ #
 
 class LatencyBreakdown(BaseModel):
-    """Per-stage timing in milliseconds."""
+    """Per-stage timings (ms)."""
     retrieval_ms: float = 0.0
     rerank_ms: float = 0.0
     llm_gen_ms: float = 0.0
@@ -102,7 +102,7 @@ class LatencyBreakdown(BaseModel):
 
 
 class TokenUsage(BaseModel):
-    """Token consumption for cost/resource reporting."""
+    """Token usage for cost tracking."""
     prompt_tokens: int = 0
     completion_tokens: int = 0
     total_tokens: int = 0
@@ -220,7 +220,7 @@ class RunQueryRecord(BaseModel):
 
 
 class RunDetail(BaseModel):
-    """Full detail of an evaluation run."""
+    """Full detail of a run."""
     summary: RunSummary = Field(default_factory=RunSummary)
     config: Dict[str, Any] = Field(default_factory=dict)
     records: List[RunQueryRecord] = Field(default_factory=list)
@@ -228,7 +228,7 @@ class RunDetail(BaseModel):
 
 
 class ComparisonResult(BaseModel):
-    """Side-by-side comparison of two runs."""
+    """Comparison of two runs."""
     run_a: RunSummary = Field(default_factory=RunSummary)
     run_b: RunSummary = Field(default_factory=RunSummary)
     metric_deltas: Dict[str, Optional[float]] = Field(default_factory=dict)

@@ -202,7 +202,7 @@ _HTML_TEMPLATE = """\
 
 
 class AuditReportService:
-    """Generates structured audit reports from query results."""
+    """Builds structured audit reports from a query result."""
 
     @staticmethod
     def generate_report(query_result: QueryResult) -> AuditReport:

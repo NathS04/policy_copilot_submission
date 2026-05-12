@@ -9,10 +9,8 @@ from policy_copilot.logging_utils import setup_logging
 logger = setup_logging()
 
 class BM25Retriever:
-    """
-    Lightweight keyword-based retriever using BM25.
-    Requires NO heavy ML dependencies (torch/transformers).
-    """
+    """Lightweight BM25 retriever. No torch / transformers needed, so it
+    works in the slim install path."""
     def __init__(self, paragraphs_path: Optional[str] = None):
         self.paragraphs = []
         self.bm25 = None
@@ -47,14 +45,19 @@ class BM25Retriever:
             return []
             
         tokenized_query = self._tokenize(query)
-        # Get top-k scores
         doc_scores = self.bm25.get_scores(tokenized_query)
-        top_n = np.argsort(doc_scores)[::-1][:k]
-        
-        # Calculate max score for normalization (avoid div-by-zero)
-        max_s = np.max(doc_scores) if len(doc_scores) > 0 else 1.0
+
+        # argpartition gives unsorted top-k in O(n); sort just the k-slice afterwards
+        if k < len(doc_scores):
+            cand = np.argpartition(doc_scores, -k)[-k:]
+            top_n = cand[np.argsort(doc_scores[cand])[::-1]]
+        else:
+            top_n = np.argsort(doc_scores)[::-1]
+
+        # Normalise to [0, 1] using max score; guard against div-by-zero
+        max_s = float(np.max(doc_scores)) if len(doc_scores) > 0 else 1.0
         if max_s <= 1e-9:
-             max_s = 1.0
+            max_s = 1.0
 
         results = []
         for idx in top_n:

@@ -88,6 +88,6 @@ Three caveats prevent overclaiming:
 
 1. **Synthetic corpus.** The evaluation uses a corpus authored specifically for this project. While this enables controlled injection of test cases, results may not transfer to real-world policy documents with OCR noise, inconsistent formatting, and genuine authorship variation.
 
-2. **Single-rater evaluation.** The human evaluation was self-administered by the author. No inter-rater agreement metrics are reportable. A genuine validation of the human-factors claims (Gap H1) would require a user study with independent participants — a limitation acknowledged in the dissertation.
+2. **Small reviewer pool, non-domain-expert.** The human evaluation includes a Round 2 independent reviewer study (6 reviewers x 20 queries x 5 axes, with Krippendorff's alpha reported per axis), but the pool is small, CS peers rather than compliance specialists, and author-facilitated rather than fully blinded. A genuine validation of the human-factors claims (Gap H1) would require a larger user study with domain-expert participants — a limitation acknowledged in the dissertation.
 
 3. **Heuristic verification ceiling.** Jaccard token overlap cannot detect semantic entailment or paraphrase-level support. An NLI-based verification layer (using models trained on FEVER/SciFact) would be more expressive but would sacrifice the determinism that is a design requirement. This trade-off is acknowledged as a future-work direction.

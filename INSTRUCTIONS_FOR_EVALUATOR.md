@@ -2,7 +2,7 @@
 
 ## Purpose
 
-This file provides the shortest path to verify the **final reproducibility contract** for the submitted Policy Copilot package. Every step below is deterministic, runs on a consumer laptop, and does not require an LLM API key unless explicitly stated.
+This file is the shortest path for an examiner to verify the submitted Policy Copilot package. Every step below is deterministic, runs on a normal laptop, and does not require an LLM API key unless explicitly stated.
 
 ## Expected environment
 
@@ -38,7 +38,7 @@ pytest -q --ignore=tests/test_run_eval_requires_key_in_generative.py
 Expected on a clean install:
 
 ```text
-193 passed, 1 skipped
+195 passed, 1 skipped
 ```
 
 The single skipped test (`test_run_eval_requires_key_in_generative`) is conditionally skipped when no API key is configured; this is intentional and documented in `tests/`.
@@ -77,7 +77,7 @@ If the API account is out of quota, the runner records `insufficient_quota` per 
 
 | Path | Content |
 | :--- | :--- |
-| `docs/report/Final_Report_Draft.pdf` | Final dissertation, 65 pages total, 30-page body |
+| `docs/report/Final_Report_Nathaniel_Sebastian_201715051.pdf` | Final dissertation, approximately 64-65 pages, 30-page main body |
 | `docs/evidence/README.md` | Examiner-facing evidence pack entry point |
 | `docs/evidence/checklist.md` | Per-claim mapping: claim → evidence file |
 | `docs/evidence/capture_guide.md` | How each artefact was produced and how to regenerate it |
@@ -123,7 +123,7 @@ That covers import, tests, offline reproduction, and artefact verification in on
 - For metric values quoted in the report → `docs/evidence/checklist.md` maps each claim to the file that backs it.
 - For an end-to-end audit trail → `docs/evidence/verification/audit_export_*.md` (three real cases lifted verbatim from the B3-Generative final run).
 - For the human-evaluation results → `docs/evidence/human_eval/` (rubric, consent, anonymised scores, Krippendorff α).
-- For the dissertation itself → `docs/report/Final_Report_Draft.pdf`.
+- For the dissertation itself → `docs/report/Final_Report_Nathaniel_Sebastian_201715051.pdf`.
 
 ## 9. Reporting issues
 

@@ -25,7 +25,7 @@ _DEFAULT_RUNS_DIR = Path("results/runs")
 
 
 class RunInspector:
-    """Provides read-only access to evaluation run artifacts."""
+    """Read-only access to evaluation run artifacts."""
 
     def __init__(self, runs_dir: Optional[Path] = None):
         self.runs_dir = runs_dir or _DEFAULT_RUNS_DIR
@@ -182,7 +182,7 @@ class RunInspector:
                         backend_requested=obj.get("backend_requested", ""),
                         backend_used=obj.get("backend_used", ""),
                     ))
-                except (json.JSONDecodeError, Exception) as exc:
+                except Exception as exc:
                     logger.debug("Skipping malformed record: %s", exc)
         return records
 
@@ -193,6 +193,6 @@ class RunInspector:
         try:
             with open(path, "r", encoding="utf-8") as f:
                 return json.load(f)
-        except (json.JSONDecodeError, Exception) as exc:
+        except Exception as exc:
             logger.debug("Failed to read %s: %s", path, exc)
             return None

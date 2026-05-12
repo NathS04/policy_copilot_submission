@@ -1,7 +1,4 @@
-"""
-Central config for the Policy Copilot project.
-Loads from .env, then from an optional JSON config, then env-var overrides.
-"""
+"""Project config. Resolution order is .env -> optional JSON overlay -> env vars."""
 import os
 import json
 from pathlib import Path
@@ -65,20 +62,21 @@ class Settings(BaseModel):
     RERANK_MODEL: str = _json_cfg.get("rerank_model", os.getenv("RERANK_MODEL", "cross-encoder/ms-marco-MiniLM-L-6-v2"))
     ABSTAIN_THRESHOLD: float = float(_json_cfg.get("abstain_threshold", os.getenv("ABSTAIN_THRESHOLD", "0.30")))
     MIN_SUPPORT_RATE: float = float(_json_cfg.get("min_support_rate", os.getenv("MIN_SUPPORT_RATE", "0.80")))
+    CLAIM_OVERLAP_THRESHOLD: float = float(_json_cfg.get("claim_overlap_threshold", os.getenv("CLAIM_OVERLAP_THRESHOLD", "0.10")))
     ENABLE_LLM_VERIFY: bool = _bool_from_cfg("enable_llm_verify", "false")
     ENABLE_LLM_CONTRADICTIONS: bool = _bool_from_cfg("enable_llm_contradictions", "false")
     CONTRADICTION_POLICY: str = _json_cfg.get("contradiction_policy", os.getenv("CONTRADICTION_POLICY", "surface"))
 
     # run tracking
     RUN_NAME: str = _json_cfg.get("run_name", os.getenv("RUN_NAME", datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")))
-    OUTPUT_DIR: str = ""  # computed below
+    OUTPUT_DIR: str = ""  # set per-run via get_output_dir() or overridden in tests
 
     def get_output_dir(self, run_name: str | None = None) -> Path:
         name = run_name or self.RUN_NAME
         return Path("results/runs") / name
 
     def to_dict(self) -> dict:
-        """Serialisable snapshot of effective config (no secrets)."""
+        """Snapshot the effective config — JSON-safe and excludes secrets."""
         return {
             "provider": self.PROVIDER,
             "model": self.LLM_MODEL,
@@ -94,6 +92,7 @@ class Settings(BaseModel):
             "rerank_model": self.RERANK_MODEL,
             "abstain_threshold": self.ABSTAIN_THRESHOLD,
             "min_support_rate": self.MIN_SUPPORT_RATE,
+            "claim_overlap_threshold": self.CLAIM_OVERLAP_THRESHOLD,
             "enable_llm_verify": self.ENABLE_LLM_VERIFY,
             "enable_llm_contradictions": self.ENABLE_LLM_CONTRADICTIONS,
             "contradiction_policy": self.CONTRADICTION_POLICY,

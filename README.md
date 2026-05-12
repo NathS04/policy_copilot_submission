@@ -28,7 +28,7 @@ The system runs end-to-end on a consumer laptop with no GPU (BM25 + Extractive M
 
 ## Why this project exists
 
-Standard RAG retrieves context and asks a language model to answer; it provides no guarantee that the answer actually uses the retrieved evidence, and gives the model no way to express *I do not know*. In a compliance setting, that is the wrong default: a confidently wrong answer to a policy question can cause real downstream harm. The contribution is not the invention of RAG, but the design and evaluation of a closed-corpus policy QA pipeline where grounding, abstention, citation verification, contradiction handling, and audit export are treated as first-class requirements rather than optional add-ons.
+Standard RAG retrieves context and asks a language model to answer; it provides no guarantee that the answer actually uses the retrieved evidence, and gives the model no way to express *I do not know*. In a compliance setting, that is the wrong default: a confidently wrong answer to a policy question can cause real downstream harm. The contribution is not the invention of RAG, but the design and evaluation of a closed-corpus policy QA pipeline where grounding, abstention, citation verification, contradiction handling, and audit export are core requirements rather than optional extras.
 
 ## Key features
 
@@ -55,7 +55,7 @@ Standard RAG retrieves context and asks a language model to answer; it provides 
 | Path | Purpose |
 | :--- | :--- |
 | `src/policy_copilot/` | Production source: ingest, index, retrieve, rerank, generate, verify, critic, service, ui |
-| `tests/` | Test suite (193 passed, 1 skipped on the offline path) |
+| `tests/` | Test suite (195 passed, 1 skipped on the offline path) |
 | `scripts/` | CLI entry points (eval runner, reproducibility, figure / report generation) |
 | `data/corpus/` | Synthetic policy PDFs and processed paragraphs (project data, not report prose) |
 | `data/public_transfer_corpus/` | OGL v3.0 public-guidance corpus + provenance.csv used by §4.11 |
@@ -94,7 +94,7 @@ python scripts/reproduce_offline.py
 python scripts/verify_artifacts.py
 ```
 
-The four commands above import the package, run the offline test suite, reproduce the offline evaluation artefacts, and verify the submitted outputs without manual patching. Together they constitute the **final reproducibility contract** for this submission.
+The four commands above import the package, run the offline test suite, reproduce the offline evaluation artefacts, and verify the submitted outputs without manual patching. Together they're the main reproducibility check for this submission.
 
 ## Running the app
 
@@ -152,7 +152,7 @@ All values are real; caveats are stated next to each metric.
 
 ## Evidence pack
 
-`docs/evidence/` is the single discoverable entry point for an examiner who wants to verify any claim against an artefact.
+`docs/evidence/` collects the main files an examiner can use to check any claim against an artefact.
 
 | Evidence | Path | Supports |
 | :--- | :--- | :--- |
@@ -162,13 +162,13 @@ All values are real; caveats are stated next to each metric.
 | Public-transfer failure taxonomy | `eval/public_transfer/failure_taxonomy.csv`, `docs/evidence/verification/public_transfer_failure_taxonomy.md` | Section 4.11 |
 | Adversarial probe summary | `eval/adversarial/adversarial_summary.csv`, `docs/evidence/verification/adversarial_test_summary.md` | Appendix B.12 Table B.6 |
 | Audit-export examples (3 cases) | `docs/evidence/verification/audit_export_*.md` | The "audit-ready" claim, made visible |
-| Final report PDF | `docs/report/Final_Report_Draft.pdf` | The dissertation itself |
+| Final report PDF | `docs/report/Final_Report_Nathaniel_Sebastian_201715051.pdf` | The dissertation itself |
 | Reproducibility checklist | `docs/evidence/checklist.md` | Per-claim mapping of report → artefact |
 | Capture guide | `docs/evidence/capture_guide.md` | How each artefact was produced and how to regenerate it |
 
-## Reproducibility contract
+## Reproducibility
 
-The repository is designed around a final reproducibility contract: a fresh install should import the package, run the offline test suite, reproduce offline evaluation artefacts, and verify submitted outputs without manual patching.
+The repo is set up so that a fresh install can import the package, run the offline test suite, reproduce the offline evaluation artefacts, and verify the submitted outputs without any manual patching.
 
 ```bash
 python3 -m venv .venv && source .venv/bin/activate

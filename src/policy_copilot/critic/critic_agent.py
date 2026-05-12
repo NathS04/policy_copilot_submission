@@ -14,9 +14,7 @@ from policy_copilot.logging_utils import setup_logging
 logger = setup_logging()
 
 
-# ------------------------------------------------------------------ #
-#  Tier 1: Heuristic detection                                         #
-# ------------------------------------------------------------------ #
+# ---- Tier 1: heuristic detection ----
 
 # L1: normative/loaded language triggers
 _L1_TRIGGERS = [
@@ -127,9 +125,7 @@ def detect_heuristic(text: str) -> dict:
     return {"labels": labels, "rationales": rationales}
 
 
-# ------------------------------------------------------------------ #
-#  Tier 2: LLM-based classification                                    #
-# ------------------------------------------------------------------ #
+# ---- Tier 2: LLM-based classification ----
 
 _CRITIC_SYSTEM = """You are a policy language critic.
 Analyse the given text snippet for these issues:

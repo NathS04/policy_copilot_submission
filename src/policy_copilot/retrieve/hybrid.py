@@ -1,21 +1,8 @@
-"""
-Hybrid retriever — fuses dense (FAISS) and sparse (BM25) retrieval via
-Reciprocal Rank Fusion (RRF).
+"""Hybrid retriever — fuses dense (FAISS) and sparse (BM25) results via RRF.
 
-RRF is preferred over linear score combination because the two backends
-produce scores on incompatible scales (L2 distance vs BM25 Okapi score).
-Rank-based fusion eliminates the need for score normalisation and has been
-shown to be robust across heterogeneous retrieval systems (Cormack et al.,
-2009).
-
-The fusion formula for each document *d* across *S* systems is:
-    score(d) = sum_{s in S}  1 / (k + rank_s(d))
-where *k* is a smoothing constant (default 60, standard in the literature).
-
-The ``alpha`` parameter controls relative weighting when one system should
-be trusted more than the other:
-    score(d) = alpha / (k + rank_dense(d))  +  (1 - alpha) / (k + rank_sparse(d))
-When alpha = 0.5, both systems contribute equally (standard RRF).
+Dense and sparse scores live on incompatible scales (L2 distance vs BM25
+Okapi), so we fuse by rank rather than by raw score. ``alpha`` lets us
+weight one backend over the other; ``alpha=0.5`` is plain RRF.
 """
 from __future__ import annotations
 
@@ -29,16 +16,9 @@ logger = setup_logging()
 class HybridRetriever:
     """Reciprocal Rank Fusion over dense and sparse retrievers.
 
-    Parameters
-    ----------
-    dense_retriever
-        Any object with a ``.retrieve(query, k=...) -> list[dict]`` method.
-    sparse_retriever
-        Any object with a ``.retrieve(query, k=...) -> list[dict]`` method.
-    alpha : float
-        Weight for the dense system (0.0–1.0).  1-alpha goes to sparse.
-    rrf_k : int
-        Smoothing constant for the RRF formula.  60 is the standard default.
+    Both backends just need a ``retrieve(query, k=...)`` method that returns
+    a list of dicts. ``alpha`` is the dense weight (sparse gets ``1 - alpha``)
+    and ``rrf_k`` is the RRF smoothing constant — 60 is the usual default.
     """
 
     fusion_method: str = "rrf"

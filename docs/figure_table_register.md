@@ -2,7 +2,7 @@
 
 > **Note:** All figure files under `docs/report/figures/` must be generated before final PDF compilation. Run `python eval/analysis/make_figures.py` for chart figures. Screenshots must be captured manually from the running Streamlit application.
 
-This register lists every figure and table embedded or defined in `docs/report/Final_Report_Draft.md`, with section placement, asset paths, narrative cross-references, and the role each item plays in the argument.
+This register lists every figure and table embedded or defined in `docs/report/Final_Report_Nathaniel_Sebastian_201715051.md`, with section placement, asset paths, narrative cross-references, and the role each item plays in the argument.
 
 ---
 
@@ -31,7 +31,7 @@ This register lists every figure and table embedded or defined in `docs/report/F
 | Table 2.1 | Functional and non-functional requirements with acceptance criteria | Ch. 2 — §2.2 Requirements Analysis | Objectives and scope (§1.2, §1.11); manual specification | Yes (also cited from Table 2.2) | Testable contracts for FR/NFR and traceability to objectives; underpins scope control (e.g. NFR3 deferral). |
 | Table 2.2 | Risk register | Ch. 2 — §2.5 Risk Assessment | Project risk review (manual) | Yes | Documents likelihood, impact, and mitigations for API, verification, corpus, scope, threshold calibration, and integrity risks. |
 | Table 3.1 | Technology stack and component justification | Ch. 3 — §3.1 Technology Stack | `pyproject.toml` / dependency choices; manual justification text | Yes | Justifies major libraries (embeddings, FAISS, reranker, OpenAI SDK, Pydantic, pdfplumber, pytest, Git). |
-| Table 3.2 | Testing and validation matrix | Appendix B.9 (referenced from §3.9 Testing and Validation) | Codebase test layout (`tests/`); manual summary | No | Maps representative test files to tier, component, and validation intent (188 tests, 1 conditionally skipped). |
+| Table 3.2 | Testing and validation matrix | Appendix B.9 (referenced from §3.9 Testing and Validation) | Codebase test layout (`tests/`); manual summary | No | Maps representative test files to tier, component, and validation intent (195 tests, 1 conditionally skipped). |
 | Table 4.1 | Golden set composition and evaluation splits | Ch. 4 — §4.1 Experimental Setup | `eval/golden_set/golden_set.csv` (and frozen split definition); counts manual/annotated | No | Defines answerable / unanswerable / contradiction counts and train–test/dev split policy. |
 | Table 4.2 | Baseline comparison across primary metrics (test split) | Ch. 4 — §4.2 Headline Results: Baseline Comparison | `scripts/run_eval.py` outputs; `results/runs/*/summary.json` (aggregated for report) | Yes | Headline B1 / B2 / B3 Generative vs Extractive metrics: coverage, abstention, grounding, recall. |
 | Table 4.3 | Retrieval metrics — Dense Retrieval (B2) vs. Reranked (B3), test split | Ch. 4 — §4.3 Retrieval Performance | Evaluation JSONL / retrieval logs; summary aggregation | No | Quantifies reranker gains on Recall@*k*, MRR, and Precision@5. |

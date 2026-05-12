@@ -1,36 +1,19 @@
-"""
-LLM answerer module — supports OpenAI and Anthropic providers.
+"""LLM answerer for the three baselines (B1 prompt-only, B2 naive RAG, B3 full).
 
-Purpose:
-    Orchestrates the generative component of all three pipeline baselines (B1, B2, B3).
-    Handles JSON schema enforcement through parse-repair-retry logic, citation validation
-    against the retrieved evidence set, and extractive fallback when the LLM is unavailable
-    or when the system is configured for offline operation.
+Handles provider dispatch (OpenAI / Anthropic), JSON parsing with a one-shot
+repair retry, citation validation against the retrieved evidence, and an
+extractive fallback used when no API key is configured.
 
-Design decisions:
-    - Provider dispatch is handled via a simple if/elif rather than a registry pattern.
-      A registry (or abstract base class) was considered but rejected because only two
-      providers are supported and the dispatch logic is trivial. If a third provider is
-      added in future, the registry pattern should be reconsidered — see Section 3.4.1.
-    - JSON repair uses a second LLM call rather than regex-based extraction. This adds
-      latency (~1.5s) but handles edge cases (nested objects, escaped quotes) that regex
-      approaches cannot. In practice, repair is triggered on <5% of queries.
-    - The extractive fallback annotates each sentence with [CITATION: pid] inline, which
-      is slightly unusual. This was chosen so that the downstream claim_split module can
-      attribute citations to individual claims without a separate mapping. The alternative
-      (returning a citation list alongside raw text) was prototyped in Sprint 3 but
-      produced attribution errors when paragraphs contained multiple distinct facts.
-
-# Future work: support streaming responses for the Streamlit UI — benchmarked
-# ~40% perceived latency reduction but requires async refactoring of the
-# verification pipeline, which currently expects a complete response.
+The extractive fallback annotates each sentence with ``[CITATION: pid]``
+inline so that ``claim_split`` can attach the right citation to each claim
+without a separate mapping.
 """
 import json
+import re
 import time
 from typing import Optional
 
 from policy_copilot.config import settings
-import re as _re
 from policy_copilot.generate.schema import RAGResponse, make_llm_disabled, make_insufficient
 from policy_copilot.generate.prompts import (
     NAIVE_RAG_SYSTEM, NAIVE_RAG_USER,
@@ -43,9 +26,7 @@ from policy_copilot.logging_utils import setup_logging
 logger = setup_logging()
 
 
-# ------------------------------------------------------------------ #
-#  Provider helpers                                                    #
-# ------------------------------------------------------------------ #
+# ---- Provider helpers ----
 
 def _call_openai(system: str, user: str, model: str, temperature: float,
                  max_tokens: int) -> tuple[str, dict]:
@@ -115,9 +96,7 @@ def _call_llm(system: str, user: str) -> tuple[str, dict, float]:
     return text, usage, latency
 
 
-# ------------------------------------------------------------------ #
-#  JSON parsing + repair                                               #
-# ------------------------------------------------------------------ #
+# ---- JSON parsing + repair ----
 
 def _parse_json_response(raw: str) -> Optional[dict]:
     """Try to parse the LLM output as JSON. Strips markdown fences if present."""
@@ -140,9 +119,7 @@ def _attempt_repair(original_response: str) -> Optional[dict]:
     return _parse_json_response(text)
 
 
-# ------------------------------------------------------------------ #
-#  Citation validation                                                 #
-# ------------------------------------------------------------------ #
+# ---- Citation validation ----
 
 def _validate_citations(response: RAGResponse, valid_ids: set[str]) -> RAGResponse:
     """Remove citations not in the evidence set; add notes if needed."""
@@ -170,9 +147,7 @@ def _validate_citations(response: RAGResponse, valid_ids: set[str]) -> RAGRespon
     return response
 
 
-# ------------------------------------------------------------------ #
-#  Relevance gate for extractive fallback                              #
-# ------------------------------------------------------------------ #
+# ---- Relevance gate (extractive fallback) ----
 
 _STOP_WORDS = frozenset({
     "the", "a", "an", "is", "are", "was", "were", "be", "been", "being",
@@ -190,7 +165,7 @@ _STOP_WORDS = frozenset({
 def _is_relevant_to_question(question: str, paragraph_text: str) -> bool:
     """Lightweight keyword-overlap check: >= 2 overlaps or >= 25% ratio."""
     def _keywords(text):
-        return {w for w in _re.findall(r"[a-z0-9]+", text.lower())
+        return {w for w in re.findall(r"[a-z0-9]+", text.lower())
                 if len(w) >= 3 and w not in _STOP_WORDS}
     q_kw = _keywords(question)
     p_kw = _keywords(paragraph_text)
@@ -200,9 +175,7 @@ def _is_relevant_to_question(question: str, paragraph_text: str) -> bool:
     return len(overlap) >= 2 or (len(overlap) / len(q_kw)) >= 0.25
 
 
-# ------------------------------------------------------------------ #
-#  Public API                                                          #
-# ------------------------------------------------------------------ #
+# ---- Public API ----
 
 class Answerer:
     """Stateless answerer — call generate() for each query."""

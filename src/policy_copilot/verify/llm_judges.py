@@ -1,7 +1,7 @@
-"""
-LLM-based judges for Tier-2 claim verification and contradiction detection.
-Each function calls the configured LLM provider with strict JSON prompts.
-Results are cached to JSONL files for reproducibility and cost control.
+"""Tier-2 LLM judges for claim support and contradiction detection.
+
+Both functions hit the configured provider with strict JSON prompts and
+write the result to a JSONL cache so reruns are free.
 """
 import hashlib
 import json
@@ -14,9 +14,7 @@ from policy_copilot.logging_utils import setup_logging
 logger = setup_logging()
 
 
-# ------------------------------------------------------------------ #
-#  Caching                                                             #
-# ------------------------------------------------------------------ #
+# ---- Caching ----
 
 def _cache_key(*parts: str) -> str:
     """Deterministic hash from multiple string parts."""
@@ -45,9 +43,7 @@ def _append_cache(cache_path: Path, entry: dict):
         f.write(json.dumps(entry) + "\n")
 
 
-# ------------------------------------------------------------------ #
-#  LLM call helper                                                     #
-# ------------------------------------------------------------------ #
+# ---- LLM call helper ----
 
 def _call_llm(system: str, user: str) -> str:
     """Call the configured LLM provider and return raw text."""
@@ -98,9 +94,7 @@ def _parse_json_response(text: str) -> dict:
         return {}
 
 
-# ------------------------------------------------------------------ #
-#  Tier-2 Claim Support Judge                                          #
-# ------------------------------------------------------------------ #
+# ---- Tier-2: claim-support judge ----
 
 _CLAIM_VERIFY_SYSTEM = """You are a strict fact-checking assistant.
 You will receive a CLAIM and one or more EVIDENCE paragraphs.
@@ -170,9 +164,7 @@ def llm_verify_claim(claim_text: str, cited_paragraph_texts: list[str],
     return result
 
 
-# ------------------------------------------------------------------ #
-#  Tier-2 Contradiction Judge                                          #
-# ------------------------------------------------------------------ #
+# ---- Tier-2: contradiction judge ----
 
 _CONTRADICTION_SYSTEM = """You are a contradiction detection assistant.
 You will receive TWO evidence paragraphs from a policy corpus.

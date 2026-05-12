@@ -485,7 +485,7 @@ def render_metadata_panel(result: QueryResult) -> None:
 # ------------------------------------------------------------------ #
 
 def render_export_feedback(success: bool, filename: str = "") -> None:
-    """Toast-like feedback after an export operation."""
+    """Quick toast after an export."""
     if success:
         st.success(f"Export complete: {filename}" if filename else "Export complete")
     else:
@@ -513,7 +513,7 @@ def render_progress_indicator(current: int, total: int, label: str = "Progress")
 # ------------------------------------------------------------------ #
 
 def render_view_header(title: str, subtitle: str = "") -> None:
-    """Render the standard view header with title and subtitle."""
+    """Standard view header with optional subtitle."""
     st.markdown(f'<p class="pc-view-header">{title}</p>', unsafe_allow_html=True)
     if subtitle:
         st.markdown(f'<p class="pc-view-subtitle">{subtitle}</p>', unsafe_allow_html=True)

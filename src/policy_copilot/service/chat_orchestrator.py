@@ -1,12 +1,9 @@
-"""
-Chat orchestrator — the reusable B3 pipeline extracted from run_eval.py.
+"""Chat orchestrator — runs the B3 pipeline for one interactive query:
 
-Runs the full evidence-grounded pipeline for a single interactive query:
     retrieve -> rerank -> abstain -> generate -> verify -> contradictions -> critic
 
-This module has NO dependency on Streamlit or any UI framework.  It is the
-single source of truth for the interactive query path, shared by the
-Streamlit UI and any future API layer.
+Deliberately UI-agnostic so the Streamlit app and any future API layer can
+share the same query path. The eval harness has its own driver in run_eval.py.
 """
 from __future__ import annotations
 
@@ -249,7 +246,11 @@ class ChatOrchestrator:
         valid_ids = set(evidence_lookup.keys())
         citations = [c for c in citations if c in valid_ids]
 
-        raw_verification = verify_claims(claims, evidence_lookup, overlap_threshold=0.10)
+        raw_verification = verify_claims(
+            claims,
+            evidence_lookup,
+            overlap_threshold=cfg.get("claim_overlap_threshold", 0.10),
+        )
 
         min_sr = cfg.get("min_support_rate", 0.80)
         answer, citations, enforce_notes = enforce_support_policy(
@@ -352,6 +353,7 @@ class ChatOrchestrator:
         cfg["rerank_model"] = settings.RERANK_MODEL
         cfg["abstain_threshold"] = settings.ABSTAIN_THRESHOLD
         cfg["min_support_rate"] = settings.MIN_SUPPORT_RATE
+        cfg["claim_overlap_threshold"] = settings.CLAIM_OVERLAP_THRESHOLD
         cfg["enable_llm_contradictions"] = settings.ENABLE_LLM_CONTRADICTIONS
         cfg["contradiction_policy"] = settings.CONTRADICTION_POLICY
         cfg.update(self._overrides)

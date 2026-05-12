@@ -1,6 +1,8 @@
-"""
-Contradiction detection between evidence paragraphs.
-Uses deterministic heuristics (always available) with optional LLM judge.
+"""Cross-paragraph contradiction detection.
+
+Tier 1 is deterministic — antonym pairs and numeric mismatches — and always
+runs. Tier 2 is an optional LLM judge that fires only when the heuristic
+came up empty and ``enable_llm`` is set.
 """
 import re
 from itertools import combinations
@@ -126,10 +128,11 @@ def detect_contradictions(evidence: List[Dict],
 def apply_contradiction_policy(answer: str, citations: List[str],
                                contradictions: List[Dict],
                                policy: str = "surface") -> tuple:
-    """
-    Adjusts the answer based on detected contradictions.
-    policy: 'surface' (default) or 'abstain_on_high'
-    Returns: (adjusted_answer, adjusted_citations, notes_list)
+    """Adjust the answer given any contradictions found.
+
+    policy='surface' appends a note and cites both sides; 'abstain_on_high'
+    refuses to answer when at least one high-confidence conflict exists.
+    Returns ``(answer, citations, notes)``.
     """
     notes = []
     if not contradictions:

@@ -42,7 +42,7 @@ class ReviewRubric(BaseModel):
 
 
 class ReviewSession(BaseModel):
-    """A collection of reviews from a single scoring session."""
+    """Reviews from one scoring session."""
 
     session_id: str = Field(default_factory=lambda: str(uuid.uuid4())[:8])
     created_at: str = Field(

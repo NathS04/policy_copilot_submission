@@ -41,12 +41,25 @@ data/corpus/processed/index/
 
 # ── Submission-only artefacts ──────────────────
 Helper/
+Helper.zip
 generate_history.py
 INSTRUCTIONS_FOR_GPT.md
 generate_presentation.py
 Dissertation_Progress_Presentation.pptx
 Speaking_Script.pdf
 *.log
+
+# ── Personal / private raw uploads ─────────────
+# data/corpus/raw/ is already ignored above, but pin the upload subtree explicitly
+data/corpus/raw/uploads/
+CV_*.pdf
+*Tenancy*
+
+# ── AI tooling artefacts ───────────────────────
+.claude/
+_AI_ARTIFACTS/
+PHASE6_PATCH_OUTPUT.md
+voice_review_notes.md
 
 # ── Report build cache ─────────────────────────
 docs/report/pagemap.json
@@ -55,9 +68,11 @@ docs/report/Final_Report_Draft_pre_humanise.md
 
 # ── Eval intermediate / per-run scratch ────────
 eval/adversarial/_adversarial_golden_set.csv
+results/runs/_archive/
+results/runs/test_*
 results/runs/adversarial_*
-results/runs/b2_test_extractive_bm25_2*
-results/runs/b3_test_extractive_bm25_2*
+results/runs/b2_test_*
+results/runs/b3_test_*
 
 # ── Misc ───────────────────────────────────────
 *.tmp

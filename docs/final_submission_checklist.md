@@ -11,12 +11,12 @@
 
 | Artefact | Path | Notes |
 | --- | --- | --- |
-| Final report (PDF) | `docs/report/Final_Report_Draft.pdf` | 55 pages total, A4, generated from markdown via two-pass build |
-| Editable source (markdown) | `docs/report/Final_Report_Draft.md` | Single-file source; LoF / LoT / TOC are markdown lists post-processed by the build script |
-| Intermediate DOCX | `docs/report/Final_Report_Draft_template.docx` | Pandoc + `apply_leeds_template.py` output, retained for reference |
+| Final report (PDF) | `docs/report/Final_Report_Nathaniel_Sebastian_201715051.pdf` | A4, generated from markdown via two-pass build |
+| Editable source (markdown) | `docs/report/Final_Report_Nathaniel_Sebastian_201715051.md` | Single-file source; LoF / LoT / TOC are markdown lists post-processed by the build script |
+| Intermediate DOCX | `docs/report/build_assets/Final_Report_Template.docx` | Pandoc + `apply_leeds_template.py` output, retained for rebuilds |
 | Build orchestrator | `scripts/build_report.py` | Two-pass build (pagemap then final render) |
 | Template post-processor | `scripts/apply_leeds_template.py` | Heading promotion, table styling, TOC / LoF / LoT typography |
-| Leeds template | `docs/report/leeds_template.docx` | Pandoc reference doc |
+| Leeds template | `docs/report/build_assets/leeds_template.docx` | Pandoc reference doc |
 
 ## PDF verification
 
@@ -50,7 +50,7 @@ LibreOffice's PDF export embeds these as `/Link` annotations with
 
 ## Tests / report status
 
-The codebase test suite (188 tests / 38 files) passes on the submitted
+The codebase test suite (195 tests / 39 files) passes on the submitted
 build, as recorded in §B.7.1. No tests were modified during the final
 polish pass; all changes were to the report markdown, the build script,
 and the post-processor script.
@@ -85,5 +85,6 @@ and the post-processor script.
 - [x] All wide tables (B.1, B.2, B.7.x) wrap snake_case identifiers via
   zero-width-space injection so no identifiers split mid-word.
 - [x] Two-pass build is reproducible: `python scripts/build_report.py`
-  regenerates `Final_Report_Draft.pdf` from the markdown source on a
-  fresh clone with pandoc, LibreOffice, python-docx, and pypdf available.
+  regenerates `Final_Report_Nathaniel_Sebastian_201715051.pdf` from the
+  markdown source on a fresh clone with pandoc, LibreOffice, python-docx,
+  and pypdf available.

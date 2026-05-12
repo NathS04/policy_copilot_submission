@@ -36,9 +36,9 @@ Any contradiction with this file in other documents is a bug.
 
 | Fact | Status |
 |------|--------|
-| Single-rater rubric scoring | Exercised (20 queries) |
-| Multi-rater agreement (kappa) | Future work only — tooling exists but not exercised |
-| Independent raters | No — single rater acknowledged |
+| Reviewer rubric scoring | Round 2: 6 reviewers x 20 queries x 5 axes |
+| Multi-rater agreement | Krippendorff alpha computed per axis; see `docs/evidence/human_eval/inter_rater_agreement.md` |
+| Independent raters | Yes — 6 independent reviewers (R1-R6) in Round 2 |
 
 ## Research Pack — Count Hierarchy (Authoritative)
 
@@ -86,8 +86,8 @@ Two complementary literature flows are reported. Both are valid and they are not
 
 | Fact | Value | Source |
 |------|-------|--------|
-| Total test files | 38 | `tests/` directory |
-| Total test cases | 188 | `pytest -q` output |
+| Total test files | 39 | `tests/` directory |
+| Total test cases | 195 | `pytest -q` output |
 | Conditionally skipped | 1 | FAISS-dependent test |
 
 ## Evaluation Artefacts (added in Final Maximiser phase)
@@ -108,7 +108,5 @@ Two complementary literature flows are reported. Both are valid and they are not
 ## Claims NOT Made
 
 - No claim of multi-model evaluation (only OpenAI tested)
-- No claim of independent human raters (single rater acknowledged)
-- No claim of real-world corpus testing (synthetic corpus acknowledged)
+- No claim of real-world corpus testing (synthetic corpus acknowledged; Public Guidance Transfer Stress Test is a stress probe, not a full transfer evaluation)
 - No claim of deployment or user study
-- No claim of kappa agreement (tooling exists, not exercised)
