@@ -194,7 +194,7 @@ If any step fails on a reasonable environment (Python 3.10+, macOS / Linux, ~1 G
 
 ## AI use and authorship
 
-Generative AI tools were used as disclosed in Appendix B.5 of the report: GitHub Copilot for code autocompletion during specific sprints, ChatGPT (GPT-4 / GPT-4o) for debugging and synthetic corpus generation (project data only, not report prose), and Claude Opus (Anthropic) for limited drafting and structuring assistance during the report-preparation phase. The final code, report claims, metrics, citations, edits, and submission decisions were reviewed, revised, and approved by the author. Use was Amber-category (COMP3931 / COMP3932) — assistive, not replacement authorship.
+Generative AI tools were used as disclosed in Appendix B.5 of the report: GitHub Copilot for code autocompletion during specific sprints, ChatGPT (GPT-4 / GPT-4o) for debugging and synthetic corpus generation (project data only, not report prose), and Claude Opus (Anthropic) for writing-review support during report preparation. AI outputs were treated as suggestions or review comments rather than final authoritative text. The final code, report wording, claims, metrics, citations, edits, and submission decisions were reviewed, revised where necessary, and approved by the author. Use was Amber-category (COMP3931 / COMP3932) — assistive, not replacement authorship.
 
 ## Licence
 

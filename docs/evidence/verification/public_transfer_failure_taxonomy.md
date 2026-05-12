@@ -75,8 +75,8 @@ document, presence of weak vs. strong obligation language).
 Two observations matter for the dissertation. First, no
 queries fall under a hallucination-style label (no
 `unanswerable_attempted`, no `over_abstention` with
-fabricated citation): the system's safety property
-(`cited or silent`) survived the corpus shift. Second,
+fabricated citation): on this small transfer set, the
+system's `cited or silent` behaviour held. Second,
 the dominant non-clean-answer category is retrieval
 generalisation - terminology mismatch and long-guidance
 pages account for the cases where the gold paragraph is

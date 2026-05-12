@@ -42,7 +42,7 @@ Three scripted demo journeys for viva presentation. Each demonstrates a core sys
 - Audit Trace view showing abstention status, confidence scores, and threshold
 - Evidence rail showing low-scoring retrieved paragraphs
 
-**Key talking point:** The system refuses to answer rather than hallucinate. This is the core safety property of an audit-ready system.
+**Key talking point:** The system refuses to answer rather than hallucinate. This is the core "cited or silent" behaviour the project is designed around.
 
 ---
 
