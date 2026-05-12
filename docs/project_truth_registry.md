@@ -87,8 +87,10 @@ Two complementary literature flows are reported. Both are valid and they are not
 | Fact | Value | Source |
 |------|-------|--------|
 | Total test files | 39 | `tests/` directory |
-| Total test cases | 195 | `pytest -q` output |
-| Conditionally skipped | 1 | FAISS-dependent test |
+| Total test cases collected | 196 | `pytest --collect-only -q` |
+| Run under documented evaluator command | 194 | `pytest -q --ignore=tests/test_run_eval_requires_key_in_generative.py` |
+| Passing | 193 | as above |
+| Conditionally skipped | 1 | FAISS-dependent test (skipped when ML extras are absent) |
 
 ## Evaluation Artefacts (added in Final Maximiser phase)
 

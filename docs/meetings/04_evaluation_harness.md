@@ -3,6 +3,8 @@
 **Date:** Early January 2025 (reconstructed summary)
 **Attendees:** Student, Supervisor
 
+> **Final package note:** This meeting note records an earlier evaluation plan. The final submission superseded it with an independent peer reviewer evaluation (n = 6, P1–P6 in Round 1 and R1–R6 in Round 2) and Krippendorff alpha inter-rater agreement, documented in §4.10 and Appendix B.10 of the dissertation and in `docs/evidence/human_eval/`.
+
 ## Agenda
 1. Review evaluation harness design
 2. Discuss critic mode implementation

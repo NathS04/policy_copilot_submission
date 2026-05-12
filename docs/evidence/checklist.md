@@ -38,11 +38,28 @@ wording.
 
 | Claim (paraphrased) | Evidence |
 | :--- | :--- |
-| 195 automated tests, 1 conditionally skipped, all pass | `pytest -q --ignore=tests/test_run_eval_requires_key_in_generative.py` per `INSTRUCTIONS_FOR_EVALUATOR.md` |
+| 193 automated tests, 1 conditionally skipped, all pass | `pytest -q --ignore=tests/test_run_eval_requires_key_in_generative.py` per `INSTRUCTIONS_FOR_EVALUATOR.md` |
 | Reproducible offline (BM25, no API key) | `scripts/reproduce_offline.py` |
 | Reproducible online (dense + LLM) | `scripts/reproduce_online.py` |
 | Pure replay of abstention thresholds | `scripts/sweep_abstention.py` |
 | Honest figures (NaN not 0.0 for missing) | `eval/analysis/make_figures.py --strict` |
+
+## Claim → artefact → command (compact)
+
+For every report claim, this table maps the artefact that backs it and the exact command an examiner can run to regenerate that artefact from a fresh install.
+
+| Report claim | Evidence file(s) | Reproduction command |
+| :--- | :--- | :--- |
+| B3-Generative response-level headline metrics | `results/runs/b3_generative_bm25_fallback_final/summary.json`; `results/tables/run_summary.csv` | `python scripts/verify_artifacts.py` |
+| B3-Extractive synthetic headline metrics (89% / 100% / 0%) | `results/runs/b3_extractive_final/summary.json`; `results/tables/run_summary.csv` | `python scripts/run_eval.py --baseline b3 --mode extractive --backend bm25 --split test --run_name b3_extractive_final --allow_no_key` |
+| B1 / B2 / B3 baseline comparison | `results/tables/run_summary.csv`; `results/figures/fig_baselines.png` | `python scripts/reproduce_offline.py` |
+| Public-transfer corpus provenance and OGL licensing | `data/public_transfer_corpus/provenance.csv` | `python scripts/download_public_corpus.py` |
+| Public-transfer extractive results | `results/runs/b3_extractive_public_transfer/summary.json`; `eval/public_transfer/failure_taxonomy.csv` | `python scripts/run_transfer_eval.py` |
+| Independent reviewer evaluation | `docs/evidence/human_eval/summary_stats.csv`; `inter_rater_agreement.md` | `python scripts/compute_human_eval.py` |
+| Adversarial probe (Appendix B.12) | `eval/adversarial/adversarial_summary.csv` | `python scripts/run_adversarial.py` |
+| Audit exports (the "audit-ready" claim) | `docs/evidence/verification/audit_export_*.md` | `python scripts/build_audit_exports.py` |
+| Figures used in Chapter 4 | `results/figures/fig_*.png` | `python eval/analysis/make_figures.py` |
+| Clean submission ZIP | `Final_Submission_Nathaniel_Sebastian_201715051.zip` (sibling of project) | `python scripts/build_clean_submission_zip.py` |
 
 ## Ethics and process claims
 

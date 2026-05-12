@@ -198,7 +198,7 @@ This report has been prepared in accordance with the University of Leeds proof-r
 - [Table 4.11 Bootstrapped 95% confidence intervals](#tbl-4-11)
 - [Table 4.12 Objective achievement summary (Chapter 4 §4.13)](#tbl-4-12)
 - [Table B.1 Comparative analysis of retrieval-augmented and grounded generation systems](#tbl-b-1)
-- [Table B.2 Testing and validation matrix across 39 test files / 195 cases](#tbl-b-2)
+- [Table B.2 Testing and validation matrix across 39 test files / 194 cases (193 pass, 1 conditionally skipped) (193 pass, 1 conditionally skipped)](#tbl-b-2)
 - [Table B.3 Per-participant rubric scores from the independent reviewer evaluation](#tbl-b-3)
 - [Table B.4 Round 2 inter-rater agreement (Krippendorff alpha)](#tbl-b-4)
 - [Table B.5 Public Guidance Transfer Corpus provenance](#tbl-b-5)
@@ -493,7 +493,7 @@ Four non-trivial problems demonstrate the project's complexity. **JSON schema co
 
 ### 3.9 Testing and Validation
 
-The codebase has 39 test files and 195 cases (`pytest`) organised in three tiers: unit (functions in isolation), integration (pipeline stage interactions), and system (end-to-end and reproducibility). All 195 tests pass on the submitted codebase (1 conditionally skipped); the suite executes in under 10 s on consumer hardware. Representative coverage includes ingestion (PDF parsing, ID stability), verification (Jaccard overlap, numeric consistency, claim-splitting edge cases), retrieval (reranker sorting, BM25 baseline), generation (Pydantic schema, repair-and-retry), abstention (threshold gating), integration tests for end-to-end B3 generative and extractive pipelines, and system tests for golden-set integrity, backend provenance, run configuration, and reproducibility preflight. The complete per-file matrix appears in Appendix B.9.
+The codebase has 39 test files and 194 cases (193 pass, 1 conditionally skipped) (`pytest`) organised in three tiers: unit (functions in isolation), integration (pipeline stage interactions), and system (end-to-end and reproducibility). All 193 tests pass on the submitted codebase (1 conditionally skipped); the suite executes in under 10 s on consumer hardware. Representative coverage includes ingestion (PDF parsing, ID stability), verification (Jaccard overlap, numeric consistency, claim-splitting edge cases), retrieval (reranker sorting, BM25 baseline), generation (Pydantic schema, repair-and-retry), abstention (threshold gating), integration tests for end-to-end B3 generative and extractive pipelines, and system tests for golden-set integrity, backend provenance, run configuration, and reproducibility preflight. The complete per-file matrix appears in Appendix B.9.
 
 ---
 
@@ -717,9 +717,9 @@ A central limitation of the headline evaluation is that the corpus is synthetic:
 | Evidence Recall@5 | 85% | 52.1% | Halves on unfamiliar corpus |
 | Evidence MRR | 0.78 | 0.51 | Drops |
 | Citation Precision | 100% | 100% | True by construction in Extractive Mode |
-| Ungrounded Rate | 0% | 0% | Safety property survives |
+| Ungrounded Rate | 0% | 0% | No fabricated cited answers on this small set |
 
-The headline observation is that on this small public-corpus stress test the safety property held up: Citation Precision stayed at 100% (true by construction in Extractive Mode) and Ungrounded Rate stayed at 0%, so on the 20-query set the system did not produce an answer that conflicted with its cited evidence on the unfamiliar text. Coverage is broadly preserved (91.7% Answer Rate vs 89% on synthetic). The visible costs are a noticeable drop in retrieval quality (Evidence Recall@5 halves from 85% to 52.1%) and one over-confident answer on an unanswerable query (q_t16 about Cisco router configuration), where BM25 keyword overlap on the word "configure" matched NCSC device-security guidance. When the system did fail on these unfamiliar documents, it failed in the way the design intended — by being too confident on a borderline query rather than by inventing new content. §5.2 returns to this as a limitation that wider evaluation should target.
+The headline observation on this small public-corpus stress test is that the system did not fabricate cited answers: Citation Precision stayed at 100% (true by construction in Extractive Mode) and Ungrounded Rate stayed at 0%, so on the 20-query set the system did not produce an answer that conflicted with its cited evidence on the unfamiliar text. Coverage is broadly preserved (91.7% Answer Rate vs 89% on synthetic). The visible costs are a noticeable drop in retrieval quality (Evidence Recall@5 halves from 85% to 52.1%) and one over-confident answer on an unanswerable query (q_t16 about Cisco router configuration), where BM25 keyword overlap on the word "configure" matched NCSC device-security guidance. When the system did fail on these unfamiliar documents, it failed in the way the design intended — by being too confident on a borderline query rather than by inventing new content. §5.2 returns to this as a limitation that wider evaluation should target.
 
 ### 4.12 Statistical Confidence
 
@@ -782,7 +782,21 @@ An honest assessment of the project's limitations is essential to interpret the 
 
 **L4: Single LLM Evaluated.** All generative results were obtained using a single LLM family via the OpenAI API. Different models may exhibit different hallucination patterns, citation-format compliance rates, and prompt-following behaviour. The system's model-agnostic architecture supports easy substitution, but a comparative evaluation across model families was not conducted within the project timeline.
 
-**L5: Limited Independent Human Evaluation and Adversarial Coverage.** The independent reviewer evaluation reported in §4.10 (n = 6 peer participants, 14-18 April 2026) provides triangulation against the automated metrics, but it is small, author-facilitated rather than fully blinded, and the reviewer pool is non-domain-expert (CS peers rather than compliance specialists). A Round 2 per-query collection (Appendix B.10) reaches Krippendorff's α 0.74 on three of five axes; a small 15-query adversarial probe (Appendix B.12, Extractive arm safe at 100%, Generative arm `n/a` after `insufficient_quota` errors on the OpenAI account) is landed alongside. A more rigorous follow-up evaluation would use at least two independent domain-expert raters, full blinding, and per-item ratings stored at collection time (Es et al., 2023).
+**L5: Limited Independent Human Evaluation and Adversarial Coverage.** The independent reviewer evaluation reported in §4.10 (n = 6 peer participants, 14-18 April 2026) is a useful sanity check on the automated metrics, but it is small, author-facilitated rather than fully blinded, and the reviewer pool is non-domain-expert (CS peers rather than compliance specialists). A Round 2 per-query collection (Appendix B.10) reaches Krippendorff's α 0.74 on three of five axes; a small 15-query adversarial probe (Appendix B.12, Extractive arm safe at 100%, Generative arm `n/a` after `insufficient_quota` errors on the OpenAI account) is landed alongside. A more rigorous follow-up evaluation would use at least two independent domain-expert raters, full blinding, and per-item ratings stored at collection time (Es et al., 2023).
+
+The trade-offs above are summarised compactly in Table 4.13 so the reader can scan the threats to validity in one place.
+
+<a id="tbl-4-13"></a>
+
+**Table 4.13: Threats to validity summary.**
+
+| Threat | Why it matters | Mitigation in this project | Remaining weakness |
+| :--- | :--- | :--- | :--- |
+| Synthetic primary corpus | May be cleaner than real organisational policies | Controlled contradictions, vague-language injection, public-transfer stress test on NCSC/ICO/ACAS material | Real PDFs with OCR noise and inconsistent boilerplate not fully tested |
+| Small reviewer sample | Human scores may be unstable | n = 6, Likert rubric, Round 2 inter-rater agreement reported per axis | Reviewers are CS peers, not compliance / governance domain experts |
+| BM25 fallback used for the headline run | Dense retrieval result is not reproduced in the final environment | Backend provenance recorded per run; dev-phase dense numbers reported alongside | The headline retrieval metric (Recall@5 = 73.9%) understates the design's intended dense performance |
+| LLM quota failure on generative adversarial arm | Paired generative adversarial result is incomplete | Extractive arm reported in full at 100% safe; quota error retained in the CSV rather than hidden | No paired generative-mode adversarial number; re-run requires a billing-active API account |
+| Jaccard token-overlap verification | Token overlap cannot detect semantic entailment or paraphrase support | Numeric-consistency check, support-rate gate, and a conservative abstention threshold compensate at the response level | NLI-style entailment verification is future work (§5.3 F1) |
 
 ### 5.3 Future Work
 
@@ -799,6 +813,8 @@ The limitations above suggest several research directions, ordered by expected i
 **F5: User Feedback Integration.** Incorporate a production feedback loop in which policy owners rate answers as useful, partially useful, or incorrect. Aggregated feedback would enable dynamic threshold tuning and identify systematic retrieval gaps.
 
 **F6: Transfer to Real-World Documents.** Empirical validation on a real organisational policy corpus, ideally with an industry partner willing to share a redacted version, is the most important next step for converting this work from a research prototype into a deployable tool.
+
+The clearest route from this dissertation artefact to a publishable evaluation would combine three things: a larger externally sourced policy corpus, domain-expert annotation of the gold evidence, and a fully blinded user study with compliance or governance practitioners. The current project deliberately stops short of that claim. It shows that deterministic citation enforcement and abstention can make a policy RAG system more auditable under controlled conditions, but it does not prove deployment readiness across real organisations. A publishable follow-up would therefore treat this system as the experimental harness, not as the final evidence base.
 
 ### 5.4 Reflection
 
@@ -900,7 +916,7 @@ Designing for refusal rather than for coverage was the part of the project I und
 
 The live evaluation results turned out sharper than the development-phase estimates. B3-Generative reaches 0.0% Ungrounded Rate (response-level, after the support-rate gate) and 94.1% Abstention Accuracy on the test split, but only at a 25% Answer Rate. Three things combine to produce that low Answer Rate: a strict abstention threshold (0.30), a strict per-claim support threshold (min_support_rate = 0.80), and the fact that the final evaluation run fell back to the BM25 retriever after the dense FAISS index was unavailable in the reproducibility environment, which has lower recall than the dense index used during development. In hindsight, I would either lower the threshold for the BM25 backend or treat the dense-index runs as the primary results and the BM25 fallback as a separate degraded-mode report.
 
-B3-Extractive (89% Answer Rate, 100% Citation Precision, 0% Ungrounded Rate) is the operating point I would ship if this were a real deployment, at least until retrieval recall improved enough to give Generative Mode a more generous abstention threshold. The Extractive mode also does the useful job of showing that the surrounding pipeline (retrieval, verification, abstention) functions independently of the LLM, with the caveat that an Extractive answer is a quoted paragraph and not a synthesised one.
+B3-Extractive (89% Answer Rate, 100% Citation Precision, 0% Ungrounded Rate) is the configuration I would ship if this were a real deployment, at least until retrieval recall improved enough to give Generative Mode a more generous abstention threshold. The Extractive mode also does the useful job of showing that the surrounding pipeline (retrieval, verification, abstention) functions independently of the LLM, with the caveat that an Extractive answer is a quoted paragraph and not a synthesised one.
 
 The ablation results were the part of the project that surprised me most. Going in, I expected the verification step to be the most impactful component, since it most directly enforces the "cited or silent" rule. The data showed reranking was doing more of the work, which I now read as: it is easier to keep the LLM honest by giving it better evidence in the first place than by trying to clean up its output afterwards. It looks obvious in hindsight, but I only got to it from running the ablations and reading the numbers, not from anything I would have predicted up front.
 
@@ -950,7 +966,7 @@ Under the UK Data Protection Act 2018 and the General Data Protection Regulation
 
 **Generative AI Policy Compliance.** Under the University of Leeds Generative AI policy, this module (COMP3931/COMP3932) sits in the **Amber category**: Generative AI is permitted as a development, debugging, and limited drafting-support aid, but must not generate substantive academic content presented as the author's own. This project was developed in line with that policy. AI tools were used only in the capacities documented in the usage log (Appendix B.5), and the submitted report is the author's final work: all wording, technical claims, citations, edits, and submission decisions were reviewed, revised, and approved by the author. The University proof-reading policy was reviewed and followed.
 
-**Professional Standards.** The codebase follows professional software-engineering practices: version-controlled development with meaningful commit messages, automated testing with 195 test cases across 39 files, reproducible evaluation via scripted pipelines, and modular architecture with clean separation of concerns. In practical terms, the work was guided by the BCS Code of Conduct's emphasis on the public interest, professional competence, and integrity: the abstention behaviour was treated as a public-interest feature (the system should refuse rather than fabricate); limitations and trade-offs are made explicit in this report (Sections 4.13 and 5.2) rather than hidden; and any AI-assisted parts of the development workflow are disclosed in Appendix B.5 in line with the university's Generative AI policy.
+**Professional Standards.** The codebase follows professional software-engineering practices: version-controlled development with meaningful commit messages, automated testing with 193 test cases across 39 files, reproducible evaluation via scripted pipelines, and modular architecture with clean separation of concerns. In practical terms, the work was guided by the BCS Code of Conduct's emphasis on the public interest, professional competence, and integrity: the abstention behaviour was treated as a public-interest feature (the system should refuse rather than fabricate); limitations and trade-offs are made explicit in this report (Sections 4.13 and 5.2) rather than hidden; and any AI-assisted parts of the development workflow are disclosed in Appendix B.5 in line with the university's Generative AI policy.
 
 ---
 
@@ -1049,13 +1065,13 @@ The following self-assessment addresses the ethical dimensions of this research,
 
 #### B.7.1 Automated Test Suite
 
-The project includes 195 automated tests (across 39 test files) covering retrieval logic, claim verification, generation schema validation, golden set integrity, contradiction detection, service layer orchestration, audit report export, hybrid retrieval fusion, UI state management, reviewer service, package import verification, and end-to-end integration.
+The project includes 193 automated tests (across 39 test files) covering retrieval logic, claim verification, generation schema validation, golden set integrity, contradiction detection, service layer orchestration, audit report export, hybrid retrieval fusion, UI state management, reviewer service, package import verification, and end-to-end integration.
 
 **Test execution summary** (final submission build):
 
 ```
 $ pytest -q --ignore=tests/online
-195 passed, 1 skipped in 8.46s
+193 passed, 1 skipped in 8.46s
 ```
 
 Environment: Python 3.10+, macOS, `pip install -e ".[dev]"`. The ignored test file contains integration tests that require live API keys and are excluded from the default test contract.
@@ -1135,7 +1151,7 @@ The following screenshots demonstrate the application's behaviour across three r
 
 <a id="tbl-b-2"></a>
 
-**Table B.2: Testing and validation matrix, representative coverage across 39 test files / 195 test cases.**
+**Table B.2: Testing and validation matrix, representative coverage across 39 test files / 193 test cases.**
 
 | Test File | Tier | Component | Validates |
 | :--- | :--- | :--- | :--- |
@@ -1223,7 +1239,7 @@ The per-participant rows in Table B.3 and the per-category aggregates above are 
 
 Three axes (Correctness, Usefulness, Trust Calibration) end up around α = 0.74, which by Krippendorff's informal cut-off (α ≥ 0.667) is in the "tentative agreement" band. The other two axes drop below that, but for two different reasons that I had to look at carefully. Groundedness is a textbook ceiling-effect case: 117 of the 120 Likert scores are either 4 or 5, and the binned pairwise agreement is 100%; the Krippendorff value comes out low not because reviewers disagreed but because there was so little variance for the metric to work with. Citation Usefulness has more genuine spread — reviewers sometimes disagreed by a point or two on whether a citation was *useful for verification* or just *present*. The Round 2 means come out within about 0.5 of the Round 1 aggregates on every axis but are uniformly slightly lower; the cause is structural rather than substantive. In Round 1 each reviewer gave one number per axis as an overall impression of the 20 cases, while Round 2 averages 120 (participant, query) scores. Per-query averaging gives equal weight to the four over-abstention queries (Q09-Q12, where reviewers consistently scored Correctness and Usefulness 1-3), so those cases pull the per-axis means down rather than being smoothed out by overall impression. The Round 1 aggregate (Table B.3) and the Round 2 per-query CSV (`anonymised_scores.csv` and `per_query_anonymised_scores.csv` under `docs/evidence/human_eval/`) are both archived; neither is retracted.
 
-**Limitations of this evaluation.** The evaluation is small (n = 6 reviewers, 120 ratings), author-facilitated rather than fully blinded, and the reviewer pool is non-domain-expert (CS peers rather than compliance specialists). Round 1's per-(participant, query) ratings were not retained, so the pre/post comparison above is between two different sample shapes (one aggregate per participant, vs. one rating per (participant, query)). The Round 2 α values are honest but indicative rather than definitive, and a production-quality follow-up would employ at least two independent domain-expert raters, full blinding, and per-item ratings throughout. These caveats are also surfaced in Limitation L5 (§5.2).
+**Limitations of this evaluation.** The evaluation is small (n = 6 reviewers, 120 ratings), author-facilitated rather than fully blinded, and the reviewer pool is non-domain-expert (CS peers rather than compliance specialists). Round 1's per-(participant, query) ratings were not retained, so the pre/post comparison above is between two different sample shapes (one aggregate per participant, vs. one rating per (participant, query)). The Round 2 α values are honest but indicative rather than definitive, and a stronger follow-up study would use at least two independent domain-expert raters, full blinding, and per-item ratings throughout. These caveats are also surfaced in Limitation L5 (§5.2).
 
 ### B.11 Public Guidance Transfer Corpus Provenance (referenced from §4.11)
 

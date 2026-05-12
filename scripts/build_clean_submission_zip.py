@@ -172,8 +172,9 @@ RESULTS_INCLUDE = [
 RESULTS_RUNS = [
     "results/runs/b1_generative_final",
     "results/runs/b2_generative_bm25_fallback_final",
-    "results/runs/b3_generative_bm25_fallback_final",
+    "results/runs/b3_extractive_final",
     "results/runs/b3_extractive_public_transfer",
+    "results/runs/b3_generative_bm25_fallback_final",
 ]
 
 DOCS_INCLUDE = [
@@ -300,6 +301,7 @@ TREE_IGNORE_PATTERNS = (
     "voice_review_notes.md",
     "forms",  # eval/human_eval/forms — internal collection artefacts
     "packs",  # eval/human_eval/packs — export bundles
+    "cache",  # per-run llm cache directories inside results/runs/*/
 )
 
 

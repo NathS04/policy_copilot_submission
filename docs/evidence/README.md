@@ -12,13 +12,19 @@ docs/evidence/
 ├── README.md            <- this file
 ├── checklist.md         <- one-row-per-claim mapping: claim → evidence file
 ├── capture_guide.md     <- how each artefact was produced and how to regenerate it
-└── human_eval/          <- materials and results for the Section 4.10 evaluation
-    ├── participant_info.md
-    ├── consent_text.md
-    ├── rubric.md
-    ├── anonymised_scores.csv
-    ├── summary_stats.csv
-    └── thematic_summary.md
+├── contribution_map.md  <- what is the author's own work vs third-party components
+├── human_eval/          <- materials and results for the Section 4.10 evaluation
+│   ├── participant_info.md
+│   ├── consent_text.md
+│   ├── rubric.md
+│   ├── anonymised_scores.csv
+│   ├── summary_stats.csv
+│   └── thematic_summary.md
+└── verification/
+    ├── fresh_install_log.md          <- pytest / verify / clean ZIP on a fresh venv
+    ├── adversarial_test_summary.md   <- Appendix B.12 paired-mode adversarial probe
+    ├── audit_export_*.md             <- the "audit-ready" claim made visible
+    └── public_transfer_failure_taxonomy.md
 ```
 
 The `human_eval/` files mirror the working copies under `eval/human_eval/`
@@ -59,5 +65,5 @@ so that an examiner only has to look in one place.
   corpus and its provenance file (referenced from Appendix B.11).
 - `eval/golden_set/golden_set.csv` and `public_transfer_set.csv` -
   the synthetic and transfer query sets.
-- `tests/` - the 195 automated tests that validate the reproducibility
+- `tests/` - the 193 automated tests that validate the reproducibility
   contract.

@@ -24,7 +24,7 @@ A user asks a question about a policy document. Policy Copilot:
 7. Falls back to **Extractive Mode** (returning the top-ranked paragraph verbatim) when the LLM is unavailable or its output cannot be made citation-clean.
 8. Exports a structured audit trail for every query.
 
-The system runs end-to-end on a consumer laptop with no GPU (BM25 + Extractive Mode) or with full dense retrieval + LLM generation when an API key is available.
+The system runs end-to-end on a normal laptop using BM25 + Extractive Mode, or with full dense retrieval + LLM generation when an API key is available.
 
 ## Why this project exists
 
@@ -55,7 +55,7 @@ Standard RAG retrieves context and asks a language model to answer; it provides 
 | Path | Purpose |
 | :--- | :--- |
 | `src/policy_copilot/` | Production source: ingest, index, retrieve, rerank, generate, verify, critic, service, ui |
-| `tests/` | Test suite (195 passed, 1 skipped on the offline path) |
+| `tests/` | Test suite (193 passed, 1 skipped on the offline path) |
 | `scripts/` | CLI entry points (eval runner, reproducibility, figure / report generation) |
 | `data/corpus/` | Synthetic policy PDFs and processed paragraphs (project data, not report prose) |
 | `data/public_transfer_corpus/` | OGL v3.0 public-guidance corpus + provenance.csv used by §4.11 |
@@ -145,7 +145,7 @@ All values are real; caveats are stated next to each metric.
 | B3-Extractive Answer Rate | **89%** | Coverage is broadly recovered |
 | B3-Extractive Citation Precision | **100%** | True by construction (the response is the cited paragraph) |
 | Public Guidance Transfer Evidence Recall@5 | **52.1%** | Halved from 85% on the synthetic test split (§4.11) |
-| Public Guidance Transfer Ungrounded Rate | **0.0%** | Safety property survives transfer on the 20-query set |
+| Public Guidance Transfer Ungrounded Rate | **0.0%** | On this small extractive-only transfer set, the system stayed conservative and did not fabricate cited answers |
 | Critic Mode macro F1 | **84.8%** | Marginally below the 85% target |
 | Round 2 Krippendorff's α (per axis) | **0.74 / 0.26 / 0.34 / 0.73 / 0.74** | Three axes in tentative-agreement band; ceiling effect on Groundedness, see Appendix B.10 |
 | Independent reviewer evaluation | Correctness 4.67, Groundedness 4.83, Usefulness 3.67 | Round 1 aggregate; n = 6 peer reviewers, author-facilitated |
@@ -156,6 +156,8 @@ All values are real; caveats are stated next to each metric.
 
 | Evidence | Path | Supports |
 | :--- | :--- | :--- |
+| Contribution map (what is the author's work) | `docs/evidence/contribution_map.md` | Authorship and scope of contribution |
+| Fresh-install verification log | `docs/evidence/verification/fresh_install_log.md` | Pytest / verify_artifacts / clean ZIP from a fresh venv |
 | Independent reviewer scores (Round 1 + Round 2) | `docs/evidence/human_eval/anonymised_scores.csv`, `per_query_anonymised_scores.csv` | Section 4.10, Appendix B.10, Tables B.3 / B.4 |
 | Inter-rater agreement (Krippendorff α + 95% CI) | `docs/evidence/human_eval/inter_rater_agreement.md` | Section 4.10, Appendix B.10 Table B.4 |
 | Public Guidance Transfer corpus provenance | `data/public_transfer_corpus/provenance.csv` | Section 4.11, Appendix B.11 Table B.5 |

@@ -4,6 +4,27 @@
 
 This file is the shortest path for an examiner to verify the submitted Policy Copilot package. Every step below is deterministic, runs on a normal laptop, and does not require an LLM API key unless explicitly stated.
 
+## Recommended one-block verification
+
+Copy-paste the block below into a terminal at the project root. It installs the package in a fresh virtual environment, runs the test suite, reproduces the offline evaluation, regenerates the manifest, and builds the clean submission ZIP. No LLM API key is required.
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -e ".[dev]"
+python -c "import policy_copilot; print(policy_copilot.__version__)"
+pytest -q --ignore=tests/test_run_eval_requires_key_in_generative.py
+python scripts/reproduce_offline.py
+python scripts/verify_artifacts.py
+python scripts/build_clean_submission_zip.py
+```
+
+Expected results: package import prints a version string; `pytest` reports `193 passed, 1 skipped`; `verify_artifacts.py` exits with `Artifact verification passed.`; the ZIP builder prints `ZIP accepted.` and writes `Final_Submission_Nathaniel_Sebastian_201715051.zip` next to the project directory.
+
+If any step fails, stop and report the exact terminal output rather than skipping ahead. See [`docs/evidence/verification/fresh_install_log.md`](docs/evidence/verification/fresh_install_log.md) for a reference run.
+
+For a one-page summary of which parts of the system are the author's own work versus third-party components, see [`docs/evidence/contribution_map.md`](docs/evidence/contribution_map.md).
+
 ## Expected environment
 
 | Requirement | Value |
@@ -38,7 +59,7 @@ pytest -q --ignore=tests/test_run_eval_requires_key_in_generative.py
 Expected on a clean install:
 
 ```text
-195 passed, 1 skipped
+193 passed, 1 skipped
 ```
 
 The single skipped test (`test_run_eval_requires_key_in_generative`) is conditionally skipped when no API key is configured; this is intentional and documented in `tests/`.
@@ -92,7 +113,7 @@ If the API account is out of quota, the runner records `insufficient_quota` per 
 
 ## 6. Known limitations
 
-- **Primary corpus is synthetic.** The Public Guidance Transfer Stress Test (§4.11) probes safety-property transfer to OGL public guidance, but full transfer is not demonstrated.
+- **Primary corpus is synthetic.** The Public Guidance Transfer Stress Test (§4.11) checks whether the same conservative behaviour holds on a small OGL public-guidance set in Extractive Mode; full transfer is not demonstrated.
 - **Public Guidance Transfer corpus is small** (20 queries, 8 documents).
 - **Independent reviewer evaluation is small** (n = 6 across two rounds), author-facilitated, and non-domain-expert.
 - **BM25 fallback affected the headline retrieval result** (Evidence Recall@5 73.9% in the reproducibility environment vs. 85% in the dev-phase dense run); the dissertation reports both numbers and clearly distinguishes them.

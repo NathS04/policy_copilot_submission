@@ -1,12 +1,13 @@
 {
   "source": "make_figures.py",
   "verified_by": "verify_artifacts.py",
-  "verified_at": "2026-05-12T22:13:37.440215+00:00",
+  "verified_at": "2026-05-12T23:09:15.194988+00:00",
   "strict": false,
   "allow_backend_mismatch": false,
   "runs": [
     "b1_generative_final",
     "b2_generative_bm25_fallback_final",
+    "b3_extractive_final",
     "b3_extractive_public_transfer",
     "b3_generative_bm25_fallback_final"
   ],
@@ -27,6 +28,15 @@
       "split": "all",
       "mode": "generative",
       "backend_requested": "dense",
+      "backend_used": "bm25"
+    },
+    "b3_extractive_final": {
+      "run_config_sha256": "6b11d7c6eb69b2a091b5f8c6866aeb672074ce13fa44a02a0857e8ec1e6564ca",
+      "summary_sha256": "4084eee95aa7399f757323f4570a35d0bc269d2878d595d6c1e86f46ee23f362",
+      "baseline": "b3",
+      "split": "test",
+      "mode": "extractive",
+      "backend_requested": "bm25",
       "backend_used": "bm25"
     },
     "b3_extractive_public_transfer": {

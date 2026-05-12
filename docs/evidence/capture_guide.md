@@ -65,7 +65,7 @@ breakdown in Appendix B.10 are computed directly from
 
 | Claim | Reproducibility |
 | :--- | :--- |
-| 195 tests pass, 1 conditionally skipped | `pytest -q --ignore=tests/test_run_eval_requires_key_in_generative.py` |
+| 193 tests pass, 1 conditionally skipped | `pytest -q --ignore=tests/test_run_eval_requires_key_in_generative.py` |
 
 ## Report build (Appendix B.7.2)
 
