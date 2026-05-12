@@ -10,7 +10,7 @@ A 20-query stress test against a **small public-guidance corpus** (8 documents, 
 - Information Commissioner's Office (ICO),
 - Advisory, Conciliation and Arbitration Service (ACAS).
 
-The corpus and its provenance live separately at `data/public_transfer_corpus/`. The test was **not** used to tune any threshold or training decision in the main benchmark; it is a one-shot probe of whether the safety properties (citation precision, ungrounded rate) survive a corpus shift to text the author did not write.
+The corpus and its provenance live separately at `data/public_transfer_corpus/`. The test was **not** used to tune any threshold or training decision in the main benchmark; it is a one-shot probe of whether citation precision and ungrounded-rate behaviour remained conservative when the same B3 pipeline ran against text the author did not write.
 
 ## Files
 

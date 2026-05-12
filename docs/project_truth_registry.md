@@ -1,7 +1,8 @@
 # Project Truth Registry
 
-Single source of truth for all critical counts, claims, and definitions.
-Any contradiction with this file in other documents is a bug.
+This file summarises the final package state. It should be checked against
+the final report and evidence pack; contradictions are bugs in whichever
+file is stale.
 
 ## Golden Set
 

@@ -30,7 +30,7 @@ wording.
 | § | Claim (paraphrased) | Evidence file(s) |
 | :--- | :--- | :--- |
 | 5.1 | Cross-encoder reranking is the highest-leverage reliability layer | Section 4.6 ablations; `results/tables/run_summary.csv` |
-| 5.2 (L1) | Synthetic corpus is the primary benchmark; safety properties stress-tested on public corpus | `results/runs/b3_extractive_public_transfer/summary.json` |
+| 5.2 (L1) | Synthetic corpus is the primary benchmark; conservative extractive behaviour checked on a small public corpus | `results/runs/b3_extractive_public_transfer/summary.json` |
 | 5.2 (L2) | Golden set = 63 queries (44 test, 19 dev) | `eval/golden_set/golden_set.csv` |
 | 5.2 (L5) | Independent reviewer evaluation is small (n = 6), author-facilitated, non-domain-expert | `docs/evidence/human_eval/anonymised_scores.csv` |
 
@@ -42,7 +42,9 @@ wording.
 | Reproducible offline (BM25, no API key) | `scripts/reproduce_offline.py` |
 | Reproducible online (dense + LLM) | `scripts/reproduce_online.py` |
 | Pure replay of abstention thresholds | `scripts/sweep_abstention.py` |
-| Honest figures (NaN not 0.0 for missing) | `eval/analysis/make_figures.py --strict` |
+| Honest figures (NaN not 0.0 for missing) | `eval/analysis/make_figures.py` |
+
+`results/manifest.json` records `"strict": false`. This is intentional under the offline-only verification path: the manifest covers the retained artefacts and the offline-safe runs, without requiring an API-enabled regeneration of generative outputs. Missing or unavailable online-generative artefacts are preserved explicitly rather than silently filled.
 
 ## Claim → artefact → command (compact)
 

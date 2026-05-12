@@ -1,16 +1,16 @@
 # Fresh install verification
 
 This file records a clean-room reproduction of the evaluator path on the
-submitted code. It is updated by running the documented commands in a fresh
-virtual environment and pasting the summary lines back in.
+submitted code. It is updated by running the documented commands in a
+fresh virtual environment and pasting the summary lines back in.
 
 ## Configuration
 
 - **Date:** 2026-05-13
 - **Machine:** Apple Silicon (macOS, Darwin 24.5.0)
 - **Python:** 3.14
-- **Repository state:** `main` at commit produced by the build script run
-  recorded below (see `git log -1` if needed)
+- **Repository state:** `main` at the commit produced by the build run
+  recorded below (run `git log -1` if needed)
 
 ## Commands run
 
@@ -20,6 +20,7 @@ source .venv/bin/activate
 pip install -e ".[dev]"
 python -c "import policy_copilot; print(policy_copilot.__version__)"
 pytest -q --ignore=tests/test_run_eval_requires_key_in_generative.py
+python scripts/reproduce_offline.py
 python scripts/verify_artifacts.py
 python scripts/build_clean_submission_zip.py
 ```
@@ -31,27 +32,40 @@ python scripts/build_clean_submission_zip.py
 | `pip install -e ".[dev]"` | succeeded; core + dev dependencies installed |
 | package import (`policy_copilot.__version__`) | succeeded |
 | `pytest` (offline path, `[dev]` only) | **193 passed, 1 skipped** in ~6 s |
+| `scripts/reproduce_offline.py` | `=== OFFLINE REPRODUCTION COMPLETE ===` — B2 and B3 re-run on the test split in Extractive Mode, BM25 backend, no API calls |
 | `scripts/verify_artifacts.py` | `Artifact verification passed.` |
-| `scripts/build_clean_submission_zip.py` | ZIP built, 289 files, 5.27 MB, `Forbidden-path scan: PASSED` |
+| `scripts/build_clean_submission_zip.py` | ZIP built, 297 files, ~5.3 MB, `Forbidden-path scan: PASSED`, `ZIP accepted.` |
 
-## Notes for the assessor
+## Expected notices and intentional behaviours
 
 - The single skipped test (`test_exits_2_when_dense_index_missing`) is
-  conditionally skipped when the optional `[ml]` extras are present. Under
-  the documented `pip install -e ".[dev]"` install path (no `[ml]` extras,
-  which depend on torch and FAISS), the test is reachable but its precondition
-  is satisfied, so it skips. This is intentional and documented in
-  `INSTRUCTIONS_FOR_EVALUATOR.md`.
-- `verify_artifacts.py` prints two warnings about `backend_requested=dense
-  but backend_used=bm25` for the B2 and B3 generative runs. This reflects
-  the documented BM25 fallback used when the dense FAISS index is not
-  available in the reproducibility environment. The dissertation reports
-  both the BM25-fallback and dev-phase dense numbers explicitly in §4.3
-  and Table 4.3.
-- `pytest` creates four short-lived integration-test run directories under
-  `results/runs/` (`b2_test_*`, `b3_test_*`, `test_b2_extractive_bm25_integration`,
-  `test_allow_no_key_generates_llm_disabled`). These are excluded by
-  `.gitignore` and by the whitelist in `build_clean_submission_zip.py`, so
-  they never enter the submission package; they may need clearing between
-  runs of `verify_artifacts.py` if it is invoked without first cleaning the
-  working tree.
+  conditionally skipped: it requires the optional `[ml]` extras to be
+  *absent*, which is the situation under the documented evaluator
+  install. Under a fuller install (with `[ml]`), the test would run
+  and pass instead.
+- `verify_artifacts.py` and `make_figures.py` print two
+  `WARNING: backend_requested=dense but backend_used=bm25` lines for
+  the B2 and B3 generative runs. This is the documented BM25 fallback
+  used in the final reproducibility environment; it is discussed in
+  the report at §4.3 and §4.13 and is intentional. The notice is
+  retained so the fallback cannot be mistaken for a silent
+  dense-retrieval result.
+- `pytest` creates four short-lived integration-test run directories
+  under `results/runs/` (`b2_test_*`, `b3_test_*`,
+  `test_b2_extractive_bm25_integration`, and
+  `test_allow_no_key_generates_llm_disabled`), and
+  `reproduce_offline.py` creates two more (`b2_test_extractive_bm25_*`,
+  `b3_test_extractive_bm25_*`) by design when re-running the offline
+  reproduction. All of these are excluded by `.gitignore` and by the
+  whitelist in `scripts/build_clean_submission_zip.py`, so they never
+  enter the submission ZIP. They may be present in a local working
+  tree after the offline path runs and can be cleared with
+  `rm -rf results/runs/b2_test_* results/runs/b3_test_* results/runs/test_*`.
+
+## Cross-references
+
+- `INSTRUCTIONS_FOR_EVALUATOR.md` — full step-by-step path.
+- `docs/evidence/checklist.md` — claim → artefact → command mapping for
+  every Chapter 4 headline.
+- `docs/evidence/contribution_map.md` — what is the author's own work
+  vs third-party components.

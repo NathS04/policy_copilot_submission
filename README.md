@@ -5,7 +5,7 @@
 [![Tests](https://github.com/NathS04/policy_copilot_submission/actions/workflows/ci.yml/badge.svg)](https://github.com/NathS04/policy_copilot_submission/actions/workflows/ci.yml)
 [![Code style: ruff](https://img.shields.io/badge/code%20style-ruff-000000.svg)](https://docs.astral.sh/ruff/)
 
-**Audit-ready Retrieval-Augmented Generation system for policy documents, designed around a *cited-or-silent* rule, abstention, citation verification, contradiction handling, and reproducible reliability evaluation.**
+Policy Copilot is a conservative closed-corpus policy QA system designed to answer only when it can point to paragraph-level evidence. The novelty is not a new language model, but a reproducible reliability stack around standard RAG: reranking, abstention, citation verification, contradiction surfacing, Extractive Mode, and audit export. The project evaluates the safety/coverage trade-off through a synthetic golden set, baseline comparison, peer-reviewer evaluation, public-guidance transfer test, adversarial probe, and an auditable evidence pack. The main limitation is external validity: the primary benchmark is synthetic, the public transfer set is small, and the human evaluation uses CS peers rather than domain experts.
 
 This repository accompanies the COMP3931 dissertation *"Audit-Ready Policy Copilot: Evidence-Grounded Retrieval-Augmented Generation with Deterministic Reliability Controls"* (BSc Computer Science, University of Leeds, 2025/26).
 

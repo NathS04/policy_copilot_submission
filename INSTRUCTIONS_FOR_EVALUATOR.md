@@ -82,6 +82,8 @@ All required artefacts present.
 No orphan figures or tables.
 ```
 
+**Expected backend notices.** `verify_artifacts.py` (and `make_figures.py`) print two `WARNING: backend_requested=dense but backend_used=bm25` lines for the B2 and B3 generative runs. This is intentional in the final reproducibility environment and is discussed in the report as the BM25 fallback limitation (§4.3, §4.13). The notice is retained on purpose so the fallback cannot be mistaken for a silent dense-retrieval result; it is not an error.
+
 ## 4. Optional online / generative reproduction
 
 This step requires an OpenAI or Anthropic API key and may incur cost (~15-30 LLM calls per baseline at ~$0.02 per call on `gpt-4o-mini`). Offline artefacts are already included in the submission, so the marker does **not** need to run this step to verify the dissertation's claims.
