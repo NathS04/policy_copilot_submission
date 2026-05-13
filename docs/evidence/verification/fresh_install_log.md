@@ -43,13 +43,13 @@ python scripts/build_clean_submission_zip.py
   *absent*, which is the situation under the documented evaluator
   install. Under a fuller install (with `[ml]`), the test would run
   and pass instead.
-- `verify_artifacts.py` and `make_figures.py` print two
-  `WARNING: backend_requested=dense but backend_used=bm25` lines for
-  the B2 and B3 generative runs. This is the documented BM25 fallback
-  used in the final reproducibility environment; it is discussed in
-  the report at §4.3 and §4.13 and is intentional. The notice is
-  retained so the fallback cannot be mistaken for a silent
-  dense-retrieval result.
+- `verify_artifacts.py` prints two `EXPECTED NOTICE: ... backend_requested=dense
+  but backend_used=bm25` lines for `b2_generative_bm25_fallback_final` and
+  `b3_generative_bm25_fallback_final`. This is the documented BM25 fallback
+  used in the final reproducibility environment; it is discussed in the report
+  at §4.3 and §4.13 and is intentional. The notice is retained (rather than
+  silenced) so the fallback cannot be mistaken for a silent dense-retrieval
+  result. `make_figures.py` may also print equivalent warnings.
 - `pytest` creates four short-lived integration-test run directories
   under `results/runs/` (`b2_test_*`, `b3_test_*`,
   `test_b2_extractive_bm25_integration`, and

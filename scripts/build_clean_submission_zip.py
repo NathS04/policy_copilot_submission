@@ -233,7 +233,6 @@ DOCS_INCLUDE = [
     "docs/report/Final_Report_Nathaniel_Sebastian_201715051.pdf",
     "docs/report/report_style.css",
     "docs/report/build_assets/Final_Report_Template.docx",
-    "docs/report/build_assets/leeds_template.docx",
 ]
 
 DOCS_INCLUDE_TREES = [
@@ -260,11 +259,15 @@ FORBIDDEN_SUBSTRINGS = [
     "PHASE6_PATCH_OUTPUT.md",
     "results/runs/_archive/",
     "results/runs/test_",
+    "results/runs/b2_test_",
+    "results/runs/b3_test_",
     "data/corpus/raw/uploads/",
     "CV_",
     "Tenancy agreement",
     "Final_Report_Draft.pdf",
     "Final_Report_Draft.md",
+    "Report_Skeleton.md",
+    "leeds_template.docx",
     ".venv_seal/",
     ".venv/",
     ".venv312/",

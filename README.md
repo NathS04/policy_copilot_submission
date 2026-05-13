@@ -65,7 +65,7 @@ Standard RAG retrieves context and asks a language model to answer; it provides 
 | `eval/adversarial/` | 15-query adversarial probe + paired extractive/generative results |
 | `eval/results/` | Cached per-run summary tables |
 | `results/runs/` | Per-run `outputs.jsonl` + `summary.json` for every reported baseline |
-| `results/figures/` | Strict figure outputs that back Chapter 4 |
+| `results/figures/` | Figure outputs that back Chapter 4 |
 | `results/tables/` | Aggregate metric tables consumed by the report |
 | `docs/report/` | Report markdown source, intermediate DOCX, final PDF |
 | `docs/evidence/` | Examiner-facing proof pack: human-eval, public-transfer failure taxonomy, adversarial summary, audit-export examples |

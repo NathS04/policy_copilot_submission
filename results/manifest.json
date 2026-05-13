@@ -1,7 +1,9 @@
 {
   "source": "make_figures.py",
-  "generated_at": "2026-05-13T08:04:21.986146+00:00",
-  "runs_dir": "results/runs",
+  "verified_by": "verify_artifacts.py",
+  "verified_at": "2026-05-13T09:20:20.915737+00:00",
+  "strict": false,
+  "allow_backend_mismatch": false,
   "runs": [
     "b1_generative_final",
     "b2_generative_bm25_fallback_final",
@@ -9,6 +11,53 @@
     "b3_extractive_public_transfer",
     "b3_generative_bm25_fallback_final"
   ],
+  "run_hashes": {
+    "b1_generative_final": {
+      "run_config_sha256": "2dbe61a96cb135830cbca0aa13a166fdab881253160cf651beb723ca656339e1",
+      "summary_sha256": "c089169f44a7a05042fb15b323597632bef764950ed806d1e2fd938cf40da3ee",
+      "baseline": "b1",
+      "split": "all",
+      "mode": "generative",
+      "backend_requested": "dense",
+      "backend_used": "dense"
+    },
+    "b2_generative_bm25_fallback_final": {
+      "run_config_sha256": "adf8a7a1f47a240076bab3c4332d25b2e00ebfa1ebb7fd674b5f9471cb76fcf0",
+      "summary_sha256": "3bd87d76f13ec9c6f2f30d04480aa7ef1de55ed1b6cf531620b249cffe67fa3d",
+      "baseline": "b2",
+      "split": "all",
+      "mode": "generative",
+      "backend_requested": "dense",
+      "backend_used": "bm25"
+    },
+    "b3_extractive_final": {
+      "run_config_sha256": "6b11d7c6eb69b2a091b5f8c6866aeb672074ce13fa44a02a0857e8ec1e6564ca",
+      "summary_sha256": "4084eee95aa7399f757323f4570a35d0bc269d2878d595d6c1e86f46ee23f362",
+      "baseline": "b3",
+      "split": "test",
+      "mode": "extractive",
+      "backend_requested": "bm25",
+      "backend_used": "bm25"
+    },
+    "b3_extractive_public_transfer": {
+      "run_config_sha256": "50d3d3c8961a7df99fdbacd9863019198284a2a3edf9c88c50fccc8fae9c2cc3",
+      "summary_sha256": "b6e1f7a4d3cee93d394e5a4aba7866dea84aa4370b96a6841e0ce33739433935",
+      "baseline": "b3",
+      "split": "test",
+      "mode": "extractive",
+      "backend_requested": "bm25",
+      "backend_used": "bm25"
+    },
+    "b3_generative_bm25_fallback_final": {
+      "run_config_sha256": "4e52a17d879dbace9e48bf01f1b9b3aa6c162343bd54d5c6b044dac5bfe1dbcf",
+      "summary_sha256": "b775d78d38fb8d272ada36e61c1b9e7b31975a41e20c0d69d818ffea198f82f1",
+      "baseline": "b3",
+      "split": "all",
+      "mode": "generative",
+      "backend_requested": "dense",
+      "backend_used": "bm25"
+    }
+  },
   "figures": [
     "fig_baselines.png",
     "fig_groundedness.png",
