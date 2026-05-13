@@ -1,6 +1,6 @@
 {
   "source": "make_figures.py",
-  "generated_at": "2026-05-13T07:36:19.004595+00:00",
+  "generated_at": "2026-05-13T07:48:59.576602+00:00",
   "runs_dir": "results/runs",
   "runs": [
     "b1_generative_final",

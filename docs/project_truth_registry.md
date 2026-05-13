@@ -26,20 +26,64 @@ file is stale.
 
 ## Key Metrics (from `results/runs/*/summary.json`)
 
-| Metric | B1 | B3 | Source |
-|--------|-----|-----|--------|
-| Answer rate | 100% | ~25% | summary.json `answer_rate` |
-| Ungrounded rate | N/A | 0.0% | summary.json `ungrounded_rate` |
-| Abstention accuracy | N/A | 94.12% (0.9412) | summary.json `abstention_accuracy` |
-| Critic macro precision | — | 93.7% | `run_critic_eval.py --mode heuristic` |
+### B1 / B2 / B3-Generative (synthetic, all-split, generative)
+
+| Metric | B1 | B2 | B3-Generative | Source |
+|--------|-----|-----|-----|--------|
+| Answer rate | 100% | 83.33% | 25.0% | summary.json `answer_rate` |
+| Abstention accuracy | 0.0% | 76.47% | 94.12% | summary.json `abstention_accuracy` |
+| Response-level ungrounded rate | N/A | N/A | 0.0% (after `min_support_rate` gate; not a claim that the LLM never produced unsupported text) | summary.json `ungrounded_rate` |
+| Evidence Recall@5 | N/A | 73.91% | 73.91% (BM25 fallback; dev-phase dense ≈ 85%) | summary.json `evidence_recall` |
+
+### B3-Extractive (synthetic, test-split, extractive, BM25)
+
+| Metric | Value | Source |
+|--------|-------|--------|
+| Answer rate | 88% (~89%) | `results/runs/b3_extractive_final/summary.json` |
+| Citation precision | 100% (mechanical: response is the cited paragraph) | summary.json `citation_precision` |
+| Ungrounded rate | 0% (mechanical in Extractive Mode) | summary.json `ungrounded_rate` |
+| Abstention accuracy | 50% | summary.json `abstention_accuracy` |
+| Evidence Recall@5 | 73.4% | summary.json `evidence_recall_at_5` |
+
+### Critic Mode
+
+| Metric | Value | Source |
+|--------|-------|--------|
+| Macro precision | 93.7% | `run_critic_eval.py --mode heuristic` |
+| Macro recall | 78.5% | as above |
+| Macro F1 | 84.8% (below 85% FR6 target by 0.2 pp) | as above |
 
 ## Human Evaluation Status
 
 | Fact | Status |
 |------|--------|
-| Reviewer rubric scoring | Round 2: 6 reviewers x 20 queries x 5 axes |
-| Multi-rater agreement | Krippendorff alpha computed per axis; see `docs/evidence/human_eval/inter_rater_agreement.md` |
-| Independent raters | Yes — 6 independent reviewers (R1-R6) in Round 2 |
+| Reviewer rubric scoring | Round 1 aggregate (P1-P6) + Round 2 per-query (R1-R6) |
+| Round 2 sample | 6 reviewers × 20 queries × 5 axes = 120 ratings per axis |
+| Multi-rater agreement | Krippendorff α per axis; see `docs/evidence/human_eval/inter_rater_agreement.md` |
+| Independent raters | Yes — 6 independent reviewers (CS peers, not domain experts; author-facilitated, not blinded) |
+| Scope | Small low-risk peer-review check, not a formal user study |
+
+## Public Guidance Transfer Stress Test
+
+| Fact | Value | Source |
+|------|-------|--------|
+| Source organisations | NCSC, ICO, ACAS | `data/public_transfer_corpus/provenance.csv` |
+| Documents | 8 | `data/public_transfer_corpus/README.md` |
+| Paragraphs | 249 | as above |
+| Query set | 20 queries (12 answerable / 4 unanswerable / 4 ambiguous) | `eval/golden_set/public_transfer_set.csv` |
+| Mode tested | Extractive-only | `results/runs/b3_extractive_public_transfer/summary.json` |
+| Licence | Open Government Licence v3.0 with attribution | `provenance.csv` |
+| Used to tune main benchmark | No | reported in §4.11 and `eval/public_transfer/README.md` |
+| Reported outcome | Citation precision 100%, ungrounded rate 0%, answer rate 91.67%, recall@5 52.1% (vs 85% on synthetic) | summary.json |
+
+## Adversarial Probe (Appendix B.12)
+
+| Fact | Value | Source |
+|------|-------|--------|
+| Query bank | 15 queries (5 attack types × 3 queries) | `eval/adversarial/adversarial_queries.csv` |
+| Extractive arm | 15/15 safe, 0 fabricated citations, 0 unsupported answers | `eval/adversarial/adversarial_summary.csv` |
+| Generative arm | `n/a` — OpenAI quota error (HTTP 429) on all 15 queries; preserved rather than estimated | `eval/adversarial/adversarial_results_generative.csv` |
+| Scope | Small probe, not a security certification | `docs/evidence/verification/adversarial_test_summary.md` |
 
 ## Research Pack — Count Hierarchy (Authoritative)
 
@@ -82,6 +126,8 @@ Two complementary literature flows are reported. Both are valid and they are not
 | `verify_artifacts.py --strict` | Fails if `backend_requested != backend_used` (unless `--allow_backend_mismatch`) |
 | Offline reproduction backend | BM25 (lexical), extractive mode |
 | Online reproduction backend | Dense (FAISS), generative mode |
+| Final B2/B3 generative runs | `backend_requested=dense`, `backend_used=bm25` (documented BM25 fallback; surfaced by `verify_artifacts.py` as `EXPECTED NOTICE`, retained on purpose) |
+| `results/manifest.json` `strict` field | `false` — the offline-only evidence path verifies retained artefacts without requiring an API-enabled generative re-run; missing online-generative artefacts are preserved explicitly rather than silently filled |
 
 ## Test Suite
 
@@ -110,6 +156,18 @@ Two complementary literature flows are reported. Both are valid and they are not
 
 ## Claims NOT Made
 
-- No claim of multi-model evaluation (only OpenAI tested)
-- No claim of real-world corpus testing (synthetic corpus acknowledged; Public Guidance Transfer Stress Test is a stress probe, not a full transfer evaluation)
-- No claim of deployment or user study
+- No claim of multi-model evaluation (only OpenAI tested).
+- No claim of real-world corpus testing (synthetic primary corpus acknowledged; Public Guidance Transfer Stress Test is a small extractive-only probe, not a full transfer evaluation).
+- No claim of deployment-readiness, production-readiness, or user-study validation.
+- No claim of domain-expert reviewer evaluation (CS peers only).
+- No claim of formal Faculty ethics approval (the peer-review check is low-risk and judged below the threshold; supervisor was kept informed of design and timing only).
+- No claim of "publishable" status. The publication route is discussed honestly in §5.3 as future work that would require larger external corpus, domain-expert annotation, and a blinded user study.
+
+## Known Limitations (cross-reference §5.2 and Table 4.13)
+
+- L1: synthetic primary corpus.
+- L2: small public-transfer set (8 docs, 249 paragraphs, 20 queries) and Extractive Mode only.
+- L3: small reviewer sample (n = 6 CS peers), author-facilitated.
+- L4: BM25 fallback for the final generative runs (Recall@5 73.9% vs ≈85% dev-phase dense).
+- L5: generative adversarial arm `n/a` (OpenAI quota).
+- L6: Jaccard token-overlap verification cannot detect paraphrase-level support.

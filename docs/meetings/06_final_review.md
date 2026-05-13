@@ -12,7 +12,7 @@
 - Multi-mode UI complete: Ask, Audit Trace, Critic Lens, Experiment Explorer
 - Service layer fully extracted from scripts into reusable modules
 - Hybrid retrieval (RRF) implemented and tested
-- 193 automated tests passing (39 test files)
+- 194 automated tests collected across 39 test files (193 passed, 1 conditionally skipped)
 - Reproduction scripts verified (offline and online paths)
 - Report draft complete with all figures, tables, and appendices
 

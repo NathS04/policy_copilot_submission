@@ -50,7 +50,8 @@ LibreOffice's PDF export embeds these as `/Link` annotations with
 
 ## Tests / report status
 
-The codebase test suite (193 tests pass / 39 files) passes on the submitted
+The codebase test suite (39 files; 194 collected under the documented
+command: 193 passed, 1 conditionally skipped) passes on the submitted
 build, as recorded in §B.7.1. No tests were modified during the final
 polish pass; all changes were to the report markdown, the build script,
 and the post-processor script.

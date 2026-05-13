@@ -190,8 +190,26 @@ def main():
     print(f"Wrote {manifest_path}")
 
     # 5) Emit warnings and decide status
+    # Known documented BM25 fallback runs: downgrade WARNING -> EXPECTED NOTICE
+    # for the specific cases the report/evaluator instructions describe. Any
+    # other backend mismatch or missing artefact still surfaces as WARNING.
+    expected_fallback_runs = {
+        "b2_generative_bm25_fallback_final",
+        "b3_generative_bm25_fallback_final",
+    }
     for w in warnings:
-        print(f"WARNING: {w}")
+        is_expected_fallback = (
+            "backend_requested=dense but backend_used=bm25" in w
+            and any(run in w for run in expected_fallback_runs)
+        )
+        prefix = "EXPECTED NOTICE" if is_expected_fallback else "WARNING"
+        if is_expected_fallback:
+            print(
+                f"{prefix}: {w}. This is documented in the report/evaluator "
+                "instructions and retained for transparency."
+            )
+        else:
+            print(f"{prefix}: {w}")
 
     if errors:
         for e in errors:

@@ -202,7 +202,7 @@ This report has been prepared in accordance with the University of Leeds proof-r
 - [Table 4.11 Bootstrapped 95% confidence intervals](#tbl-4-11)
 - [Table 4.12 Objective achievement summary (Chapter 4 §4.13)](#tbl-4-12)
 - [Table B.1 Comparative analysis of retrieval-augmented and grounded generation systems](#tbl-b-1)
-- [Table B.2 Testing and validation matrix across 39 test files / 194 cases (193 pass, 1 conditionally skipped)](#tbl-b-2)
+- [Table B.2 Testing and validation matrix: 39 test files; 194 collected tests (193 passed, 1 conditionally skipped)](#tbl-b-2)
 - [Table B.3 Per-participant rubric scores from the independent reviewer evaluation](#tbl-b-3)
 - [Table B.4 Round 2 inter-rater agreement (Krippendorff alpha)](#tbl-b-4)
 - [Table B.5 Public Guidance Transfer Corpus provenance](#tbl-b-5)
@@ -497,7 +497,7 @@ Four non-trivial problems demonstrate the project's complexity. **JSON schema co
 
 ### 3.9 Testing and Validation
 
-The codebase has 39 test files and 194 cases (193 pass, 1 conditionally skipped) (`pytest`) organised in three tiers: unit (functions in isolation), integration (pipeline stage interactions), and system (end-to-end and reproducibility). All 193 tests pass on the submitted codebase (1 conditionally skipped); the suite executes in under 10 s on consumer hardware. Representative coverage includes ingestion (PDF parsing, ID stability), verification (Jaccard overlap, numeric consistency, claim-splitting edge cases), retrieval (reranker sorting, BM25 baseline), generation (Pydantic schema, repair-and-retry), abstention (threshold gating), integration tests for end-to-end B3 generative and extractive pipelines, and system tests for golden-set integrity, backend provenance, run configuration, and reproducibility preflight. The complete per-file matrix appears in Appendix B.9.
+The evaluator test suite collects 194 tests under the documented `pytest -q --ignore=tests/test_run_eval_requires_key_in_generative.py` command: 193 pass and 1 is conditionally skipped. The 39 test files are organised in three tiers: unit (functions in isolation), integration (pipeline stage interactions), and system (end-to-end and reproducibility). The suite executes in under 10 s on consumer hardware. Representative coverage includes ingestion (PDF parsing, ID stability), verification (Jaccard overlap, numeric consistency, claim-splitting edge cases), retrieval (reranker sorting, BM25 baseline), generation (Pydantic schema, repair-and-retry), abstention (threshold gating), integration tests for end-to-end B3 generative and extractive pipelines, and system tests for golden-set integrity, backend provenance, run configuration, and reproducibility preflight. The complete per-file matrix appears in Appendix B.9.
 
 ---
 
@@ -1071,7 +1071,7 @@ The following self-assessment addresses the ethical dimensions of this research,
 
 #### B.7.1 Automated Test Suite
 
-The project includes 193 automated tests (across 39 test files) covering retrieval logic, claim verification, generation schema validation, golden set integrity, contradiction detection, service layer orchestration, audit report export, hybrid retrieval fusion, UI state management, reviewer service, package import verification, and end-to-end integration.
+The project's test suite collects 194 tests under the documented evaluator command (193 passed, 1 conditionally skipped) across 39 test files, covering retrieval logic, claim verification, generation schema validation, golden set integrity, contradiction detection, service layer orchestration, audit report export, hybrid retrieval fusion, UI state management, reviewer service, package import verification, and end-to-end integration.
 
 **Test execution summary** (final submission build):
 
@@ -1157,7 +1157,7 @@ The following screenshots demonstrate the application's behaviour across three r
 
 <a id="tbl-b-2"></a>
 
-**Table B.2: Testing and validation matrix, representative coverage across 39 test files / 193 test cases.**
+**Table B.2: Testing and validation matrix — 39 test files; 194 collected tests (193 passed, 1 conditionally skipped).**
 
 | Test File | Tier | Component | Validates |
 | :--- | :--- | :--- | :--- |

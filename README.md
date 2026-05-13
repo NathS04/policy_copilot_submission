@@ -55,7 +55,7 @@ Standard RAG retrieves context and asks a language model to answer; it provides 
 | Path | Purpose |
 | :--- | :--- |
 | `src/policy_copilot/` | Production source: ingest, index, retrieve, rerank, generate, verify, critic, service, ui |
-| `tests/` | Test suite (193 passed, 1 skipped on the offline path) |
+| `tests/` | Test suite (194 collected under the documented command: 193 passed, 1 conditionally skipped) |
 | `scripts/` | CLI entry points (eval runner, reproducibility, figure / report generation) |
 | `data/corpus/` | Synthetic policy PDFs and processed paragraphs (project data, not report prose) |
 | `data/public_transfer_corpus/` | OGL v3.0 public-guidance corpus + provenance.csv used by §4.11 |
