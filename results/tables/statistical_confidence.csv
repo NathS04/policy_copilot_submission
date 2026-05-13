@@ -1,0 +1,4 @@
+metric,denominator_n,point_estimate,ci95_lo,ci95_hi,n_resamples,seed
+"answer_rate (B3-Gen, 36 answerable)",36,0.2500,0.1111,0.3889,2000,42
+"abstention_accuracy (B3-Gen, 17 unanswerable)",17,0.9412,0.8235,1.0000,2000,42
+"evidence_recall_at_5 (B3-Gen, 46 queries with non-empty gold)",46,0.7391,0.6522,0.8261,2000,42

@@ -22,6 +22,9 @@ ALLOWED_TABLES = {
     "auditability_scores.csv",
     "ablation_comparison.csv",
     "threshold_sweep.csv",
+    # Side-tables produced by separate scripts (not by make_figures.py):
+    "critic_summary.csv",            # written by scripts/run_critic_eval.py
+    "statistical_confidence.csv",    # written by scripts/compute_bootstrap_ci.py
 }
 
 

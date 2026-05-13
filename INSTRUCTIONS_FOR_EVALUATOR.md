@@ -81,14 +81,13 @@ python scripts/verify_artifacts.py
 
 `verify_artifacts.py` checks that each run directory under `results/runs/` has a complete `run_config.json + summary.json` pair, verifies that no orphan figures or tables exist in `results/figures/` and `results/tables/`, and exits 0 on success.
 
-Expected last lines of output:
+Expected last line of output:
 
 ```text
-All required artefacts present.
-No orphan figures or tables.
+Artifact verification passed.
 ```
 
-**Expected backend notices.** `verify_artifacts.py` (and `make_figures.py`) print two `WARNING: backend_requested=dense but backend_used=bm25` lines for the B2 and B3 generative runs. This is intentional in the final reproducibility environment and is discussed in the report as the BM25 fallback limitation (§4.3, §4.13). The notice is retained on purpose so the fallback cannot be mistaken for a silent dense-retrieval result; it is not an error.
+**Expected backend notices.** `verify_artifacts.py` prints two `EXPECTED NOTICE: ... backend_requested=dense but backend_used=bm25` lines for `b2_generative_bm25_fallback_final` and `b3_generative_bm25_fallback_final`. This is intentional in the final reproducibility environment and is discussed in the report as the BM25 fallback (§4.3, §4.13). The notice is retained on purpose so the fallback cannot be mistaken for a silent dense-retrieval result; it is not an error. `make_figures.py` may print equivalent warnings.
 
 ## 4. Optional online / generative reproduction
 

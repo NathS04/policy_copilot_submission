@@ -39,19 +39,29 @@ file is stale.
 
 | Metric | Value | Source |
 |--------|-------|--------|
-| Answer rate | 88% (~89%) | `results/runs/b3_extractive_final/summary.json` |
+| Answer rate | 88% (44 test-split queries) | `results/runs/b3_extractive_final/summary.json` |
 | Citation precision | 100% (mechanical: response is the cited paragraph) | summary.json `citation_precision` |
 | Ungrounded rate | 0% (mechanical in Extractive Mode) | summary.json `ungrounded_rate` |
-| Abstention accuracy | 50% | summary.json `abstention_accuracy` |
+| Abstention accuracy | 50.0% (n = 12 unanswerable test queries; Extractive Mode bypasses the LLM and therefore the post-LLM `min_support_rate` gate that drives B3-Generative's 94.1% all-split figure) | summary.json `abstention_accuracy` |
 | Evidence Recall@5 | 73.4% | summary.json `evidence_recall_at_5` |
+| Evidence MRR | 0.7562 | summary.json `evidence_mrr` |
 
-### Critic Mode
+### Critic Mode (heuristic, 50-snippet labelled suite)
 
 | Metric | Value | Source |
 |--------|-------|--------|
-| Macro precision | 93.7% | `run_critic_eval.py --mode heuristic` |
-| Macro recall | 78.5% | as above |
-| Macro F1 | 84.8% (below 85% FR6 target by 0.2 pp) | as above |
+| Macro precision | 93.3% | `python scripts/run_critic_eval.py --run_name critic_heuristic_final --mode heuristic` |
+| Macro recall | 95.2% | as above |
+| Macro F1 | 93.8% (above 85% FR6 target) | as above |
+| Per-label / macro values | Stored in `results/tables/critic_summary.csv` | regenerated from `results/runs/critic_heuristic_final/critic_summary.json` |
+
+### Statistical confidence (B3-Generative bootstrap CIs, seed = 42, n_resamples = 2000)
+
+| Metric | Denominator | Point | 95% CI | Source |
+|--------|-------------|-------|--------|--------|
+| Answer Rate | 36 answerable | 25.0% | [11.1%, 38.9%] | `results/tables/statistical_confidence.csv` from `python scripts/compute_bootstrap_ci.py` |
+| Abstention Accuracy | 17 unanswerable | 94.1% | [82.4%, 100.0%] | as above |
+| Evidence Recall@5 | 46 queries with non-empty gold | 73.9% | [65.2%, 82.6%] | as above |
 
 ## Human Evaluation Status
 
@@ -74,7 +84,8 @@ file is stale.
 | Mode tested | Extractive-only | `results/runs/b3_extractive_public_transfer/summary.json` |
 | Licence | Open Government Licence v3.0 with attribution | `provenance.csv` |
 | Used to tune main benchmark | No | reported in §4.11 and `eval/public_transfer/README.md` |
-| Reported outcome | Citation precision 100%, ungrounded rate 0%, answer rate 91.67%, recall@5 52.1% (vs 85% on synthetic) | summary.json |
+| Reported outcome | Citation precision 100%, ungrounded rate 0%, answer rate 91.67%, recall@5 52.1% (vs 73.4% on the synthetic test split) | summary.json |
+| ACAS row caveat | The recorded target URL `https://www.acas.org.uk/working-from-home-and-hybrid-working` resolved at retrieval time to broader Acas flexible-working content (page title "Flexible working \| Acas"); cached raw text and SHA-256 preserve the exact text used in the stress test; row title relabelled accordingly | `data/public_transfer_corpus/provenance.csv` and `README.md` |
 
 ## Adversarial Probe (Appendix B.12)
 

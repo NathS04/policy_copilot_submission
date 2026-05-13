@@ -82,6 +82,7 @@ SCRIPTS_INCLUDE = [
     "run_acceptance_tests.sh",
     "run_adversarial.py",
     "run_all_experiments.py",
+    "compute_bootstrap_ci.py",
     "run_critic_eval.py",
     "run_dev_tuning.sh",
     "run_eval.py",
@@ -162,9 +163,11 @@ RESULTS_INCLUDE = [
     "results/figures/fig_tradeoff.png",
     "results/tables/ablation_comparison.csv",
     "results/tables/auditability_scores.csv",
+    "results/tables/critic_summary.csv",
     "results/tables/failure_taxonomy.csv",
     "results/tables/objective_slice_results.csv",
     "results/tables/run_summary.csv",
+    "results/tables/statistical_confidence.csv",
     "results/tables/threshold_sweep.csv",
 ]
 
@@ -175,6 +178,7 @@ RESULTS_RUNS = [
     "results/runs/b3_extractive_final",
     "results/runs/b3_extractive_public_transfer",
     "results/runs/b3_generative_bm25_fallback_final",
+    "results/runs/critic_heuristic_final",
 ]
 
 DOCS_INCLUDE = [

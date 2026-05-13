@@ -30,7 +30,7 @@ SRC_MD = REPORT / f"{REPORT_STEM}.md"
 DOCX = REPORT / "build_assets" / "Final_Report_Template.docx"
 PDF = REPORT / f"{REPORT_STEM}.pdf"
 PAGEMAP = REPORT / "pagemap.json"
-TEMPLATE = REPORT / "build_assets" / "leeds_template.docx"
+TEMPLATE = REPORT / "build_assets" / "Final_Report_Template.docx"
 
 PANDOC = "pandoc"
 SOFFICE = "/opt/homebrew/bin/soffice"

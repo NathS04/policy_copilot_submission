@@ -16,7 +16,7 @@
 | Intermediate DOCX | `docs/report/build_assets/Final_Report_Template.docx` | Pandoc + `apply_leeds_template.py` output, retained for rebuilds |
 | Build orchestrator | `scripts/build_report.py` | Two-pass build (pagemap then final render) |
 | Template post-processor | `scripts/apply_leeds_template.py` | Heading promotion, table styling, TOC / LoF / LoT typography |
-| Leeds template | `docs/report/build_assets/leeds_template.docx` | Pandoc reference doc |
+| Leeds template / pandoc reference doc | `docs/report/build_assets/Final_Report_Template.docx` | Single retained template; the older `leeds_template.docx` was removed during the May-2026 audit pass and the build now uses this template throughout |
 
 ## PDF verification
 

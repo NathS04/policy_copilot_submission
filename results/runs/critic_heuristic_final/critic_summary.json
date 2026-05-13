@@ -1,0 +1,58 @@
+{
+  "mode": "heuristic",
+  "total_snippets": 50,
+  "per_label": {
+    "L1": {
+      "tp": 7,
+      "fp": 0,
+      "fn": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    "L2": {
+      "tp": 6,
+      "fp": 4,
+      "fn": 1,
+      "precision": 0.6,
+      "recall": 0.8571,
+      "f1": 0.7059
+    },
+    "L3": {
+      "tp": 7,
+      "fp": 0,
+      "fn": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    "L4": {
+      "tp": 4,
+      "fp": 0,
+      "fn": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    "L5": {
+      "tp": 6,
+      "fp": 0,
+      "fn": 1,
+      "precision": 1.0,
+      "recall": 0.8571,
+      "f1": 0.9231
+    },
+    "L6": {
+      "tp": 6,
+      "fp": 0,
+      "fn": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    }
+  },
+  "macro_precision": 0.9333,
+  "macro_recall": 0.9524,
+  "macro_f1": 0.9382,
+  "exact_match_accuracy": 0.88
+}

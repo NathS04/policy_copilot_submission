@@ -63,10 +63,9 @@ Standard RAG retrieves context and asks a language model to answer; it provides 
 | `eval/human_eval/` | Independent reviewer evaluation: rubric, consent, P1-P6 aggregate + R1-R6 per-query data |
 | `eval/public_transfer/` | Public-transfer failure taxonomy CSV |
 | `eval/adversarial/` | 15-query adversarial probe + paired extractive/generative results |
-| `eval/results/` | Cached per-run summary tables |
 | `results/runs/` | Per-run `outputs.jsonl` + `summary.json` for every reported baseline |
 | `results/figures/` | Figure outputs that back Chapter 4 |
-| `results/tables/` | Aggregate metric tables consumed by the report |
+| `results/tables/` | Aggregated per-run summary tables (`run_summary.csv`, `critic_summary.csv`, `statistical_confidence.csv`, etc.) consumed by the report |
 | `docs/report/` | Report markdown source, intermediate DOCX, final PDF |
 | `docs/evidence/` | Examiner-facing proof pack: human-eval, public-transfer failure taxonomy, adversarial summary, audit-export examples |
 | `docs/research/` | Literature matrix and gap-analysis artefacts |
@@ -142,13 +141,14 @@ All values are real; caveats are stated next to each metric.
 | :--- | :--- | :--- |
 | B3-Generative response-level Ungrounded Rate | **0.0%** | After post-LLM `min_support_rate` enforcement (§4.4); not proof the LLM never hallucinates |
 | B3-Generative claim-level residual Ungrounded Rate | **4%** | Two-thirds reduction from the 12% pre-verification baseline |
-| B3-Generative Abstention Accuracy (test split) | **94.1%** | n = 12 unanswerable test queries; bootstrap CI is wide (§4.12) |
-| B3-Generative Answer Rate (test split) | **25.0%** | Below the 85% target; the visible price of the strict "cited or silent" rule |
-| B3-Extractive Answer Rate | **89%** | Coverage is broadly recovered |
+| B3-Generative Abstention Accuracy (full 63-query golden set) | **94.1%** | n = 17 unanswerable queries in the full golden set; bootstrap 95% CI [82.4%, 100%] (§4.12) |
+| B3-Generative Answer Rate (full 63-query golden set) | **25.0%** | 9 of 36 answerable; below the 85% target; the visible price of the strict "cited or silent" rule; bootstrap 95% CI [11.1%, 38.9%] |
+| B3-Extractive Answer Rate (test split, 44 queries) | **88%** | Coverage is broadly recovered relative to B3-Generative |
+| B3-Extractive Abstention Accuracy (test split) | **50.0%** | n = 12 unanswerable test queries; Extractive Mode bypasses the LLM and therefore the post-LLM `min_support_rate` gate that drives B3-Generative's all-split 94.1% |
 | B3-Extractive Citation Precision | **100%** | True by construction (the response is the cited paragraph) |
-| Public Guidance Transfer Evidence Recall@5 | **52.1%** | Halved from 85% on the synthetic test split (§4.11) |
+| Public Guidance Transfer Evidence Recall@5 | **52.1%** | Down from 73.4% on the synthetic test split (a roughly 30% relative drop), §4.11 |
 | Public Guidance Transfer Ungrounded Rate | **0.0%** | On this small extractive-only transfer set, the system stayed conservative and did not fabricate cited answers |
-| Critic Mode macro F1 | **84.8%** | Marginally below the 85% target |
+| Critic Mode macro F1 (heuristic, 50-snippet labelled suite) | **93.8%** | Above the 85% target; per-label values in `results/tables/critic_summary.csv` |
 | Round 2 Krippendorff's α (per axis) | **0.74 / 0.26 / 0.34 / 0.73 / 0.74** | Three axes in tentative-agreement band; ceiling effect on Groundedness, see Appendix B.10 |
 | Independent reviewer evaluation | Correctness 4.67, Groundedness 4.83, Usefulness 3.67 | Round 1 aggregate; n = 6 peer reviewers, author-facilitated |
 
