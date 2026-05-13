@@ -211,6 +211,7 @@ DOCS_INCLUDE = [
     "docs/evidence/verification/audit_export_index.md",
     "docs/evidence/verification/audit_export_unanswerable.md",
     "docs/evidence/verification/fresh_install_log.md",
+    "docs/evidence/verification/vertical_slice_case_study.md",
     "docs/evidence/verification/public_transfer_failure_taxonomy.md",
     "docs/meetings/000_template.md",
     "docs/meetings/01_project_kickoff.md",

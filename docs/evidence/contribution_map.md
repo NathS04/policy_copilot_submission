@@ -1,9 +1,33 @@
 # Contribution Map
 
-This project's contribution is not a new foundation model. It is an evaluated
-reliability layer for policy-document retrieval-augmented generation (RAG).
-The system, evaluation harness, evidence pack, and report are all the author's
-own work, in line with the AI usage declaration in Appendix B.5 of the report.
+Policy Copilot is a conservative policy-document QA system. It is not designed
+to answer every question; it is designed to answer only when the supporting
+policy evidence is strong enough to cite. The project wraps standard RAG with
+paragraph-level citations, reranking, abstention, claim-level verification,
+contradiction surfacing, Extractive Mode, and audit exports. The main finding
+is the safety/coverage trade-off: stricter evidence checks reduce unsupported
+answers, but they also reduce how often the system is willing to answer. I
+evaluate that trade-off using baselines, ablations, reviewer feedback, a small
+public-guidance transfer test, adversarial probes, and a reproducible evidence
+pack.
+
+The contribution is not a new foundation model. It is an evaluated reliability
+layer for policy-document RAG. The system, evaluation harness, evidence pack,
+and report are all the author's own work, in line with the AI usage declaration
+in Appendix B.5 of the report.
+
+## Core contribution and extensions
+
+| Layer | Role in the project | Evidence |
+| :--- | :--- | :--- |
+| Core CS problem | Closed-corpus policy QA is risky when systems give fluent answers without evidence. The project asks whether citation enforcement, abstention, and per-claim verification can make RAG safer to audit. | Chapter 1; `docs/evidence/checklist.md` |
+| Core implementation | Ingestion with stable paragraph IDs, retrieval (BM25 / dense), cross-encoder reranking, schema-validated generation, sentence-level claim verification, abstention, contradiction surfacing. | `src/policy_copilot/`; `tests/`; `results/runs/` |
+| Core evaluation | B1, B2, and B3 compared on the held-out golden set using retrieval, citation, groundedness, and abstention metrics. | Chapter 4; `results/tables/run_summary.csv`; `results/manifest.json` |
+| Reliability extension | Extractive Mode tests the safest version of the design by returning the cited paragraph directly rather than a free-form answer. | `results/runs/b3_extractive_final/`; Chapter 4 |
+| Human-check extension | Peer reviewers provide a small supporting check on whether outputs felt correct, grounded, and appropriately cautious. | Appendix B.10; `docs/evidence/human_eval/` |
+| Externality extension | Public-guidance transfer checks the extractive system on documents that were not written for the synthetic benchmark. | Appendix B.11; `data/public_transfer_corpus/`; `eval/public_transfer/` |
+| Robustness extension | Adversarial probes check whether prompt-injection style inputs make the extractive system fabricate citations or unsupported answers. | Appendix B.12; `eval/adversarial/` |
+| Examiner-usability extension | Audit exports, the case-study walkthrough, and the evidence pack map every headline claim to a concrete file and command. | `docs/evidence/`; `INSTRUCTIONS_FOR_EVALUATOR.md`; `docs/evidence/verification/vertical_slice_case_study.md` |
 
 ## Built by the author
 

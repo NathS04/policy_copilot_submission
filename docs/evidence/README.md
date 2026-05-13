@@ -22,13 +22,18 @@ docs/evidence/
 │   └── thematic_summary.md
 └── verification/
     ├── fresh_install_log.md          <- pytest / verify / clean ZIP on a fresh venv
-    ├── adversarial_test_summary.md   <- Appendix B.12 paired-mode adversarial probe
-    ├── audit_export_*.md             <- the "audit-ready" claim made visible
+    ├── adversarial_test_summary.md       <- Appendix B.12 paired-mode adversarial probe
+    ├── audit_export_*.md                 <- the "audit-ready" claim made visible
+    ├── vertical_slice_case_study.md      <- one-page walkthrough of the three audit exports
     └── public_transfer_failure_taxonomy.md
 ```
 
 The `human_eval/` files mirror the working copies under `eval/human_eval/`
 so that an examiner only has to look in one place.
+
+For a short walkthrough of one answerable query, one unanswerable query, and
+one contradiction probe, see
+[`docs/evidence/verification/vertical_slice_case_study.md`](verification/vertical_slice_case_study.md).
 
 ## How to use this folder
 

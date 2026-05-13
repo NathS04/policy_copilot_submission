@@ -4,6 +4,12 @@
 
 This file is the shortest path for an examiner to verify the submitted Policy Copilot package. Every step below is deterministic, runs on a normal laptop, and does not require an LLM API key unless explicitly stated.
 
+## What this project is
+
+Policy Copilot is a conservative policy-document QA system. It is not designed to answer every question; it is designed to answer only when the supporting policy evidence is strong enough to cite. The project wraps standard RAG with paragraph-level citations, reranking, abstention, claim-level verification, contradiction surfacing, Extractive Mode, and audit exports. The main finding is the safety/coverage trade-off: stricter evidence checks reduce unsupported answers, but they also reduce how often the system is willing to answer. I evaluate that trade-off using baselines, ablations, reviewer feedback, a small public-guidance transfer test, adversarial probes, and a reproducible evidence pack.
+
+For a short walkthrough of one answerable query, one unanswerable query, and one contradiction probe, see [`docs/evidence/verification/vertical_slice_case_study.md`](docs/evidence/verification/vertical_slice_case_study.md).
+
 ## Recommended one-block verification
 
 Copy-paste the block below into a terminal at the project root. It installs the package in a fresh virtual environment, runs the test suite, reproduces the offline evaluation, regenerates the manifest, and builds the clean submission ZIP. No LLM API key is required.

@@ -5,7 +5,7 @@
 [![Tests](https://github.com/NathS04/policy_copilot_submission/actions/workflows/ci.yml/badge.svg)](https://github.com/NathS04/policy_copilot_submission/actions/workflows/ci.yml)
 [![Code style: ruff](https://img.shields.io/badge/code%20style-ruff-000000.svg)](https://docs.astral.sh/ruff/)
 
-Policy Copilot is a conservative closed-corpus policy QA system designed to answer only when it can point to paragraph-level evidence. The novelty is not a new language model, but a reproducible reliability stack around standard RAG: reranking, abstention, citation verification, contradiction surfacing, Extractive Mode, and audit export. The project evaluates the safety/coverage trade-off through a synthetic golden set, baseline comparison, peer-reviewer evaluation, public-guidance transfer test, adversarial probe, and an auditable evidence pack. The main limitation is external validity: the primary benchmark is synthetic, the public transfer set is small, and the human evaluation uses CS peers rather than domain experts.
+Policy Copilot is a conservative policy-document QA system. It is not designed to answer every question; it is designed to answer only when the supporting policy evidence is strong enough to cite. The project wraps standard RAG with paragraph-level citations, reranking, abstention, claim-level verification, contradiction surfacing, Extractive Mode, and audit exports. The main finding is the safety/coverage trade-off: stricter evidence checks reduce unsupported answers, but they also reduce how often the system is willing to answer. I evaluate that trade-off using baselines, ablations, reviewer feedback, a small public-guidance transfer test, adversarial probes, and a reproducible evidence pack. The main limitation is external validity: the primary benchmark is synthetic, the public-transfer set is small, and the human evaluation uses CS peers rather than domain experts.
 
 This repository accompanies the COMP3931 dissertation *"Audit-Ready Policy Copilot: Evidence-Grounded Retrieval-Augmented Generation with Deterministic Reliability Controls"* (BSc Computer Science, University of Leeds, 2025/26).
 
@@ -134,6 +134,8 @@ The final retrieval reported in the dissertation used the **BM25 fallback** beca
 
 ## Reported headline results
 
+The main lesson from the project is that auditability has a cost. Stricter evidence checks and abstention reduce unsupported answers, but they also reduce how often the system is willing to answer.
+
 All values are real; caveats are stated next to each metric.
 
 | Metric | Result | Caveat |
@@ -164,6 +166,7 @@ All values are real; caveats are stated next to each metric.
 | Public-transfer failure taxonomy | `eval/public_transfer/failure_taxonomy.csv`, `docs/evidence/verification/public_transfer_failure_taxonomy.md` | Section 4.11 |
 | Adversarial probe summary | `eval/adversarial/adversarial_summary.csv`, `docs/evidence/verification/adversarial_test_summary.md` | Appendix B.12 Table B.6 |
 | Audit-export examples (3 cases) | `docs/evidence/verification/audit_export_*.md` | The "audit-ready" claim, made visible |
+| Vertical-slice case study (walks the three audit exports) | `docs/evidence/verification/vertical_slice_case_study.md` | One-page tour of an answered, an abstained, and a contradiction-surfaced query |
 | Final report PDF | `docs/report/Final_Report_Nathaniel_Sebastian_201715051.pdf` | The dissertation itself |
 | Reproducibility checklist | `docs/evidence/checklist.md` | Per-claim mapping of report → artefact |
 | Capture guide | `docs/evidence/capture_guide.md` | How each artefact was produced and how to regenerate it |
