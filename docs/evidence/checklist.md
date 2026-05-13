@@ -62,6 +62,9 @@ For every report claim, this table maps the artefact that backs it and the exact
 | Audit exports (the "audit-ready" claim) | `docs/evidence/verification/audit_export_*.md` | `python scripts/build_audit_exports.py` |
 | Figures used in Chapter 4 | `results/figures/fig_*.png` | `python eval/analysis/make_figures.py` |
 | Clean submission ZIP | `Final_Submission_Nathaniel_Sebastian_201715051.zip` (sibling of project) | `python scripts/build_clean_submission_zip.py` |
+| Fresh-install verification log | [`docs/evidence/verification/fresh_install_log.md`](verification/fresh_install_log.md) | Re-run all of the above in a fresh venv and paste the summary back in |
+
+Every headline metric in Chapter 4 maps to a concrete repository artefact so that the result can be audited rather than taken on trust.
 
 ## Ethics and process claims
 

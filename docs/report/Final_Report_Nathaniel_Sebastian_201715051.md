@@ -202,7 +202,7 @@ This report has been prepared in accordance with the University of Leeds proof-r
 - [Table 4.11 Bootstrapped 95% confidence intervals](#tbl-4-11)
 - [Table 4.12 Objective achievement summary (Chapter 4 §4.13)](#tbl-4-12)
 - [Table B.1 Comparative analysis of retrieval-augmented and grounded generation systems](#tbl-b-1)
-- [Table B.2 Testing and validation matrix across 39 test files / 194 cases (193 pass, 1 conditionally skipped) (193 pass, 1 conditionally skipped)](#tbl-b-2)
+- [Table B.2 Testing and validation matrix across 39 test files / 194 cases (193 pass, 1 conditionally skipped)](#tbl-b-2)
 - [Table B.3 Per-participant rubric scores from the independent reviewer evaluation](#tbl-b-3)
 - [Table B.4 Round 2 inter-rater agreement (Krippendorff alpha)](#tbl-b-4)
 - [Table B.5 Public Guidance Transfer Corpus provenance](#tbl-b-5)
