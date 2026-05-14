@@ -1,13 +1,19 @@
 """Cross-paragraph contradiction detection.
 
 Tier 1 is deterministic — antonym pairs and numeric mismatches — and always
-runs. Tier 2 is an optional LLM judge that fires only when the heuristic
-came up empty and ``enable_llm`` is set.
+runs. Tier 1.5 is the quantitative-conflict detector built on
+``policy_facts.extract_policy_facts`` (Phase H). Tier 2 is an optional
+LLM judge that fires only when the heuristic came up empty and
+``enable_llm`` is set.
 """
 import re
 from itertools import combinations
 from typing import List, Dict
 from policy_copilot.logging_utils import setup_logging
+from policy_copilot.verify.policy_facts import (
+    extract_policy_facts,
+    find_quantitative_conflicts,
+)
 
 logger = setup_logging()
 
@@ -84,9 +90,18 @@ def detect_contradictions(evidence: List[Dict],
         neg_conflicts = _check_negation_pair(text_a, text_b)
         reasons.extend(neg_conflicts)
 
-        # check numeric conflicts
+        # check numeric conflicts (legacy "minimum N" detector)
         num_conflicts = _check_numeric_conflict(text_a, text_b)
         reasons.extend(num_conflicts)
+
+        # Tier 1.5 — quantitative-fact conflict detector (Phase H).
+        # Catches "8 characters vs 12 characters", "90 days vs 60 days",
+        # and similar value/unit mismatches when the subjects match.
+        facts_a = extract_policy_facts(text_a, paragraph_id=pid_a)
+        facts_b = extract_policy_facts(text_b, paragraph_id=pid_b)
+        quant_conflicts = find_quantitative_conflicts(facts_a, facts_b)
+        for qc in quant_conflicts:
+            reasons.append(qc["rationale"])
 
         # Tier-2 LLM judge if enabled and heuristic found nothing
         llm_confirmed = False
