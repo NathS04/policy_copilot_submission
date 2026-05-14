@@ -196,7 +196,19 @@ class ChatOrchestrator:
         if self._retriever is None or not getattr(self._retriever, "loaded", False):
             logger.warning("Retriever not loaded; returning empty evidence.")
             return []
-        return self._retriever.retrieve(question, k=k)
+        # Phase 4: optional policy-domain synonym expansion *for retrieval only*.
+        # The original ``question`` is preserved for downstream use (LLM prompt,
+        # claim verification, audit export). Controlled via cfg flag
+        # ``enable_query_normalisation`` so it can be toggled in ablations.
+        cfg = self._overrides or {}
+        retrieval_query = question
+        if cfg.get("enable_query_normalisation", False):
+            try:
+                from policy_copilot.retrieve.query_normaliser import normalise_query
+                retrieval_query, _applied = normalise_query(question)
+            except Exception as exc:
+                logger.warning("query normalisation failed; using raw question: %s", exc)
+        return self._retriever.retrieve(retrieval_query, k=k)
 
     def _rerank(
         self, question: str, candidates: list[dict], top_k: int, cfg: dict,

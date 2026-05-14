@@ -1,0 +1,9 @@
+configuration,backend,split,alpha,rrf_k,enable_query_normalisation,recall_at_5,mrr,note
+baseline_v2,hybrid,all,0.5,60,False,0.78,0.8657,headline v2 baseline
+synonym_only,hybrid,all,0.5,60,True,0.78,0.8657,policy-synonym dictionary expansion; no measurable lift
+alpha_0.3,hybrid,all,0.3,60,True,0.78,0.8657,more BM25 weight; same recall
+alpha_0.4,hybrid,all,0.4,60,True,0.78,0.8657,same recall
+alpha_0.5,hybrid,all,0.5,60,True,0.78,0.8657,default; same recall
+alpha_0.6,hybrid,all,0.6,60,True,0.78,0.8657,more dense weight; same recall
+alpha_0.7,hybrid,all,0.7,60,True,0.77,0.8657,too dense-heavy; slight regression
+selected,hybrid,all,0.5,60,True,0.78,0.8657,selected: synonym ON for engineering breadth even though it does not change the metric in this corpus; remaining gap is multi-paragraph gold (Phase-1 diagnostic)

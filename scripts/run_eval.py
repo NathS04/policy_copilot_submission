@@ -106,7 +106,17 @@ def _run_b3_query(question: str, category: str, retriever: Retriever,
     # --- Step 1: Retrieve candidates ---
     retrieve_k = cfg.get("retrieve_k_candidates", 20)
     t0 = time.time()
-    candidates = retriever.retrieve(question, k=retrieve_k)
+    # Phase 4: optional policy-domain query normalisation for retrieval only.
+    # Toggled via cfg["enable_query_normalisation"]; default False so existing
+    # runs are unchanged.
+    retrieval_query = question
+    if cfg.get("enable_query_normalisation", False):
+        try:
+            from policy_copilot.retrieve.query_normaliser import normalise_query
+            retrieval_query, _applied = normalise_query(question)
+        except Exception as exc:
+            logger.warning("query normalisation failed; using raw question: %s", exc)
+    candidates = retriever.retrieve(retrieval_query, k=retrieve_k)
     timings["retrieval_ms"] = round((time.time() - t0) * 1000, 1)
     backend_requested = cfg.get("backend_requested", cfg.get("backend", "unknown"))
     backend_used = getattr(retriever, "backend_used", cfg.get("backend_used", backend_requested))
@@ -301,6 +311,10 @@ def run_baseline(baseline: str, golden_path: str, run_name: str,
     cfg["backend_used"] = cfg["backend_requested"]
     cfg["enable_llm"] = getattr(settings, "ENABLE_LLM", True)
     cfg["allow_fallback"] = ablations.get("allow_fallback", False)
+    # Phase 4: optional policy-domain query normalisation for retrieval only.
+    cfg["enable_query_normalisation"] = bool(
+        (cli_args or {}).get("enable_query_normalisation", False)
+    )
     cfg["cli_args"] = _json_safe(cli_args or {})
     cfg["thresholds"] = {
         "abstain_threshold": getattr(settings, "ABSTAIN_THRESHOLD", None),
@@ -374,7 +388,14 @@ def run_baseline(baseline: str, golden_path: str, run_name: str,
                 backend_used = cfg["backend_used"]
 
                 if baseline == "b2" and retriever is not None:
-                    evidence = retriever.retrieve(question, k=settings.TOP_K)
+                    retrieval_query = question
+                    if cfg.get("enable_query_normalisation", False):
+                        try:
+                            from policy_copilot.retrieve.query_normaliser import normalise_query
+                            retrieval_query, _ = normalise_query(question)
+                        except Exception:
+                            pass
+                    evidence = retriever.retrieve(retrieval_query, k=settings.TOP_K)
                     backend_used = getattr(retriever, "backend_used", backend_used)
                     cfg["backend_used"] = backend_used
                     retrieved_ids = [e["paragraph_id"] for e in evidence]
@@ -659,6 +680,10 @@ def main():
                         help="[B3] Disable per-claim citation verification")
     parser.add_argument("--no_contradictions", action="store_true",
                         help="[B3] Disable contradiction detection")
+    parser.add_argument("--enable_query_normalisation", action="store_true",
+                        help="[B3/Retrieval] Apply policy-domain synonym normalisation to "
+                             "the retrieval query (Phase 4). Original question is preserved "
+                             "for LLM prompt, claim verification, and audit.")
 
     # B3 config overrides
     parser.add_argument("--retrieve_k_candidates", type=int, default=50,

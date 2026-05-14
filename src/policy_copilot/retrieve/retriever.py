@@ -168,9 +168,22 @@ class Retriever:
         if not self.bm25_retriever.is_ready:
             raise BackendUnavailableError("Hybrid backend: BM25 init failed")
 
+        # Phase 4: allow env-var overrides of RRF tuning knobs so the
+        # alpha/k tradeoff can be swept without changing code.
+        import os as _os
+        try:
+            _alpha = float(_os.environ.get("POLICY_COPILOT_HYBRID_ALPHA", "0.5"))
+        except ValueError:
+            _alpha = 0.5
+        try:
+            _rrf_k = int(_os.environ.get("POLICY_COPILOT_HYBRID_RRF_K", "60"))
+        except ValueError:
+            _rrf_k = 60
         self.hybrid_retriever = HybridRetriever(
             dense_retriever=dense_inner,
             sparse_retriever=self.bm25_retriever,
+            alpha=_alpha,
+            rrf_k=_rrf_k,
         )
         if not self.hybrid_retriever.loaded:
             raise BackendUnavailableError("Hybrid backend: neither side loaded")
