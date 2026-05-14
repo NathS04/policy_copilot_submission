@@ -741,13 +741,13 @@ The wide Answer Rate CI reflects the small number of answered queries (9 of 36);
 | Objective | Target | Achieved (v2 corrected golden set) | Status |
 | :--- | :--- | :--- | :--- |
 | 1. Ungrounded Rate ≤ 5% | ≤ 5% | 0% surfaced (Gen/B4, after enforcement); 4% residual claim-level (Gen); 0% (Ext, by construction) | Met |
-| 2. Answer Rate ≥ 85% | ≥ 85% | 25.0% (Gen, replay), 92.5% (Ext, hybrid), 50.0% (B4), 90.0% (B5) | Met by B3-Extractive (92.5%); substantially closed by B5 (90.0%) under all safety floors |
-| 3. Evidence Recall@5 ≥ 80% | ≥ 80% | 78.0% (B3-Ext hybrid, all-split, CI95 [70.0%, 85.0%]); 73.0% (Gen, BM25 replay) | Close to target; CI overlaps 80% |
-| 4. Abstention Accuracy ≥ 80% | ≥ 80% | 100% (Gen/B4, all-split, n=13 unanswerable); 76.9% (Ext, hybrid, all-split) | Met in Gen and B4; Ext just below |
+| 2. Answer Rate ≥ 85% | ≥ 85% | 25.0% (Gen, replay), 92.5% (Ext, hybrid), 50.0% (B4), 90.0% (B5) | Met by B5 (90.0%) and B3-Extractive (92.5%); not met by B3-Generative or B4 |
+| 3. Evidence Recall@5 ≥ 80% | ≥ 80% | 78.0% (B3-Ext hybrid, all-split, CI95 [70.0%, 85.0%]); 73.0% (Gen, BM25 replay) | Near miss; CI overlaps 80% |
+| 4. Abstention Accuracy ≥ 80% | ≥ 80% | 100% (Gen/B4); 84.6% (B5, CI95 [61.5%, 100%]); 76.9% (Ext) | Met by Gen, B4 and B5 (B5 wide CI, n=13); Ext just below |
 | 5. Critic Mode F1 ≥ 85% | ≥ 85% | 93.8% (heuristic, 50-snippet labelled suite) | Met |
 | 6. Systematic Evaluation | Complete | Complete | Met |
 
-Headline grounding, Critic Mode F1, abstention (for B3-Generative, B4, and B5), and the harness all meet their targets on the corrected v2 set. Objective 2 is met by B3-Extractive on hybrid (92.5%) and substantially closed by B5 Evidence-Gated Hybrid (90.0%) while preserving all safety floors; B4 raises generative-first answer rate from 25% to 50% but does not reach the 85% generative target. Objective 3 reaches 78%, two points below target, with a 95% CI overlapping 80%.
+Headline grounding, Critic Mode F1, abstention (B3-Generative, B4 and B5), and the harness all meet their targets on the corrected v2 set. Objective 2 is met by B5 Evidence-Gated Hybrid (90.0%) and B3-Extractive on hybrid (92.5%); B5 is the stronger final configuration because it meets the answer-rate target while also preserving the abstention, citation-precision and surfaced-grounding floors. B3-Generative (25%) and B4 (50%) do not reach 85%. Objective 3 reaches 78%, two points below target with a CI overlapping 80%. B5 meets abstention at 84.6% but the CI is wide (n=13).
 
 The remaining open issue is generative coverage. The §4.5 sweep showed 25% is the maximum attainable under the dual safety constraints on the BM25-fallback outputs. B4 addresses this by degrading gracefully: when generation fails the support gate and retrieval is strong, B4 returns the retrieved paragraph verbatim with its citation. Strict surfaced grounding can be combined with better coverage in this closed-corpus setting, with the cost paid as controlled extractive degradation rather than relaxed safety.
 
@@ -785,7 +785,7 @@ A single threats-to-validity table compiling each of the above against its mitig
 
 ### 5.3 Future Work and Reflection
 
-The limitations above suggest a prioritised future-work programme. The nearest technical step is NLI-based verification, using FEVER-style or SciFact-style entailment models as a backstop for borderline claims (Thorne et al., 2018; Wadden et al., 2020), which directly addresses the heuristic-verification ceiling in L3. The second priority is backend-specific threshold tuning and domain-adapted embeddings, drawing on legal NLP corpora to reduce vocabulary-mismatch failures (Chalkidis et al., 2020). A stronger evaluation would expand the golden set to 200+ annotated queries, compare at least two LLM families, and validate on a real organisational policy corpus with an industry partner. Looking back, designing the evaluation was harder than implementing the reliability features: a safety-first RAG system cannot be judged by answer rate alone, and refusing often had to be reported honestly as both a strength and a limitation.
+The limitations above suggest a prioritised future-work programme. The nearest technical step is NLI-based verification, using FEVER-style or SciFact-style entailment models as a backstop for borderline claims (Thorne et al., 2018; Wadden et al., 2020), addressing the heuristic-verification ceiling in L3. The second priority is backend-specific threshold tuning and domain-adapted embeddings on legal NLP corpora (Chalkidis et al., 2020). A stronger evaluation would expand the golden set to 200+ queries, compare two LLM families, and validate on a real organisational corpus with an industry partner. Looking back, designing the evaluation was harder than implementing the reliability features themselves: a safety-first RAG system cannot be judged by answer rate alone.
 
 </div>
 
