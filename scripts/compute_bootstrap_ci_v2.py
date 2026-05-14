@@ -36,6 +36,7 @@ RUNS_TO_COVER = [
     ("b3_generative_v2",                          "B3-Generative (replay, v2)", "b3"),
     ("b3_extractive_hybrid_v2_final",             "B3-Extractive hybrid (v2)", "b3"),
     ("b4_conservative_hybrid_replay_v2_final",    "B4 Conservative Hybrid (v2 replay)", "b4"),
+    ("b5_evidence_gated_hybrid_v3_final",         "B5 Evidence-Gated Hybrid (v3)",     "b5"),
 ]
 
 
