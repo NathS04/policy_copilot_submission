@@ -10,6 +10,6 @@
   "citation_recall": 0.5631,
   "ungrounded_rate": 0.0,
   "support_rate_mean": 1.0,
-  "contradiction_recall": 0.5,
-  "contradiction_precision": 0.1852
+  "contradiction_recall": 0.8,
+  "contradiction_precision": 0.2222
 }

@@ -2,10 +2,10 @@
 
 - **Baseline**: b3
 - **Queries processed**: 63
-- **Duration**: 16.5s
+- **Duration**: 17.9s
 - **Provider**: openai
 - **Model**: gpt-4o-mini
-- **Created**: 2026-05-14T09:02:48.014358+00:00
+- **Created**: 2026-05-14T10:14:45.626495+00:00
 
 ## B3 Configuration
 - retrieve_k_candidates: 50

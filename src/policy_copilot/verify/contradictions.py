@@ -24,8 +24,15 @@ _ANTONYM_PAIRS = [
     ("must", "must not"), ("shall", "shall not"),
     ("enabled", "disabled"), ("always", "never"),
     ("mandatory", "voluntary"), ("permitted", "banned"),
+    ("permitted", "prohibited"), ("permitted", "forbidden"),  # Phase 5
     ("can", "cannot"), ("should", "should not"),
     ("approve", "reject"), ("include", "exclude"),
+]
+
+# Phase 5: frequency-conflict tiers. Same subject + different frequency
+# adverb is a conflict.
+_FREQUENCY_GROUPS = [
+    {"daily", "weekly", "fortnightly", "monthly", "quarterly", "annually", "yearly"},
 ]
 
 
@@ -44,6 +51,43 @@ def _check_negation_pair(text_a: str, text_b: str) -> List[str]:
         if (pos in a_norm and neg in b_norm) or (neg in a_norm and pos in b_norm):
             conflicts.append(f"'{pos}' vs '{neg}'")
 
+    return conflicts
+
+
+def _check_frequency_conflict(text_a: str, text_b: str) -> List[str]:
+    """Phase 5: same subject phrase + different frequency adverb.
+
+    Fires when both texts contain a frequency adverb from the same group
+    (e.g., one says "annually" and the other "quarterly") AND both texts
+    share a meaningful subject token (e.g., both mention "training" or
+    "review"). Avoids false positives when the adverbs apply to unrelated
+    subjects.
+    """
+    a_norm = _normalise(text_a)
+    b_norm = _normalise(text_b)
+    conflicts = []
+    for group in _FREQUENCY_GROUPS:
+        a_terms = [t for t in group if t in a_norm]
+        b_terms = [t for t in group if t in b_norm]
+        if not a_terms or not b_terms:
+            continue
+        # Skip if both texts use the same frequency.
+        if set(a_terms) == set(b_terms):
+            continue
+        # Require shared subject token (≥1 content word). Use the policy_facts
+        # token set as the subject signal.
+        a_tokens = set(_normalise(text_a).split())
+        b_tokens = set(_normalise(text_b).split())
+        shared = a_tokens & b_tokens
+        # Strip stop-words / connectives.
+        shared = {t for t in shared if len(t) > 3 and t not in _FREQUENCY_GROUPS[0]}
+        if not shared:
+            continue
+        conflicts.append(
+            f"frequency: {sorted(a_terms)[0]!r} vs {sorted(b_terms)[0]!r} "
+            f"on shared subject {sorted(list(shared))[:3]}"
+        )
+        break  # one frequency conflict per pair is enough
     return conflicts
 
 
@@ -93,6 +137,10 @@ def detect_contradictions(evidence: List[Dict],
         # check numeric conflicts (legacy "minimum N" detector)
         num_conflicts = _check_numeric_conflict(text_a, text_b)
         reasons.extend(num_conflicts)
+
+        # Phase 5: frequency conflict (annually vs quarterly, etc.).
+        freq_conflicts = _check_frequency_conflict(text_a, text_b)
+        reasons.extend(freq_conflicts)
 
         # Tier 1.5 — quantitative-fact conflict detector (Phase H).
         # Catches "8 characters vs 12 characters", "90 days vs 60 days",

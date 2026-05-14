@@ -1,4 +1,4 @@
 run_name,label,contradiction_recall,contradiction_precision,f1,note
-b3_extractive_hybrid_v2_final,B3-Extractive hybrid (pre-upgrade detector),0.4,0.1905,0.2581,
-b3_extractive_hybrid_v2_contra_upgraded,B3-Extractive hybrid (POST-upgrade detector),0.5,0.1852,0.2703,
-b3_generative_v2,"B3-Generative replay (BM25, post-upgrade source unaffected)",0.2,0.3333,0.25,
+b3_extractive_hybrid_v2_final,B3-Extractive hybrid (pre-Phase-H detector),0.4,0.1905,0.2581,
+b3_extractive_hybrid_v2_contra_upgraded,B3-Extractive hybrid (POST-upgrade Phase-H + Phase-5 detector),0.8,0.2222,0.3478,
+b3_generative_v2,B3-Generative replay (BM25 source),0.2,0.3333,0.25,
