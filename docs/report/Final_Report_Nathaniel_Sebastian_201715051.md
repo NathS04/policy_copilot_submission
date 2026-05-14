@@ -47,7 +47,7 @@ The candidate confirms that the following have been submitted:
 
 | Items | Format | Recipient(s) and Date |
 | :--- | :--- | :--- |
-| Final Report | PDF file | Uploaded to Minerva, 13/05/2026 |
+| Final Report | PDF file | Uploaded to Minerva final submission point, 13/05/2026 |
 | Source code repository | GitHub repository URL | Supervisor and assessor, 13/05/2026 |
 | Documentation and evaluation pack | GitHub repository URL | Supervisor and assessor, 13/05/2026 |
 
@@ -166,10 +166,8 @@ This report has been prepared in accordance with the University of Leeds proof-r
 - [Figure 1.1 PRISMA 2020 flow diagram: systematic search and selection process](#fig-1-1)
 - [Figure 2.1 Gantt chart: six-sprint development timeline (Weeks 1 to 22)](#fig-2-1)
 - [Figure 2.2 Data flow diagram: end-to-end RAG pipeline architecture](#fig-2-2)
-- [Figure 4.1 Generative-baseline comparison on the corrected v2 golden set](#fig-4-1)
-- [Figure 4.2 Retrieval quality (BM25 replay): B2 vs B3](#fig-4-2)
-- [Figure 4.3 Groundedness metrics: ungrounded rate and citation precision](#fig-4-3)
-- [Figure 4.4 Operating curve: support-rate threshold sweep for B3-Generative](#fig-4-4)
+- [Figure 4.1 Groundedness metrics: ungrounded rate and citation precision](#fig-4-1)
+- [Figure 4.2 Operating curve: support-rate threshold sweep for B3-Generative](#fig-4-2)
 - [Figure B.1 Answerable query result showing extractive fallback with citations](#fig-b-1)
 - [Figure B.2 Unanswerable query showing abstention behaviour](#fig-b-2)
 - [Figure B.3 Contradiction query showing retrieved evidence with citations](#fig-b-3)
@@ -351,11 +349,11 @@ This staged design ensures reliability is an emergent outcome of multiple indepe
 
 ### 2.4 Design Decisions and Alternatives Considered
 
-The following decisions were the most consequential architectural trade-offs. Some of them were practical trade-offs given the project's time and complexity budget rather than theoretically perfect choices, and I have tried to be explicit about that where it applies.
+The following decisions were the most consequential architectural trade-offs. Some of them were practical trade-offs given the project's time and complexity budget rather than theoretically perfect choices, and are stated explicitly where this applies.
 
 Decision 1: RAG vs. long-context injection. Adopted: RAG with 5-paragraph context. Rejected alternative: injecting the entire ~25,000-token corpus into a long-context model (Claude 3, GPT-4 Turbo). The long-context option was rejected for three reasons. Liu et al. (2024) document "lost in the middle" effects in long contexts; pricing scales roughly 10× per query; and RAG forces explicit evidence selection, which is what enables the traceability required by FR1.
 
-Decision 2: Dense + cross-encoder reranking vs. BM25. Adopted: two-stage bi-encoder + cross-encoder. Rejected: BM25 keyword search. Policy queries frequently use synonyms ("remote work" / "work from home"; "password rotation" / "credential refresh") that lexical matching cannot resolve. The cross-encoder logit also gives me a useful confidence signal for the abstention gate, where bi-encoder cosine scores are poorly calibrated (Nogueira and Cho, 2019). The roughly 1.8s reranking latency was acceptable given the bounded corpus and the non-real-time nature of policy queries.
+Decision 2: Dense + cross-encoder reranking vs. BM25. Adopted: two-stage bi-encoder + cross-encoder. Rejected: BM25 keyword search. Policy queries frequently use synonyms ("remote work" / "work from home"; "password rotation" / "credential refresh") that lexical matching cannot resolve. The cross-encoder logit also provides a useful confidence signal for the abstention gate, where bi-encoder cosine scores are poorly calibrated (Nogueira and Cho, 2019). The roughly 1.8s reranking latency was acceptable given the bounded corpus and the non-real-time nature of policy queries.
 
 Decision 3: Heuristic verification vs. LLM-based verification. Adopted: Jaccard token overlap + numeric consistency, post-generation. Rejected: LLM-as-judge for verification. Zheng et al. (2023) document verbosity and self-enhancement biases that would undermine NFR2 (reproducibility); an LLM judge would also double the API cost and introduce non-determinism in the very layer that needed to be deterministic. The heuristic is less expressive (it cannot detect semantic entailment or paraphrase support) but it is fully auditable and immune to model drift. Those limitations are revisited in §4.4, where the verification ceiling is evaluated, and in §5.2, where L3 records the heuristic verification ceiling as a threat to validity.
 
@@ -432,7 +430,7 @@ An off-the-shelf orchestration framework would have shortened development time b
 
 ### 3.2 Corpus Engineering and Ingestion
 
-The evaluation corpus consists of five synthetic policy documents created for this project — Internal Policy Handbook (74 paragraphs), IT Security Addendum (39), HR Procedures Manual (25), Business Continuity Plan (23), and DPIA Guide (15) — totalling 176 paragraphs across 53 PDF pages, with document identifiers and SHA-256 hashes recorded in `data/corpus/manifests/corpus_manifest.csv`. Together they cover remote work, leave, password rules and rotation, incident response, business-continuity testing, HR procedure, and data-protection impact assessment. Synthetic documents were used because real organisational policies are usually confidential and could not be redistributed in a reproducible submission package. This also let me build specific evaluation cases into the corpus, including deliberate contradictions between documents, vague wording for Critic Mode, and varied paragraph structures.
+The evaluation corpus consists of five synthetic policy documents created for this project — Internal Policy Handbook (74 paragraphs), IT Security Addendum (39), HR Procedures Manual (25), Business Continuity Plan (23), and DPIA Guide (15) — totalling 176 paragraphs across 53 PDF pages, with document identifiers and SHA-256 hashes recorded in `data/corpus/manifests/corpus_manifest.csv`. Together they cover remote work, leave, password rules and rotation, incident response, business-continuity testing, HR procedure, and data-protection impact assessment. Synthetic documents were used because real organisational policies are usually confidential and could not be redistributed in a reproducible submission package. This also allowed specific evaluation cases to be built into the corpus, including deliberate contradictions between documents, vague wording for Critic Mode, and varied paragraph structures.
 
 The ingestion pipeline extracts text with `pypdf`, normalises whitespace, and splits documents into paragraph-level chunks. `pdfplumber` is included as a fallback for layout-sensitive PDFs, but it is not used on the active path for the synthetic corpus. Each paragraph is assigned a stable identifier based on its document, page, local index, and a short SHA-256 content hash. This means citations remain traceable after re-ingestion: unchanged paragraphs keep the same identifiers, while edited paragraphs receive new hashes. An earlier prototype used sequential integer IDs, but that proved fragile when documents were reordered, so the final scheme is deliberately content-aware. Very short paragraphs, mostly headers, are filtered out.
 
@@ -525,15 +523,7 @@ Table 4.2 should be read as a safety-coverage trade-off rather than a leaderboar
 | **B4 Conservative Hybrid** | Generative + extractive fallback (replay) | BM25/Hybrid | **50.0%** | **100%** | **0%** | 73.0% |
 | **B5 Evidence-Gated Hybrid** | Extractive + answerability gate (no LLM) | Hybrid | **90.0%** | **84.6%** | **0%** | 78.0% |
 
-<a id="fig-4-1"></a>
-
-<div align="center">
-<img src="figures/fig_baselines.png" alt="Baseline comparison bar chart" width="650">
-
-*Figure 4.1: Generative-baseline comparison on the corrected v2 golden set. Bars show Answer Rate, Abstention Accuracy and surfaced response-level Ungrounded Rate for B1, B2 and B3-Generative. Error bars show the 95% bootstrap confidence interval for B3 (n = 63, 2,000 resamples; §4.12). The extractive and B5 configurations are not shown here; their headline numbers are in Table 4.2.*
-</div>
-
-The prompt-only baseline answers every query without grounding (Ji et al., 2023). Naive RAG abstains just below the FR2 target as a side effect of irrelevant-context refusal, not verified-citation enforcement. The B3-Generative configuration is the chapter's main case. The Ungrounded Rate is reported at the *surfaced response* level — what the enforcement layer suppresses, not what the LLM never produced; the honest companion is the *claim*-level rate in Table 4.4. Abstention accuracy on the corrected unanswerable set reaches 100% — the only v1 false positive was a mislabel (Appendix B.7.5) — at the visible cost of low coverage relative to the 85% target.
+The pattern in Table 4.2 is the main result: B3-Generative gives the strict low-coverage generative frontier, while B5 recovers high coverage through evidence-gated extractive answering. The prompt-only baseline answers every query without grounding (Ji et al., 2023). Naive RAG abstains just below the FR2 target as a side effect of irrelevant-context refusal, not verified-citation enforcement. The B3-Generative configuration is the chapter's main case. The Ungrounded Rate is reported at the *surfaced response* level — what the enforcement layer suppresses, not what the LLM never produced; the honest companion is the *claim*-level rate in Table 4.4. Abstention accuracy on the corrected unanswerable set reaches 100% — the only v1 false positive was a mislabel (Appendix B.7.5) — at the visible cost of low coverage relative to the 85% target.
 
 B5 is therefore not a better generator; it is a safer high-coverage audit mode, using extractive evidence when fluent generation would create unnecessary risk. B4 Conservative Hybrid Mode is the project's coverage-recovery configuration: it returns the generative answer when the support gate passes, falls back to the top retrieved paragraph verbatim (with its citation) when generation is unsafe but retrieval is strong, and abstains otherwise. The fallback overlap threshold was tuned on the dev split to the lowest value that keeps unanswerable abstention at 100% (see `results/tables/b4_threshold_tune_dev.csv`); the selected value is 0.09. B4 raises Answer Rate from 25.0% to 50.0% while preserving 100% Abstention Accuracy and 0% surfaced Ungrounded Rate; it never returns uncited text. B3-Extractive on the hybrid backend recovers most coverage (92.5%) with 78% Recall@5, but is weaker at refusing unanswerable questions because it bypasses the LLM and the post-generation support gate. §4.13 returns to the trade-off.
 
@@ -550,15 +540,7 @@ Retrieval ceiling determines downstream answer quality (Barnett et al., 2024). T
 | Evidence Recall@5 | 73.0% | 78.0% |
 | MRR | 0.76 | 0.87 |
 
-Note: the hybrid backend recovers most of the retrieval-quality gap that the prior BM25 report documented as a residual limitation — Recall@5 improves by 5pp and MRR by 11 points. Backend provenance (requested, used, reason, dense_index_sha) is recorded in every `run_config.json`; `Retriever(backend="dense", allow_fallback=False)` raises `BackendUnavailableError` rather than silently falling back, so this discrepancy can no longer occur unobserved. The reranker's component-level contribution is isolated in the §4.6 ablation.
-
-<a id="fig-4-2"></a>
-
-<div align="center">
-<img src="figures/fig_retrieval.png" alt="Retrieval quality comparison" width="650">
-
-*Figure 4.2: Retrieval quality on the corrected v2 generative replay (BM25 backend): B2 vs B3 on Evidence Recall@5, MRR and Citation Precision. The hybrid backend uplift (Recall@5 73.0% → 78.0%, MRR 0.76 → 0.87) used by the extractive and B5 configurations is reported in Table 4.3.*
-</div>
+Table 4.3 shows the retrieval improvement directly: the hybrid backend raises Evidence Recall@5 from 73.0% to 78.0% and MRR from 0.76 to 0.87. Backend provenance (requested, used, reason, dense_index_sha) is recorded in every `run_config.json`; `Retriever(backend="dense", allow_fallback=False)` raises `BackendUnavailableError` rather than silently falling back, so this discrepancy can no longer occur unobserved. The reranker's component-level contribution is isolated in the §4.6 ablation.
 
 ### 4.4 Groundedness and Verification
 
@@ -576,12 +558,12 @@ Grounding is reported at two layers. The *claim*-level metric in Table 4.4 measu
 
 Note: These are intermediate claim-level rates after failed claims have been pruned, but before the final response-level support gate. The 4% value is therefore the residual claim-level error left by the heuristic. The 0.0% value in Table 4.2 is what reaches the user after weakly supported responses are converted into abstentions.
 
-<a id="fig-4-3"></a>
+<a id="fig-4-1"></a>
 
 <div align="center">
 <img src="figures/fig_groundedness.png" alt="Groundedness metrics" width="650">
 
-*Figure 4.3: Groundedness, Ungrounded Rate and Citation Precision before and after verification.*
+*Figure 4.1: Groundedness, Ungrounded Rate and Citation Precision before and after verification.*
 </div>
 
 Verification reduces the claim-level Ungrounded Rate from 12% to 4% (roughly a two-thirds reduction) and pushes Citation Precision from 78% to 94%. Precision improves while average claims per response only drops from 3.2 to 2.8, indicating that pruning is mostly hitting weaker claims rather than removing material at random. The Jaccard threshold (0.10) was tuned on the dev split to balance two failure modes: too aggressive a threshold prunes legitimate paraphrases, and too permissive a threshold lets weakly-supported claims through. The threshold sweep used to pick this value is reported in §4.5, and the trade-off is revisited as a limitation in §4.13.
@@ -590,21 +572,21 @@ Contradiction surfacing. The detector was extended with a quantitative-fact laye
 
 ### 4.5 Abstention Threshold Sensitivity
 
-Figure 4.4 is the clearest empirical characterisation of the system's safety–coverage operating frontier. B3 has two refusal mechanisms: a retrieval-confidence gate before the LLM is called, and a support-rate gate after the LLM has produced an answer. In the final BM25-fallback evaluation, the first gate does little because every query receives the same maximum rerank value. The support-rate gate is therefore the meaningful threshold in this run, and the sweep shows how moving this threshold changes the balance between answer coverage and abstention accuracy.
+Figure 4.2 is the clearest empirical characterisation of the system's safety–coverage operating frontier. B3 has two refusal mechanisms: a retrieval-confidence gate before the LLM is called, and a support-rate gate after the LLM has produced an answer. In the final BM25-fallback evaluation, the first gate does little because every query receives the same maximum rerank value. The support-rate gate is therefore the meaningful threshold in this run, and the sweep shows how moving this threshold changes the balance between answer coverage and abstention accuracy.
 
-<a id="fig-4-4"></a>
+<a id="fig-4-2"></a>
 
 <div align="center">
 <img src="figures/fig_tradeoff.png" alt="Threshold sensitivity analysis" width="650">
 
-*Figure 4.4: Operating curve for B3-Generative, parameterised by the post-LLM support-rate threshold τ. Produced by replaying the gate over the stored `outputs.jsonl` (`scripts/sweep_abstention.py`); the shipped operating point at τ = 0.80 sits in the upper-left and the "ideal" corner is upper-right. The abrupt knee at τ ≈ 0.65 is what makes Abstention Accuracy ≥ 90% expensive in coverage terms.*
+*Figure 4.2: Operating curve for B3-Generative, parameterised by the post-LLM support-rate threshold τ. Produced by replaying the gate over the stored `outputs.jsonl` (`scripts/sweep_abstention.py`); the shipped operating point at τ = 0.80 sits in the upper-left and the "ideal" corner is upper-right. The abrupt knee at τ ≈ 0.66 is what makes Abstention Accuracy ≥ 90% expensive in coverage terms.*
 </div>
 
-The curve falls into three regions. Below τ ≈ 0.30 the support-rate gate barely fires and B3 behaves close to B2 (high Answer Rate, mediocre Abstention Accuracy). Between 0.30 and 0.65 Abstention Accuracy improves while Answer Rate stays close to 80%. Above τ ≈ 0.65 the curve bends sharply: Abstention Accuracy rises from 82% to 94% but Answer Rate collapses from roughly 80% to 25%. The shipped value of τ = 0.80 sits on the precision-favouring side of that knee, consistent with the project's "cited or silent" rule (Objective 2) and FR2's ≥ 80% target. The visible cost is the low Answer Rate; §4.13 returns to whether that trade-off is appropriate, and to the open question of how to recover coverage without weakening abstention.
+The curve falls into three regions. Below τ ≈ 0.30 the support-rate gate barely fires and B3 behaves close to B2 (high Answer Rate, mediocre Abstention Accuracy). Between 0.30 and 0.66 Abstention Accuracy improves while Answer Rate stays close to 80%. Above τ ≈ 0.66 the curve bends sharply: Abstention Accuracy rises from 82% to 94% but Answer Rate collapses from roughly 80% to 25%. The shipped value of τ = 0.80 sits on the precision-favouring side of that knee, consistent with the project's "cited or silent" rule (Objective 2) and FR2's ≥ 80% target. The visible cost is the low Answer Rate; §4.13 returns to whether that trade-off is appropriate, and to the open question of how to recover coverage without weakening abstention.
 
 This matters because the shipped τ = 0.80 setting is not the only possible system behaviour. It is the precision-favouring operating point chosen for a compliance-style setting where unsupported surfaced answers are more costly than refusals. A less safety-critical deployment could choose a lower threshold and recover answer coverage, but would need to accept weaker abstention behaviour. The dissertation's main empirical finding is therefore the shape of this frontier, not just the single shipped point.
 
-**BM25-specific retuning diagnostic (original-label / pre-audit).** This sweep was run on the BM25-source generative `outputs.jsonl` against the pre-audit v1 labels, before the four label corrections audited in Appendix B.7.5. Because the final reproducible run uses the BM25 fallback backend (§3.3), I replayed the post-LLM support-rate gate at finer granularity (τ in steps of 0.01) and added a per-τ response-level Ungrounded Rate column that the original sweep does not report. The selection rule fixes Answer Rate as the objective subject to two safety constraints used elsewhere in the dissertation: Abstention Accuracy ≥ 80% (Objective 4 / FR2) and response-level Ungrounded Rate ≤ 5% (Objective 1 / FR1). Under that rule, the feasible region collapses to the plateau τ ∈ [0.70, 1.00], over which Answer Rate is constant at 25.0%, Abstention Accuracy at 94.1% (pre-audit; under corrected v2 labels B3-Generative AbsAcc is 100% across the 13 unanswerable queries — see Table 4.2), and response-level Ungrounded Rate at 0%. The shipped τ = 0.80 already sits on this plateau, and no τ inside the safety envelope recovers additional coverage. Below the plateau the support-rate gate begins admitting answers whose claim-level support rate is incomplete: response-level Ungrounded Rate jumps from 0% at τ = 0.70 to 45% at τ = 0.65, which the earlier (Answer Rate vs Abstention Accuracy only) view did not surface. The retuning analysis therefore strengthens the operating-frontier framing: the 25% Answer Rate is the *maximum* coverage attainable under the dual safety constraints in this BM25-fallback run, not an arbitrary consequence of the shipped τ. Figure B.4 plots the three rates together and marks both the shipped and the (zero-uplift) retuned operating point; the artefacts produced by `scripts/analyse_bm25_threshold_retuning.py` are listed in Appendix B.7.4.
+**BM25-specific retuning diagnostic (original-label / pre-audit).** This sweep was run on the BM25-source generative `outputs.jsonl` against the pre-audit v1 labels, before the four label corrections audited in Appendix B.7.5. Because the final reproducible run uses the BM25 fallback backend (§3.3), I replayed the post-LLM support-rate gate at finer granularity (τ in steps of 0.01) and added a per-τ response-level Ungrounded Rate column that the original sweep does not report. The selection rule fixes Answer Rate as the objective subject to two safety constraints used elsewhere in the dissertation: Abstention Accuracy ≥ 80% (Objective 4 / FR2) and response-level Ungrounded Rate ≤ 5% (Objective 1 / FR1). Under that rule, the feasible region collapses to the plateau τ ∈ [0.67, 1.00], over which Answer Rate is constant at 25.0%, Abstention Accuracy at 94.1% (pre-audit; under corrected v2 labels B3-Generative AbsAcc is 100% across the 13 unanswerable queries — see Table 4.2), and response-level Ungrounded Rate at 0%. The shipped τ = 0.80 already sits on this plateau, and no τ inside the safety envelope recovers additional coverage. Below the plateau the support-rate gate begins admitting answers whose claim-level support rate is incomplete: response-level Ungrounded Rate jumps from 0% at τ = 0.67 to 45% at τ = 0.66, which the earlier (Answer Rate vs Abstention Accuracy only) view did not surface. The retuning analysis therefore strengthens the operating-frontier framing: the 25% Answer Rate is the *maximum* coverage attainable under the dual safety constraints in this BM25-fallback run, not an arbitrary consequence of the shipped τ. Figure B.4 plots the three rates together and marks both the shipped and the (zero-uplift) retuned operating point; the artefacts produced by `scripts/analyse_bm25_threshold_retuning.py` are listed in Appendix B.7.4.
 
 ### 4.6 Ablation Studies
 
@@ -721,14 +703,14 @@ Because the corrected v2 golden set is small (n = 63: 40 answerable, 13 unanswer
 
 <a id="tbl-4-11"></a>
 
-**Table 4.11: 95% bootstrap CIs for headline B5 metrics on the corrected v2 golden set. Each metric is bootstrapped over its own per-query denominator (Answer Rate over 40 answerable; Abstention Accuracy over 13 unanswerable; Evidence Recall@5 over 50 queries with non-empty `gold_paragraph_ids`; Citation Precision over the 36 cited surfaced responses), seed = 42, n_resamples = 2,000.**
+**Table 4.11: 95% bootstrap CIs for headline B5 metrics on the corrected v2 golden set. Each metric is bootstrapped over its own per-query denominator (Answer Rate over 40 answerable; Abstention Accuracy over 13 unanswerable; Evidence Recall@5 over 50 queries with non-empty `gold_paragraph_ids`; Citation Precision over 36 citation-scored surfaced records), seed = 42, n_resamples = 2,000.**
 
 | Metric | Denominator | Point Estimate | 95% CI |
 | :--- | :--- | :--- | :--- |
 | Answer Rate | 40 answerable | 90.0% | [80.0%, 97.5%] |
 | Abstention Accuracy | 13 unanswerable | 84.6% | [61.5%, 100.0%] |
 | Evidence Recall@5 | 50 with gold | 78.0% | [70.0%, 85.0%] |
-| Citation Precision | 36 cited | 100.0% | [100.0%, 100.0%] |
+| Citation Precision | 36 records | 100.0% | [100.0%, 100.0%] |
 
 The wide B5 AbsAcc CI reflects the small n = 13 unanswerable subset; the upper bound at 100% indicates a ceiling effect. B3-Generative on the same set bootstraps to AR 25.0% [12.5%, 40.0%] and AbsAcc 100%. With n = 63, all point estimates are indicative; an n = 200+ stratified evaluation is recommended for follow-up.
 
@@ -875,7 +857,7 @@ The starting point for this project was a fairly specific design rule: build a R
 
 Designing for refusal rather than for coverage was the part of the project I underestimated at the start. Most of the tutorials and frameworks I looked at early on (LangChain, LlamaIndex, the standard "QA over your docs" pattern) treat answering as the default and refusal as an edge case. The B1 vs. B3 comparison made it clear that this default does not survive contact with a compliance use-case: B1 will answer policy questions with no grounding at all, and the abstention machinery in B3 had to be designed against the grain of those defaults rather than as a small add-on.
 
-The final evaluation results turned out sharper than the development-phase estimates. On the corrected v2 golden set, B3-Generative reaches 0.0% surfaced response-level Ungrounded Rate after enforcement, with a 4% residual claim-level rate before enforcement, and 100% Abstention Accuracy on the 13 unanswerable queries. Its Answer Rate remains only 25.0%, which is the clearest evidence of the safety-first trade-off rather than a hidden success. The final B5 Evidence-Gated Hybrid mode was added to test whether coverage could be recovered without relaxing the cited-or-silent contract: it answers 90.0% of answerable queries while preserving 84.6% Abstention Accuracy, 100% Citation Precision and 0.0% surfaced response-level Ungrounded Rate. I read this as the most useful final compromise: B3-Generative shows the strict generative frontier, while B5 shows how a more extractive, evidence-gated mode can recover practical usefulness without inventing unsupported prose.
+The final evaluation results turned out sharper than the development-phase estimates. B3-Generative reaches 0.0% surfaced response-level Ungrounded Rate after enforcement on the corrected-v2 replay, while the retained claim-level verification analysis in Table 4.4 shows a 4% residual claim-level rate after pruning before the final response-level support gate. Abstention Accuracy is 100% on the 13 unanswerable queries. Its Answer Rate remains only 25.0%, which is the clearest evidence of the safety-first trade-off rather than a hidden success. The final B5 Evidence-Gated Hybrid mode was added to test whether coverage could be recovered without relaxing the cited-or-silent contract: it answers 90.0% of answerable queries while preserving 84.6% Abstention Accuracy, 100% Citation Precision and 0.0% surfaced response-level Ungrounded Rate. I read this as the most useful final compromise: B3-Generative shows the strict generative frontier, while B5 shows how a more extractive, evidence-gated mode can recover practical usefulness without inventing unsupported prose.
 
 Extractive Mode (test-split headline numbers in Table 4.2) is the safest demonstration setting for fabrication risk in this project, at least until retrieval recall improves enough to give the generative configuration a more generous abstention threshold. Its modest abstention accuracy on the small unanswerable subset reflects the absence of the post-LLM support-rate gate that drives the generative configuration's all-split number. Extractive Mode also does the useful job of showing that the surrounding pipeline (retrieval, citation construction, contradiction handling) functions independently of the LLM, with the caveat that an Extractive answer is a quoted paragraph and not a synthesised one.
 
@@ -1082,16 +1064,16 @@ Figure B.3: Contradiction query showing retrieved evidence with citations.
 
 #### B.7.4 BM25-Specific Threshold Retuning Diagnostic (referenced from §4.5)
 
-`scripts/analyse_bm25_threshold_retuning.py` replays the post-LLM support-rate gate over the retained B3-Generative `outputs.jsonl` at τ in steps of 0.01, adding a per-τ response-level Ungrounded Rate column that the original `scripts/sweep_abstention.py` (the source for Figure 4.4) does not compute. It then selects a retuned operating point under the rule *max Answer Rate subject to Abstention Accuracy ≥ 80% and response-level Ungrounded Rate ≤ 5%* (tie-breakers: higher Abstention Accuracy, lower Ungrounded Rate, higher τ). Before any selection it cross-checks the reconstructed τ = 0.80 row against `results/runs/b3_generative_bm25_fallback_final/summary.json` and aborts if the two disagree. No new LLM calls are made; the script is a pure replay over already-stored claim-verification fields.
+`scripts/analyse_bm25_threshold_retuning.py` replays the post-LLM support-rate gate over the retained B3-Generative `outputs.jsonl` at τ in steps of 0.01, adding a per-τ response-level Ungrounded Rate column that the original `scripts/sweep_abstention.py` (the source for Figure 4.2) does not compute. It then selects a retuned operating point under the rule *max Answer Rate subject to Abstention Accuracy ≥ 80% and response-level Ungrounded Rate ≤ 5%* (tie-breakers: higher Abstention Accuracy, lower Ungrounded Rate, higher τ). Before any selection it cross-checks the reconstructed τ = 0.80 row against `results/runs/b3_generative_bm25_fallback_final/summary.json` and aborts if the two disagree. No new LLM calls are made; the script is a pure replay over already-stored claim-verification fields.
 
-Selected point in the final run (original-label / pre-audit diagnostic; the corrected-v2 headline metrics are reported in Table 4.2 and Table 4.11): τ = 1.00, Answer Rate 25.0%, Abstention Accuracy 94.1% (pre-audit), response-level Ungrounded Rate 0.0%, n_answered = 12, n_abstained = 51. The selection rule's feasible region under the dual safety constraints is τ ∈ [0.70, 1.00]; Answer Rate is flat at 25.0% across that whole region, so the coverage uplift over the shipped τ = 0.80 is 0.0 percentage points (`interpretation: feasible_region_matches_conservative_plateau`, `coverage_uplift_pp: 0.0` in the summary JSON). Below τ ≈ 0.65 the constraint that fails first is response-level Ungrounded Rate, which jumps to 45% at τ = 0.65 — a finding visible only after the per-τ Ungrounded column is computed. Figure B.4 plots Answer Rate, Abstention Accuracy, and response-level Ungrounded Rate against τ, with both the shipped and the retuned operating point marked.
+Selected point in the final run (original-label / pre-audit diagnostic; the corrected-v2 headline metrics are reported in Table 4.2 and Table 4.11): τ = 1.00, Answer Rate 25.0%, Abstention Accuracy 94.1% (pre-audit), response-level Ungrounded Rate 0.0%, n_answered = 12, n_abstained = 51. The selection rule's feasible region under the dual safety constraints is τ ∈ [0.67, 1.00]; Answer Rate is flat at 25.0% across that whole region, so the coverage uplift over the shipped τ = 0.80 is 0.0 percentage points (`interpretation: feasible_region_matches_conservative_plateau`, `coverage_uplift_pp: 0.0` in the summary JSON). Below τ ≈ 0.66 the constraint that fails first is response-level Ungrounded Rate, which jumps to 45% at τ = 0.66 — a finding visible only after the per-τ Ungrounded column is computed. Figure B.4 plots Answer Rate, Abstention Accuracy, and response-level Ungrounded Rate against τ, with both the shipped and the retuned operating point marked.
 
 <a id="fig-b-4"></a>
 
 <div align="center">
 <img src="figures/fig_bm25_retuned_operating_point.png" alt="BM25-fallback retuning operating points" width="700">
 
-Figure B.4: BM25-fallback support-rate retuning. Answer Rate, Abstention Accuracy and response-level Ungrounded Rate plotted against τ over the retained B3-Generative outputs. The shipped τ = 0.80 operating point is marked with a circle; the retuned point selected under the dual safety constraints (τ = 1.00) is marked with a diamond. Both sit on the τ ∈ [0.70, 1.00] feasible plateau over which Answer Rate is constant at 25%. Produced by `scripts/analyse_bm25_threshold_retuning.py` from `results/runs/b3_generative_bm25_fallback_final/outputs.jsonl`; no LLM calls.
+Figure B.4: BM25-fallback support-rate retuning. Answer Rate, Abstention Accuracy and response-level Ungrounded Rate plotted against τ over the retained B3-Generative outputs. The shipped τ = 0.80 operating point is marked with a circle; the retuned point selected under the dual safety constraints (τ = 1.00) is marked with a diamond. Both sit on the τ ∈ [0.67, 1.00] feasible plateau over which Answer Rate is constant at 25%. Produced by `scripts/analyse_bm25_threshold_retuning.py` from `results/runs/b3_generative_bm25_fallback_final/outputs.jsonl`; no LLM calls.
 </div>
 
 Artefacts (all reproducible offline, no API keys):
