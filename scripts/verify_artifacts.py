@@ -33,6 +33,8 @@ ALLOWED_TABLES = {
     "run_summary_v2.csv",             # Phase L aggregator
     "b4_threshold_tune_dev.csv",      # Phase 2 (residual-gap-closure)
     "retrieval_v3_sweep.csv",         # Phase 4 (residual-gap-closure)
+    "b5_threshold_sweep_dev.csv",     # B5 Phase 3 (final round)
+    "b5_failure_analysis.csv",        # B5 Phase 5 (final round)
 }
 ALLOWED_SIDE_TABLES_JSON = {
     "bm25_threshold_retuning_summary.json",  # paired with bm25_threshold_retuning.csv

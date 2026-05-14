@@ -62,8 +62,11 @@ SCRIPTS_INCLUDE = [
     "final_consistency_check.py",           # Phase N
     "replay_score_runs.py",                 # Phase B
     "run_b4_replay.py",                     # Phase F
+    "run_b5_evidence_gated_hybrid.py",      # B5 Phase 2 (final round)
     "run_component_ablations.py",           # Phase G
     "tune_b4_overlap_threshold.py",         # Phase 2 residual-gap-closure
+    "tune_answerability_gate.py",           # B5 Phase 3 (final round)
+    "analyse_b5_failures.py",               # B5 Phase 5 (final round)
     "auto_label_gold.py",
     "build_audit_exports.py",
     "build_clean_submission_zip.py",
@@ -190,6 +193,8 @@ RESULTS_INCLUDE = [
     "results/tables/baseline_snapshot_phase1.json",       # Phase 1 residual-gap-closure
     "results/tables/b4_threshold_tune_dev.csv",           # Phase 2 residual-gap-closure
     "results/tables/retrieval_v3_sweep.csv",              # Phase 4 residual-gap-closure
+    "results/tables/b5_threshold_sweep_dev.csv",          # B5 Phase 3 (final round)
+    "results/tables/b5_failure_analysis.csv",             # B5 Phase 5 (final round)
 ]
 
 # Whole canonical run folders.
@@ -211,6 +216,7 @@ RESULTS_RUNS = [
     "results/runs/b3_extractive_hybrid_v2_final",
     "results/runs/b3_extractive_hybrid_v2_contra_upgraded",
     "results/runs/b4_conservative_hybrid_replay_v2_final",
+    "results/runs/b5_evidence_gated_hybrid_v3_final",     # B5 final round
 ]
 
 DOCS_INCLUDE = [
@@ -248,6 +254,7 @@ DOCS_INCLUDE = [
     "docs/evidence/verification/audit_export_unanswerable.md",
     "docs/evidence/verification/fresh_install_log.md",
     "docs/evidence/verification/golden_set_label_audit.md",  # Phase A
+    "docs/evidence/verification/b5_failure_analysis.md",     # B5 Phase 5 (final round)
     "docs/evidence/verification/vertical_slice_case_study.md",
     "docs/evidence/verification/public_transfer_failure_taxonomy.md",
     "docs/meetings/000_template.md",

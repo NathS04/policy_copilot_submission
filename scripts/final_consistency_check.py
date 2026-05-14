@@ -58,6 +58,11 @@ BANNED_SUBSTRINGS = [
     "contradiction detector is production",
     "generative adversarial completed",       # only valid if API key was used
     "generative adversarial arm completed",
+    # B5 final round: do not claim B5 is generative
+    "B5 is generative",
+    "B5 calls the LLM",
+    "B5 generative answer",
+    "B5 surfaced generative",
 ]
 
 # FR cross-reference mistakes
@@ -153,6 +158,8 @@ def check_table_traces(text: str) -> List[str]:
         ("92.5%", ROOT / "results/runs/b3_extractive_hybrid_v2_final/summary.json", "answer_rate"),
         ("78.0%", ROOT / "results/runs/b3_extractive_hybrid_v2_final/summary.json", "evidence_recall_at_5"),
         ("50.0%", ROOT / "results/runs/b4_conservative_hybrid_replay_v2_final/summary.json", "answer_rate"),
+        ("90.0%", ROOT / "results/runs/b5_evidence_gated_hybrid_v3_final/summary.json", "answer_rate"),
+        ("84.6%", ROOT / "results/runs/b5_evidence_gated_hybrid_v3_final/summary.json", "abstention_accuracy"),
     ]
     for number_str, run_path, key in checks:
         if not run_path.exists():
