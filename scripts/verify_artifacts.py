@@ -26,6 +26,11 @@ ALLOWED_TABLES = {
     "critic_summary.csv",            # written by scripts/run_critic_eval.py
     "statistical_confidence.csv",    # written by scripts/compute_bootstrap_ci.py
     "bm25_threshold_retuning.csv",   # written by scripts/analyse_bm25_threshold_retuning.py
+    "golden_set_label_audit.csv",    # written by scripts/audit_golden_set_labels.py (Phase A)
+    "component_ablation_final.csv",  # written by scripts/run_component_ablations.py (Phase G)
+    "contradiction_evaluation_v2.csv",  # Phase I aggregate
+    "statistical_confidence_v2.csv",  # Phase J
+    "run_summary_v2.csv",             # Phase L aggregator
 }
 ALLOWED_SIDE_TABLES_JSON = {
     "bm25_threshold_retuning_summary.json",  # paired with bm25_threshold_retuning.csv
