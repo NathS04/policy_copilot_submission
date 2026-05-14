@@ -1,0 +1,6 @@
+run_name,label,component_disabled,answer_rate,abstention_accuracy,evidence_recall_at_5,evidence_mrr,citation_precision,citation_recall,ungrounded_rate,support_rate_mean,contradiction_recall,contradiction_precision,total_queries,source
+ablation_full_hybrid_v2,Full B3,none,0.925,0.7692,0.78,0.8657,1.0,0.5225,0.0,1.0,0.4,0.1905,63,reproducible_extractive_hybrid_v2_corrected
+ablation_no_rerank_hybrid_v2,minus Reranker,rerank,0.0,1.0,0.74,0.8363,,,N/A,,0.0,N/A,63,reproducible_extractive_hybrid_v2_corrected
+ablation_no_verify_hybrid_v2,minus Verification,verify,0.925,0.7692,0.78,0.8657,1.0,0.5225,N/A,,0.4,0.1905,63,reproducible_extractive_hybrid_v2_corrected
+ablation_no_abstain_hybrid_v2,minus Abstention Gate,abstention,0.975,0.2308,0.78,0.8657,1.0,0.5085,0.0,1.0,0.4,0.1538,63,reproducible_extractive_hybrid_v2_corrected
+ablation_no_contra_hybrid_v2,minus Contradiction Detection,contradiction,0.925,0.7692,0.78,0.8657,1.0,0.4347,0.0,1.0,0.0,N/A,63,reproducible_extractive_hybrid_v2_corrected
