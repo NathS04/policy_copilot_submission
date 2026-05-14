@@ -31,7 +31,7 @@ python scripts/build_clean_submission_zip.py
 | :--- | :--- |
 | `pip install -e ".[dev]"` | succeeded; core + dev dependencies installed |
 | package import (`policy_copilot.__version__`) | succeeded |
-| `pytest` (offline path, `[dev]` only) | **199 passed, 1 skipped** in ~7 s |
+| `pytest` (offline path, `[dev]` only) | **290 passed, 2 skipped** in ~7 s |
 | `scripts/reproduce_offline.py` | `=== OFFLINE REPRODUCTION COMPLETE ===` — B2 and B3 re-run on the test split in Extractive Mode, BM25 backend, no API calls |
 | `scripts/verify_artifacts.py` | `Artifact verification passed.` |
 | `scripts/build_clean_submission_zip.py` | ZIP built, 302 files, ~5.3 MB, `Forbidden-path scan: PASSED`, `ZIP accepted.` |

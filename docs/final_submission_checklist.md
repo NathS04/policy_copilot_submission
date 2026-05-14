@@ -41,8 +41,8 @@ The PDF was inspected with `pypdf` to confirm link annotations exist. Internal n
 
 ## Tests / report status
 
-The codebase test suite (40 files; 200 collected under the documented
-command: 199 passed, 1 conditionally skipped) passes on the submitted
+The codebase test suite (49 files; 292 collected under the documented
+command: 290 passed, 2 conditionally skipped) passes on the submitted
 build, as recorded in §B.7.1.
 
 ## Final checks completed

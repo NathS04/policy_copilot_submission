@@ -39,7 +39,7 @@ wording.
 
 | Claim (paraphrased) | Evidence |
 | :--- | :--- |
-| 200 collected tests under the documented evaluator command: 199 pass, 1 conditionally skipped | `pytest -q --ignore=tests/test_run_eval_requires_key_in_generative.py` per `INSTRUCTIONS_FOR_EVALUATOR.md` |
+| 292 collected tests under the documented evaluator command: 290 pass, 2 conditionally skipped | `pytest -q --ignore=tests/test_run_eval_requires_key_in_generative.py` per `INSTRUCTIONS_FOR_EVALUATOR.md` |
 | Reproducible offline (BM25, no API key) | `scripts/reproduce_offline.py` |
 | Reproducible online (dense + LLM) | `scripts/reproduce_online.py` |
 | Pure replay of abstention thresholds | `scripts/sweep_abstention.py` |

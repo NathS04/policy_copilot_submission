@@ -25,7 +25,7 @@ python scripts/verify_artifacts.py
 python scripts/build_clean_submission_zip.py
 ```
 
-Expected results: package import prints a version string; `pytest` reports `199 passed, 1 skipped`; `verify_artifacts.py` exits with `Artifact verification passed.`; the ZIP builder prints `ZIP accepted.` and writes `Final_Submission_Nathaniel_Sebastian_201715051.zip` next to the project directory.
+Expected results: package import prints a version string; `pytest` reports `290 passed, 2 skipped`; `verify_artifacts.py` exits with `Artifact verification passed.`; the ZIP builder prints `ZIP accepted.` and writes `Final_Submission_Nathaniel_Sebastian_201715051.zip` next to the project directory.
 
 If any step fails, stop and report the exact terminal output rather than skipping ahead. See [`docs/evidence/verification/fresh_install_log.md`](docs/evidence/verification/fresh_install_log.md) for a reference run.
 
@@ -65,7 +65,7 @@ pytest -q --ignore=tests/test_run_eval_requires_key_in_generative.py
 Expected on a clean install:
 
 ```text
-199 passed, 1 skipped
+290 passed, 2 skipped
 ```
 
 The single skipped test (`test_run_eval_requires_key_in_generative`) is conditionally skipped when no API key is configured; this is intentional and documented in `tests/`.

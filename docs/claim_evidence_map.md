@@ -29,7 +29,7 @@ Maps major claims made in the dissertation report to their backing artifacts in 
 
 | Claim | Report Section | Backing Artifact |
 |-------|---------------|------------------|
-| Automated test suite (200 collected: 199 pass, 1 conditionally skipped) | Section 3.9, Appendix B.7.1, B.9 | `tests/` directory, `pyproject.toml` |
+| Automated test suite (292 collected: 290 pass, 2 conditionally skipped) | Section 3.9, Appendix B.7.1, B.9 | `tests/` directory, `pyproject.toml` |
 | Offline reproduction | Section 2.6 / Appendix B.7 | `scripts/reproduce_offline.py` |
 | Online reproduction | Section 2.6 / Appendix B.7 | `scripts/reproduce_online.py` |
 
