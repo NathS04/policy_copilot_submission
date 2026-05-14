@@ -6,4 +6,5 @@ matplotlib
 tqdm
 python-dotenv
 pydantic
+jinja2
 # rich  # optional

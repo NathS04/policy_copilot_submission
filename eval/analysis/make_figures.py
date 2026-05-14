@@ -600,10 +600,14 @@ def write_manifest(df: pd.DataFrame, runs_dir: Path, out_fig_dir: Path, out_tabl
     runs = sorted(set(df["run_id"].tolist())) if "run_id" in df.columns else []
     figures = sorted([p.name for p in out_fig_dir.iterdir() if p.is_file() and p.suffix.lower() == ".png"]) if out_fig_dir.exists() else []
     tables = sorted([p.name for p in out_table_dir.iterdir() if p.is_file() and p.suffix.lower() == ".csv"]) if out_table_dir.exists() else []
+    try:
+        runs_dir_str = str(runs_dir.resolve().relative_to(root))
+    except ValueError:
+        runs_dir_str = str(runs_dir)
     manifest = {
         "source": "make_figures.py",
         "generated_at": datetime.now(timezone.utc).isoformat(),
-        "runs_dir": str(runs_dir),
+        "runs_dir": runs_dir_str,
         "runs": runs,
         "figures": figures,
         "tables": tables,

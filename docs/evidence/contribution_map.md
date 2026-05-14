@@ -70,8 +70,11 @@ in Appendix B.5 of the report.
   is configured.
 - Open-source Python libraries listed in Appendix B.1 (FAISS, Sentence
   Transformers, Pydantic, pypdf, pdfplumber, Streamlit, pytest, etc.).
-- Public Guidance Transfer Corpus content from NCSC, ICO, and ACAS,
-  redistributed under the Open Government Licence v3.0.
+- Public Guidance Transfer Corpus: cached main text from NCSC, ICO and
+  ACAS guidance pages whose site terms or page footers state Open
+  Government Licence v3.0, except where otherwise stated. Provenance,
+  retrieval dates, and content hashes are recorded in
+  `data/public_transfer_corpus/provenance.csv`.
 
 ## Main research contribution
 

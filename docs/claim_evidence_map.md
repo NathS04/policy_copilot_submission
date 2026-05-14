@@ -9,7 +9,7 @@ Maps major claims made in the dissertation report to their backing artifacts in 
 | B3 achieves 0% ungrounded rate | Section 4.2, Table 4.2 | `results/runs/b3_generative_bm25_fallback_final/summary.json` → `ungrounded_rate: 0.0` | `python -c "import json; d=json.load(open('results/runs/b3_generative_bm25_fallback_final/summary.json')); print(d['ungrounded_rate'])"` |
 | B3 abstention accuracy = 94.1% | Section 4.2, Table 4.2 | `results/runs/b3_generative_bm25_fallback_final/summary.json` → `abstention_accuracy: 0.9412` | Same file |
 | B1 answer rate = 100% | Section 4.2, Table 4.2 | `results/runs/b1_generative_final/summary.json` → `answer_rate: 1.0` | Same file |
-| Critic macro precision = 93.7% | Section 4.7 | Critic eval output (reported in text) | `python scripts/run_critic_eval.py --mode heuristic` |
+| Critic macro precision / recall / F1 = 93.3% / 95.2% / 93.8% on the 50-snippet labelled suite | Section 4.7, Table 4.6 | `results/tables/critic_summary.csv` | `python scripts/run_critic_eval.py --run_name critic_heuristic_final --mode heuristic` |
 
 ## Architecture Claims
 
@@ -29,7 +29,7 @@ Maps major claims made in the dissertation report to their backing artifacts in 
 
 | Claim | Report Section | Backing Artifact |
 |-------|---------------|------------------|
-| Automated test suite (194 collected: 193 pass, 1 conditionally skipped) | Section 3.9, Appendix B.7.1, B.9 | `tests/` directory, `pyproject.toml` |
+| Automated test suite (200 collected: 199 pass, 1 conditionally skipped) | Section 3.9, Appendix B.7.1, B.9 | `tests/` directory, `pyproject.toml` |
 | Offline reproduction | Section 2.6 / Appendix B.7 | `scripts/reproduce_offline.py` |
 | Online reproduction | Section 2.6 / Appendix B.7 | `scripts/reproduce_online.py` |
 
@@ -39,8 +39,8 @@ Maps major claims made in the dissertation report to their backing artifacts in 
 |-------|---------------|------------------|
 | Golden set: 63 queries (36 answerable, 17 unanswerable, 10 contradiction) | Section 2.7 / Table 4.1 | `eval/golden_set/golden_set.csv` |
 | Dev/test split (19 dev, 44 test) | Section 2.7 / Table 4.1 | CSV `split` column |
-| Self-administered human evaluation on 20 queries | Section 4.10 / Table 4.9 | `eval/human_eval/README.md` |
-| Bootstrapped 95% confidence intervals | Section 4.11 / Table 4.10 | `scripts/bootstrap_intervals.py` |
+| Independent peer reviewer evaluation (n = 6 reviewers, 14–18 April 2026) on a structured sub-sample of the golden set | Section 4.10 / Table 4.9 | `docs/evidence/human_eval/anonymised_scores.csv`, `summary_stats.csv`, `thematic_summary.md`; participant materials in `eval/human_eval/` |
+| Bootstrapped 95% confidence intervals (n = 63, 2,000 resamples, seed = 42) | Section 4.12 / Table 4.11 | `scripts/compute_bootstrap_ci.py`; output in `results/tables/statistical_confidence.csv` |
 
 ## Auditability and Evaluation Claims (added in Final Maximiser phase)
 
@@ -57,8 +57,8 @@ Maps major claims made in the dissertation report to their backing artifacts in 
 
 ## Claims NOT Made (important for honesty)
 
-- No claim of multi-model evaluation (only OpenAI tested)
-- No claim of independent human raters (single rater acknowledged)
-- No claim of real-world corpus testing (synthetic corpus acknowledged)
-- No claim of deployment or user study
-- No claim of automated faithfulness scoring (e.g. RAGAS) — grounding approximated via support rate and citation metrics
+- No claim of multi-model evaluation (only one OpenAI generator was tested under the BM25 fallback configuration).
+- Independent peer reviewers were Computer Science peers, not policy or compliance domain experts; this is recorded as a limitation in §5.2 (L5).
+- Primary benchmark is the synthetic 63-query golden set; a small extractive-only public-guidance transfer test (§4.11) is the only check on non-author-written content, and full transfer to messier real corpora is not demonstrated.
+- No deployment or user study; the system has not been used by real reviewers under operational conditions.
+- No claim of automated faithfulness scoring (e.g. RAGAS) — grounding is approximated via support rate and citation metrics, with the limitations documented in §4.4 and §5.2.

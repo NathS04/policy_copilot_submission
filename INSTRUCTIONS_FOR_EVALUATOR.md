@@ -25,7 +25,7 @@ python scripts/verify_artifacts.py
 python scripts/build_clean_submission_zip.py
 ```
 
-Expected results: package import prints a version string; `pytest` reports `193 passed, 1 skipped`; `verify_artifacts.py` exits with `Artifact verification passed.`; the ZIP builder prints `ZIP accepted.` and writes `Final_Submission_Nathaniel_Sebastian_201715051.zip` next to the project directory.
+Expected results: package import prints a version string; `pytest` reports `199 passed, 1 skipped`; `verify_artifacts.py` exits with `Artifact verification passed.`; the ZIP builder prints `ZIP accepted.` and writes `Final_Submission_Nathaniel_Sebastian_201715051.zip` next to the project directory.
 
 If any step fails, stop and report the exact terminal output rather than skipping ahead. See [`docs/evidence/verification/fresh_install_log.md`](docs/evidence/verification/fresh_install_log.md) for a reference run.
 
@@ -54,7 +54,7 @@ python -c "import policy_copilot; print(policy_copilot.__version__)"
 
 `pip install -e ".[dev]"` installs the core dependencies plus development tools (`pytest`, `ruff`, `mypy`). It does **not** install PyTorch, FAISS, or SentenceTransformers; those live in the `[ml]` extra and are only required for dense retrieval.
 
-The import line should print a version string (e.g. `1.0.0`). If it raises, stop and report the error.
+The import line should print a non-empty version string. If it raises, stop and report the error.
 
 ## 2. Test suite
 
@@ -65,7 +65,7 @@ pytest -q --ignore=tests/test_run_eval_requires_key_in_generative.py
 Expected on a clean install:
 
 ```text
-193 passed, 1 skipped
+199 passed, 1 skipped
 ```
 
 The single skipped test (`test_run_eval_requires_key_in_generative`) is conditionally skipped when no API key is configured; this is intentional and documented in `tests/`.
@@ -105,7 +105,7 @@ If the API account is out of quota, the runner records `insufficient_quota` per 
 
 | Path | Content |
 | :--- | :--- |
-| `docs/report/Final_Report_Nathaniel_Sebastian_201715051.pdf` | Final dissertation, approximately 64-65 pages, 30-page main body |
+| `docs/report/Final_Report_Nathaniel_Sebastian_201715051.pdf` | Final dissertation PDF and markdown source. |
 | `docs/evidence/README.md` | Examiner-facing evidence pack entry point |
 | `docs/evidence/checklist.md` | Per-claim mapping: claim → evidence file |
 | `docs/evidence/capture_guide.md` | How each artefact was produced and how to regenerate it |

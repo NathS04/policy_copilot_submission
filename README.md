@@ -5,7 +5,7 @@
 [![Tests](https://github.com/NathS04/policy_copilot_submission/actions/workflows/ci.yml/badge.svg)](https://github.com/NathS04/policy_copilot_submission/actions/workflows/ci.yml)
 [![Code style: ruff](https://img.shields.io/badge/code%20style-ruff-000000.svg)](https://docs.astral.sh/ruff/)
 
-Policy Copilot is a conservative policy-document QA system. It is not designed to answer every question; it is designed to answer only when the supporting policy evidence is strong enough to cite. The project wraps standard RAG with paragraph-level citations, reranking, abstention, claim-level verification, contradiction surfacing, Extractive Mode, and audit exports. The main finding is the safety/coverage trade-off: stricter evidence checks reduce unsupported answers, but they also reduce how often the system is willing to answer. I evaluate that trade-off using baselines, ablations, reviewer feedback, a small public-guidance transfer test, adversarial probes, and a reproducible evidence pack. The main limitation is external validity: the primary benchmark is synthetic, the public-transfer set is small, and the human evaluation uses CS peers rather than domain experts.
+Policy Copilot is a closed-corpus question-answering system that answers only when it can cite paragraph-level evidence, and abstains otherwise. The contribution is not a new language model but a reproducible reliability stack — reranking, abstention, deterministic per-claim verification, contradiction surfacing, and audit export — wrapped around standard RAG and evaluated under a strict "cited or silent" rule. The headline finding is a measurable safety/coverage trade-off: on a 63-query synthetic policy corpus, the strict configuration drives the response-level ungrounded rate to zero while answer coverage drops to 25%. That trade-off is evaluated across a five-rung validation ladder: synthetic golden set, peer-reviewer evaluation, public-guidance transfer stress test, adversarial probe, and audit-export artefacts. The external-validity boundary is explicit: the primary benchmark is synthetic, the public-transfer set is small, and the reviewer pool is CS peers rather than compliance specialists.
 
 This repository accompanies the COMP3931 dissertation *"Audit-Ready Policy Copilot: Evidence-Grounded Retrieval-Augmented Generation with Deterministic Reliability Controls"* (BSc Computer Science, University of Leeds, 2025/26).
 
@@ -55,10 +55,10 @@ Standard RAG retrieves context and asks a language model to answer; it provides 
 | Path | Purpose |
 | :--- | :--- |
 | `src/policy_copilot/` | Production source: ingest, index, retrieve, rerank, generate, verify, critic, service, ui |
-| `tests/` | Test suite (194 collected under the documented command: 193 passed, 1 conditionally skipped) |
+| `tests/` | Test suite (200 collected under the documented command: 199 passed, 1 conditionally skipped) |
 | `scripts/` | CLI entry points (eval runner, reproducibility, figure / report generation) |
 | `data/corpus/` | Synthetic policy PDFs and processed paragraphs (project data, not report prose) |
-| `data/public_transfer_corpus/` | OGL v3.0 public-guidance corpus + provenance.csv used by §4.11 |
+| `data/public_transfer_corpus/` | Cached main text from NCSC, ICO and ACAS guidance pages whose site terms or page footers state Open Government Licence v3.0, except where otherwise stated; provenance and hashes in `provenance.csv`, used by §4.11 |
 | `eval/golden_set/` | 63-query synthetic golden set with paragraph-level gold IDs |
 | `eval/human_eval/` | Independent reviewer evaluation: rubric, consent, P1-P6 aggregate + R1-R6 per-query data |
 | `eval/public_transfer/` | Public-transfer failure taxonomy CSV |
@@ -66,11 +66,11 @@ Standard RAG retrieves context and asks a language model to answer; it provides 
 | `results/runs/` | Per-run `outputs.jsonl` + `summary.json` for every reported baseline |
 | `results/figures/` | Figure outputs that back Chapter 4 |
 | `results/tables/` | Aggregated per-run summary tables (`run_summary.csv`, `critic_summary.csv`, `statistical_confidence.csv`, etc.) consumed by the report |
-| `docs/report/` | Report markdown source, intermediate DOCX, final PDF |
+| `docs/report/` | Final report markdown source, final PDF, report figures, stylesheet, and build assets |
 | `docs/evidence/` | Examiner-facing proof pack: human-eval, public-transfer failure taxonomy, adversarial summary, audit-export examples |
 | `docs/research/` | Literature matrix and gap-analysis artefacts |
 | `INSTRUCTIONS_FOR_EVALUATOR.md` | Shortest reproduction path for a marker |
-| `CHANGELOG.md`, `CONTRIBUTING.md` | Project metadata |
+| `CHANGELOG.md`, `LICENSE` | Project metadata and licensing |
 
 ## Quick start
 
@@ -166,6 +166,7 @@ All values are real; caveats are stated next to each metric.
 | Public-transfer failure taxonomy | `eval/public_transfer/failure_taxonomy.csv`, `docs/evidence/verification/public_transfer_failure_taxonomy.md` | Section 4.11 |
 | Adversarial probe summary | `eval/adversarial/adversarial_summary.csv`, `docs/evidence/verification/adversarial_test_summary.md` | Appendix B.12 Table B.6 |
 | Audit-export examples (3 cases) | `docs/evidence/verification/audit_export_*.md` | The "audit-ready" claim, made visible |
+| BM25-specific threshold retuning diagnostic | `results/tables/bm25_threshold_retuning.csv`, `results/tables/bm25_threshold_retuning_summary.json`, `docs/report/figures/fig_bm25_retuned_operating_point.png` | §4.5 / Appendix B.7.4 — replays the post-LLM support-rate gate over retained B3-Generative outputs and confirms the 25% Answer Rate is the maximum coverage attainable under the dual safety constraints; no new LLM calls |
 | Vertical-slice case study (walks the three audit exports) | `docs/evidence/verification/vertical_slice_case_study.md` | One-page tour of an answered, an abstained, and a contradiction-surfaced query |
 | Final report PDF | `docs/report/Final_Report_Nathaniel_Sebastian_201715051.pdf` | The dissertation itself |
 | Reproducibility checklist | `docs/evidence/checklist.md` | Per-claim mapping of report → artefact |
@@ -202,7 +203,7 @@ Generative AI tools were used as disclosed in Appendix B.5 of the report: GitHub
 ## Licence
 
 - Code: MIT licence — see [LICENSE](LICENSE).
-- Public guidance corpus (`data/public_transfer_corpus/`): Open Government Licence v3.0; provenance and content hashes recorded in `data/public_transfer_corpus/provenance.csv`.
+- Public guidance corpus (`data/public_transfer_corpus/`): cached main text from NCSC, ICO and ACAS guidance pages whose site terms or page footers state Open Government Licence v3.0, except where otherwise stated; provenance and content hashes recorded in `data/public_transfer_corpus/provenance.csv`.
 - Synthetic policy corpus (`data/corpus/`): authored for this project; project data, not third-party content.
 - Reviewer evaluation materials (`eval/human_eval/` and `docs/evidence/human_eval/`): anonymised at collection time, used only for the dissertation's Section 4.10 and Appendix B.10.
 

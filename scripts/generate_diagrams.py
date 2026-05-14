@@ -130,7 +130,7 @@ def draw_prisma():
 def draw_gantt():
     """Six-sprint Gantt chart in a single muted blue tone with a parallel
     documentation strip. Restrained palette, no rainbow."""
-    fig, ax = plt.subplots(figsize=(11.5, 5.2))
+    fig, ax = plt.subplots(figsize=(12.5, 5.7))
 
     sprints = [
         ("S1  Corpus Engineering",  1,  3),
@@ -144,6 +144,7 @@ def draw_gantt():
     bar_color    = "#3b6c8b"   # muted slate blue
     docs_color   = "#a8a8a8"   # warm grey for the parallel docs strip
     grid_color   = "#dddddd"
+    text_color   = "black"
 
     rows = list(range(len(sprints), 0, -1))  # 6,5,4,3,2,1 (top → bottom)
     docs_row = 0  # parallel documentation strip below sprint rows
@@ -154,26 +155,28 @@ def draw_gantt():
                 color=bar_color, edgecolor="white", linewidth=0.6)
         ax.text(start + duration / 2 - 0.5, y,
                 f"Wk {start}\u2013{end}", ha="center", va="center",
-                fontsize=9, color="white", family="serif")
+                fontsize=10, color="white", family="serif")
 
     # Parallel documentation strip (real continuous activity per §2.1)
     ax.barh(docs_row, 22, left=0.5, height=0.45,
             color=docs_color, edgecolor="white", linewidth=0.6, alpha=0.85)
     ax.text(11, docs_row, "Documentation, evaluation refinement, report writing",
-            ha="center", va="center", fontsize=8.5, color="white",
+            ha="center", va="center", fontsize=9.5, color="white",
             style="italic", family="serif")
 
     yticks = [docs_row] + rows
     yticklabels = ["  Continuous"] + [s[0] for s in sprints]
     ax.set_yticks(yticks)
-    ax.set_yticklabels(yticklabels, fontsize=9.5, family="serif")
-    ax.set_xlabel("Project week", fontsize=10, family="serif")
+    ax.set_yticklabels(yticklabels, fontsize=10.5, family="serif",
+                       color=text_color)
+    ax.set_xlabel("Project week", fontsize=11, family="serif",
+                  color=text_color)
     ax.set_xlim(0.5, 22.5)
     ax.set_ylim(-0.7, len(sprints) + 0.7)
     ax.set_xticks(range(1, 23))
-    ax.set_xticklabels(range(1, 23), fontsize=7.5)
-    ax.tick_params(axis="x", length=2, pad=2)
-    ax.tick_params(axis="y", length=0, pad=4)
+    ax.set_xticklabels(range(1, 23), fontsize=9, color=text_color)
+    ax.tick_params(axis="x", length=2, pad=2, colors=text_color)
+    ax.tick_params(axis="y", length=0, pad=4, colors=text_color)
 
     # Subtle vertical month separators (no big rainbow lines)
     month_labels = [
@@ -184,15 +187,15 @@ def draw_gantt():
         ax.axvline(x=wk - 0.5, color=grid_color, linestyle="-",
                    linewidth=0.5, zorder=0)
     for wk, label in month_labels:
-        ax.text(wk - 0.5, len(sprints) + 0.5, label, fontsize=7.5,
-                color="#666666", family="serif", ha="left")
+        ax.text(wk - 0.5, len(sprints) + 0.5, label, fontsize=9,
+                color=text_color, family="serif", ha="left")
 
     # Clean spines: keep bottom and left only
     for s in ("top", "right"):
         ax.spines[s].set_visible(False)
     for s in ("bottom", "left"):
-        ax.spines[s].set_color("#888888")
-        ax.spines[s].set_linewidth(0.6)
+        ax.spines[s].set_color(text_color)
+        ax.spines[s].set_linewidth(0.7)
 
     fig.savefig(OUT / "fig_gantt.png", dpi=300, bbox_inches="tight",
                 facecolor="white", edgecolor="none")

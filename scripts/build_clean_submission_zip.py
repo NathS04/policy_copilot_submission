@@ -53,6 +53,7 @@ TOP_LEVEL_DIRS = [
 ]
 
 SCRIPTS_INCLUDE = [
+    "analyse_bm25_threshold_retuning.py",
     "apply_leeds_template.py",
     "auto_label_gold.py",
     "build_audit_exports.py",
@@ -163,6 +164,8 @@ RESULTS_INCLUDE = [
     "results/figures/fig_tradeoff.png",
     "results/tables/ablation_comparison.csv",
     "results/tables/auditability_scores.csv",
+    "results/tables/bm25_threshold_retuning.csv",
+    "results/tables/bm25_threshold_retuning_summary.json",
     "results/tables/critic_summary.csv",
     "results/tables/failure_taxonomy.csv",
     "results/tables/objective_slice_results.csv",

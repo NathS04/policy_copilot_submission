@@ -9,8 +9,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 ## [0.7.0] — 2026-02-22 — Hardening & Submission Preparation
 
 ### Added
-- Production-grade Streamlit workbench with 5 modes: Ask, Audit Trace,
-  Critic Lens, Experiment Explorer, Reviewer
+- Production-grade Streamlit workbench with six modes: question
+  answering, audit-trace inspection, Critic Mode, experiment browsing,
+  reviewer scoring, and help
 - Centralised design system (`theme.py`) and reusable UI components
 - Evaluator verification guide (`INSTRUCTIONS_FOR_EVALUATOR.md`)
 - Reproducibility checklist and requirements traceability matrix

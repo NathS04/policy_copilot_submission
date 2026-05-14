@@ -35,8 +35,9 @@ from docx.oxml import OxmlElement
 
 REPORT = Path(__file__).resolve().parent.parent / "docs" / "report"
 # Pandoc renders the intermediate docx into build_assets/; this script post-processes it in place.
-SRC = REPORT / "build_assets" / "Final_Report_Template.docx"
-DST = REPORT / "build_assets" / "Final_Report_Template.docx"
+REPORT_STEM = "Final_Report_Nathaniel_Sebastian_201715051"
+SRC = REPORT / "build_assets" / f"{REPORT_STEM}.docx"
+DST = REPORT / "build_assets" / f"{REPORT_STEM}.docx"
 # Optional page-number map written by build_report.py after the first PDF pass.
 PAGEMAP_PATH = REPORT / "pagemap.json"
 # Final PDF is rendered from the docx into the canonical primary path
@@ -168,7 +169,7 @@ def split_sections_for_page_numbering(doc, chapter_one_paragraph):
 FIGURE_MAP = [
     # (caption prefix, image filename, width in inches) - tightened to stay within 30-page body limit
     ("Figure 1.1: PRISMA", "fig_prisma.png", 3.5),
-    ("Figure 2.1: Gantt chart", "fig_gantt.png", 4.5),
+    ("Figure 2.1: Gantt chart", "fig_gantt.png", 5.8),
     ("Figure 2.2: End-to-end pipeline", "fig_data_flow.png", 4.5),
     ("Figure 4.1: Grouped bar chart", "fig_baselines.png", 4.0),
     ("Figure 4.2: Retrieval quality", "fig_retrieval.png", 4.0),

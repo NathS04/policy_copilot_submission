@@ -53,6 +53,7 @@ breakdown in Appendix B.10 are computed directly from
 | :--- | :--- |
 | `results/tables/threshold_sweep.csv` | `python scripts/sweep_abstention.py` (replays from existing `b3_generative_bm25_fallback_final/outputs.jsonl`; no LLM cost). |
 | `docs/report/figures/fig_tradeoff.png` | `python eval/analysis/make_figures.py --out_fig_dir docs/report/figures` |
+| `results/tables/bm25_threshold_retuning.csv`, `results/tables/bm25_threshold_retuning_summary.json`, `docs/report/figures/fig_bm25_retuned_operating_point.png` | `python scripts/analyse_bm25_threshold_retuning.py` (also a replay over `outputs.jsonl`; adds a per-τ response-level Ungrounded Rate column and selects an operating point under the dual safety constraints; cross-checks the reconstructed τ = 0.80 row against `summary.json` before writing artefacts; no LLM cost). |
 
 ## Figures (Chapter 1, 2, 4)
 
@@ -65,7 +66,7 @@ breakdown in Appendix B.10 are computed directly from
 
 | Claim | Reproducibility |
 | :--- | :--- |
-| 194 collected: 193 passed, 1 conditionally skipped | `pytest -q --ignore=tests/test_run_eval_requires_key_in_generative.py` |
+| 200 collected: 199 passed, 1 conditionally skipped | `pytest -q --ignore=tests/test_run_eval_requires_key_in_generative.py` |
 
 ## Report build (Appendix B.7.2)
 

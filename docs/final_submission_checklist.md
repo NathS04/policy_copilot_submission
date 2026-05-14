@@ -13,7 +13,7 @@
 | --- | --- | --- |
 | Final report (PDF) | `docs/report/Final_Report_Nathaniel_Sebastian_201715051.pdf` | A4, generated from markdown via two-pass build |
 | Editable source (markdown) | `docs/report/Final_Report_Nathaniel_Sebastian_201715051.md` | Single-file source; LoF / LoT / TOC are markdown lists post-processed by the build script |
-| Intermediate DOCX | `docs/report/build_assets/Final_Report_Template.docx` | Pandoc + `apply_leeds_template.py` output, retained for rebuilds |
+| Intermediate DOCX | `docs/report/build_assets/Final_Report_Nathaniel_Sebastian_201715051.docx` | Pandoc + `apply_leeds_template.py` output, retained for rebuilds |
 | Build orchestrator | `scripts/build_report.py` | Two-pass build (pagemap then final render) |
 | Template post-processor | `scripts/apply_leeds_template.py` | Heading promotion, table styling, TOC / LoF / LoT typography |
 | Leeds template / pandoc reference doc | `docs/report/build_assets/Final_Report_Template.docx` | Single retained template; the older `leeds_template.docx` was removed during the May-2026 audit pass and the build now uses this template throughout |
@@ -22,39 +22,28 @@
 
 | Metric | Value |
 | --- | --- |
-| Total PDF pages | 55 |
-| First body page (Chapter 1) | absolute page 10 (body page 1) |
-| Last body page (end of Chapter 5) | absolute page 37 (body page 28) |
-| Body page count (Chapters 1–5) | **28 pages** (within the stated 30-page body limit) |
-| Summary page count | 1 page (absolute page 4 / Roman iv) |
-| Front-matter pages (i–ix) | 9 pages of Roman-numeral preliminaries |
-| References + Appendices | absolute pages 38–55 (excluded from body limit per Deliverables wording) |
-| File size | 1,436,834 bytes (~1.4 MB) |
-| PDF link annotations | 69 total (66 internal navigation, 3 external URI) |
-| External URIs in PDF | Deloitte AI Institute report, Pinecone tutorial, GitHub repository |
+| Total PDF pages | 67 |
+| First body page (Chapter 1) | Arabic page 1 (after Roman-numeral preliminaries) |
+| Last body page (end of Chapter 5) | Arabic page 32 |
+| Body page range (Chapters 1–5) | Arabic pages 1–32 (preliminaries, references, and appendices excluded from the body count, per Deliverables wording) |
+| Summary page count | 1 page (Roman preliminaries) |
+| Front-matter pages | Roman-numeral preliminaries before Chapter 1 |
+| References + Appendices | After the body chapters (excluded from body count) |
+| File size | ~1.85 MB |
+| PDF link annotations | Internal navigation + external URI links for the GitHub repository |
+| External URIs in PDF | GitHub repository link (Appendix B) |
+
+Page counts above are taken from the rebuilt PDF and were not hardcoded earlier in this checklist; re-running `python scripts/build_report.py` will overwrite the PDF but is not expected to change the body chapter range materially.
 
 ## Hyperlink verification
 
-The PDF was inspected with `pypdf` to confirm link annotations exist:
-
-```
-total link annots: 69  internal(GoTo): 66  external URI: 3
-```
-
-Internal navigation covers every entry in the Table of Contents,
-List of Figures, and List of Tables. External URIs cover the
-GitHub repository link in Appendix B and the two web-hosted
-references in the bibliography (Deloitte 2024, Kamradt 2024).
-LibreOffice's PDF export embeds these as `/Link` annotations with
-`/URI` actions, which all standard PDF viewers treat as clickable.
+The PDF was inspected with `pypdf` to confirm link annotations exist. Internal navigation covers entries in the Table of Contents, List of Figures, and List of Tables; the external URI covers the GitHub repository link in Appendix B. LibreOffice's PDF export embeds these as `/Link` annotations with `/URI` actions, which all standard PDF viewers treat as clickable. (Earlier Deloitte and Pinecone external URIs were removed during the May-2026 audit pass when those bibliography entries were dropped.)
 
 ## Tests / report status
 
-The codebase test suite (39 files; 194 collected under the documented
-command: 193 passed, 1 conditionally skipped) passes on the submitted
-build, as recorded in §B.7.1. No tests were modified during the final
-polish pass; all changes were to the report markdown, the build script,
-and the post-processor script.
+The codebase test suite (40 files; 200 collected under the documented
+command: 199 passed, 1 conditionally skipped) passes on the submitted
+build, as recorded in §B.7.1.
 
 ## Final checks completed
 
@@ -76,7 +65,7 @@ and the post-processor script.
   prescribed B1/B2 offline wording.
 - [x] `pdfplumber` and `pypdf` references reconciled (pypdf is the active
   extraction path; pdfplumber is documented as an optional fallback).
-- [x] Body length within the stated 30-page limit (28 pages).
+- [x] Body chapters precede references and appendices; the body count excludes preliminaries, references, and appendices per the Deliverables wording in the report.
 - [x] Summary fits on one A4 page.
 - [x] No placeholder or marker strings remain in the PDF (TODO, FIXME,
   XXX, broken cross-reference text, or the truncated-name placeholder

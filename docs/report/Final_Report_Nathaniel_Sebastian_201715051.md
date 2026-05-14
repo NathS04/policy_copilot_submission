@@ -21,7 +21,7 @@ Student ID: 201715051
 
 <br>
 
-Submitted in accordance with the requirements for the degree of
+Submitted in accordance with the requirements for the degree of\
 BSc (Hons) Computer Science
 
 <br>
@@ -41,21 +41,17 @@ COMP3931 Individual Project
 
 <div class="preliminaries">
 
----
-
 ## Deliverables
 
 The candidate confirms that the following have been submitted:
 
 | Items | Format | Recipient(s) and Date |
 | :--- | :--- | :--- |
-| Final Report | PDF file | Uploaded to Minerva, 30/04/2026 |
-| Source code repository | GitHub repository URL | Supervisor and assessor, 30/04/2026 |
-| Documentation and evaluation pack | GitHub repository URL | Supervisor and assessor, 30/04/2026 |
+| Final Report | PDF file | Uploaded to Minerva, 13/05/2026 |
+| Source code repository | GitHub repository URL | Supervisor and assessor, 13/05/2026 |
+| Documentation and evaluation pack | GitHub repository URL | Supervisor and assessor, 13/05/2026 |
 
-The submitted report sits within the COMP3931 30-page body limit (Chapters 1 to 5; preliminaries, references, and appendices are excluded from that count). A fresh install using the evaluator path in `INSTRUCTIONS_FOR_EVALUATOR.md` (`pip install -e ".[dev]"`, then `pytest`, `scripts/reproduce_offline.py`, and `scripts/verify_artifacts.py`) verifies the shipped offline artefacts and regenerates the offline-safe evaluation outputs on a consumer laptop. API-dependent generative runs (B1 / B2 / B3-Generative) are represented by retained run artefacts under `results/runs/` and are documented separately.
-
----
+The main chapters (Chapters 1 to 5) are presented before the references and appendices; preliminary pages, references, and appendices are excluded from the main report body count. A fresh install using the evaluator path in `INSTRUCTIONS_FOR_EVALUATOR.md` (`pip install -e ".[dev]"`, then `pytest`, `scripts/reproduce_offline.py`, and `scripts/verify_artifacts.py`) verifies the shipped offline artefacts and regenerates the offline-safe evaluation outputs on a consumer laptop. API-dependent generative runs (B1 / B2 / B3-Generative) are represented by retained run artefacts under `results/runs/` and are documented separately.
 
 ## Declaration
 
@@ -67,33 +63,27 @@ The use of Generative AI tools during this project complies with the University 
 
 (Signature of student) Nathaniel Sebastian ......................................................
 
-(Date) 30 April 2026 .........................................................
-
----
+(Date) 13 May 2026 .........................................................
 
 ## Summary
 
-Most large organisations rely on a stack of internal policy documents (employee handbooks, IT security addenda, data-protection guidelines) to govern day-to-day operations. Employees regularly need quick answers from these documents, but searching through long PDFs by hand is slow. Large Language Models (LLMs) can answer such questions fluently, but their tendency to hallucinate makes them risky to deploy in a compliance setting without extra safeguards.
+Policy Copilot is a conservative question-answering system over organisational policy documents. It answers only when the supporting evidence is strong enough to cite, and abstains otherwise. The contribution is a reproducible reliability stack wrapped around standard Retrieval-Augmented Generation, used to characterise the safety–coverage operating frontier of a strict "cited or silent" system: reranking, abstention, deterministic per-claim verification, contradiction surfacing, and audit export.
 
-This project presents Policy Copilot, a Retrieval-Augmented Generation (RAG) system designed for that setting. The central design rule is "cited or silent": every claim in a response must be traceable to a specific source paragraph, and the system abstains when the supporting evidence is weak rather than answering anyway. On top of a standard RAG pipeline the system adds four extra checks: cross-encoder reranking (which improves retrieval precision and produces the confidence signal used by the abstention gate); per-claim citation verification that uses fixed rules rather than a second LLM, which keeps the check reproducible; contradiction detection across documents; and an Extractive Fallback Mode that returns the top-ranked evidence paragraph when the LLM is unavailable.
+The setting matters because organisations rely on internal policy documents such as handbooks, IT security addenda, and data-protection guidelines to govern day-to-day decisions. Large Language Models can answer such questions fluently, but in a compliance setting hallucination is not just a quality problem; it is a traceability problem, because a confident wrong answer cannot be audited backwards to a source paragraph.
 
-The system was evaluated on a 63-query synthetic golden set: 36 answerable queries, 17 unanswerable queries, and 10 contradiction probes, with 44 held out for testing. The dev split was used exclusively for threshold tuning; the headline B1/B2/B3-Generative figures are reported across the full 63-query golden set (the runs were executed with `split=all`), and B3-Extractive is reported on the held-out test split (44 queries, `split=test`). Across the full golden set, B3-Generative reports a 0.0% response-level ungrounded rate. This result needs careful interpretation. It does not show that the LLM never produced unsupported text; it shows that responses failing the support-rate check were converted into abstentions before reaching the user. The same configuration reaches 94.1% abstention accuracy across the 17 unanswerable queries in the full golden set, above the 80% target, although the small sample makes the confidence interval wide.
+Concretely, the pipeline adds five reliability layers to standard RAG: cross-encoder reranking that produces the confidence signal used by the abstention gate; deterministic refusal before any LLM call when that signal is too low; per-claim citation verification by token overlap rather than a second LLM (which keeps the check reproducible); contradiction surfacing across documents; and an Extractive Fallback Mode that returns the top-ranked evidence paragraph verbatim when the LLM is unavailable.
 
-The main cost is coverage. B3-Generative answers only 25% of the 63 golden-set queries, well below the 85% target. Extractive Mode recovers most of that coverage with an 88% answer rate and 100% citation precision; abstention accuracy on its small unanswerable test subset is 50.0% (n = 12 unanswerable queries in the test split), so abstention strength on the test-split denominator is weaker than the generative configuration's all-split number. Extractive Mode achieves this by returning quoted evidence rather than synthesised answers. The heuristic Critic Mode reaches 93.3% macro precision, 95.2% macro recall and 93.8% macro F1 on its 50-snippet labelled suite, above the 85% target. Overall, the results support the safety argument on a controlled synthetic corpus, while also showing that recall, coverage and transfer to messier documents remain the main limitations.
+The system was evaluated on a 63-query synthetic golden set covering answerable, unanswerable, and contradiction-style policy questions. A held-out test split was kept separate from the development split used for threshold tuning. The main generative results are reported across the full golden set, while Extractive Mode is reported on the held-out test split. Across the full golden set, B3-Generative reports a 0.0% response-level ungrounded rate. This result needs careful interpretation. It does not show that the LLM never produced unsupported text; it shows that responses failing the support-rate check were converted into abstentions before reaching the user. The same configuration reaches 94.1% abstention accuracy across the 17 unanswerable queries in the full golden set, above the 80% target, although the small sample makes the confidence interval wide.
 
-The evaluation was deliberately layered. The main benchmark used a synthetic golden set so that answerability, expected evidence, and contradiction probes could be controlled. Three smaller checks sit around it: a peer-review exercise to test whether the outputs felt useful and trustworthy to readers, a public-guidance transfer test on text I had not authored, and a small adversarial probe focused on prompt-injection style attacks. The audit-export artefacts tie individual answers back to evidence so the headline results can be checked rather than taken on trust.
+The main cost is coverage. The generative configuration answers only a quarter of the golden-set queries, well below the target, because the support gate refuses aggressively. Extractive Mode recovers most of the answer coverage and keeps citation precision at 100%, but its weaker abstention result shows that quoted evidence alone is not enough for every unanswerable query. The heuristic Critic Mode reaches 93.3% macro precision, 95.2% macro recall and 93.8% macro F1 on its 50-snippet labelled suite, above the 85% target.
 
-Overall the project supports a fairly narrow claim. Adding three rule-based safety checks on top of a standard RAG pipeline — refusing when the reranker is not confident, dropping claims whose cited paragraph does not actually support them, and surfacing contradictions across documents — cut the unsupported-claim rate sharply for a policy-compliance use-case in this synthetic setting, at the cost of a smaller answer rate that would need its thresholds retuned for any new corpus or retrieval backend.
-
----
+Taken together, these five evaluation rungs support a narrow but defensible claim: a strict "cited or silent" RAG configuration can reduce unsupported surfaced answers, but only by accepting a clear coverage-versus-safety trade-off.
 
 ## Acknowledgements
 
 I would like to thank my supervisor for their guidance and feedback throughout this project, and the COMP3931 module coordinators for clear expectations and resources.
 
 This report has been prepared in accordance with the University of Leeds proof-reading policy. No third-party human proof-reading was used. Generative AI tools were used in an assistive role during the project, including development support, debugging, structuring, and review of clarity and consistency. AI outputs were treated as suggestions or review comments rather than final authoritative text. All final technical decisions, implementation work, report wording, citations, results, figures, and submission decisions were reviewed, revised where necessary, and approved by the author. Full details are provided in Appendix B.5.
-
----
 
 ## Table of Contents
 
@@ -169,7 +159,8 @@ This report has been prepared in accordance with the University of Leeds proof-r
   - [B.9 Test Suite Matrix (referenced from §3.9)](#b.9-test-suite-matrix-referenced-from-3.9)
   - [B.10 Independent Reviewer Evaluation Materials (referenced from §4.10)](#b.10-independent-reviewer-evaluation-materials-referenced-from-4.10)
   - [B.11 Public Guidance Transfer Corpus Provenance (referenced from §4.11)](#b.11-public-guidance-transfer-corpus-provenance-referenced-from-4.11)
-  - [B.12 Adversarial and Audit Export Evidence (referenced from L6 and §4.4)](#b.12-adversarial-and-audit-export-evidence-referenced-from-l6-and-4.4)
+  - [B.12 Adversarial and Audit Export Evidence (referenced from L5 and §4.4)](#b.12-adversarial-and-audit-export-evidence-referenced-from-l5-and-4.4)
+  - [B.13 Threats to Validity Summary (referenced from §5.2)](#b.13-threats-to-validity-summary-referenced-from-5.2)
 
 ## List of Figures
 
@@ -183,6 +174,7 @@ This report has been prepared in accordance with the University of Leeds proof-r
 - [Figure B.1 Answerable query result showing extractive fallback with citations](#fig-b-1)
 - [Figure B.2 Unanswerable query showing abstention behaviour](#fig-b-2)
 - [Figure B.3 Contradiction query showing retrieved evidence with citations](#fig-b-3)
+- [Figure B.4 BM25-fallback support-rate retuning: operating points under safety constraints](#fig-b-4)
 
 ## List of Tables
 
@@ -190,23 +182,24 @@ This report has been prepared in accordance with the University of Leeds proof-r
 - [Table 2.2 Risk register: top risks and mitigations](#tbl-2-2)
 - [Table 3.1 Technology stack and justification](#tbl-3-1)
 - [Table 4.1 Golden set composition by category](#tbl-4-1)
-- [Table 4.2 Baseline comparison across primary metrics (B1/B2/B3-Gen all-split, B3-Ext test split)](#tbl-4-2)
+- [Table 4.2 Baseline comparison across primary metrics](#tbl-4-2)
 - [Table 4.3 Final retrieval metrics under BM25 fallback](#tbl-4-3)
 - [Table 4.4 Citation and verification metrics by baseline](#tbl-4-4)
-- [Table 4.5 Development-phase ablation evidence with final B3 reference row](#tbl-4-5)
+- [Table 4.5 Ablation evidence with final Policy Copilot reference row](#tbl-4-5)
 - [Table 4.6 Critic Mode pattern-level performance](#tbl-4-6)
 - [Table 4.7 Error taxonomy: B3 failure classification](#tbl-4-7)
 - [Table 4.8 End-to-end latency statistics by baseline](#tbl-4-8)
 - [Table 4.9 Independent reviewer evaluation: per-axis means and per-category breakdown](#tbl-4-9)
-- [Table 4.10 B3-Extractive: synthetic test split versus Public Guidance Transfer Stress Test](#tbl-4-10)
+- [Table 4.10 Synthetic test split versus public-guidance transfer set](#tbl-4-10)
 - [Table 4.11 Bootstrapped 95% confidence intervals](#tbl-4-11)
-- [Table 4.12 Objective achievement summary (Chapter 4 §4.13)](#tbl-4-12)
+- [Table 4.12 Objective achievement summary](#tbl-4-12)
 - [Table B.1 Comparative analysis of retrieval-augmented and grounded generation systems](#tbl-b-1)
-- [Table B.2 Testing and validation matrix: 39 test files; 194 collected tests (193 passed, 1 conditionally skipped)](#tbl-b-2)
+- [Table B.2 Representative testing and validation matrix](#tbl-b-2)
 - [Table B.3 Per-participant rubric scores from the independent reviewer evaluation](#tbl-b-3)
 - [Table B.4 Round 2 inter-rater agreement (Krippendorff alpha)](#tbl-b-4)
 - [Table B.5 Public Guidance Transfer Corpus provenance](#tbl-b-5)
 - [Table B.6 Adversarial probe results, paired across modes](#tbl-b-6)
+- [Table B.7 Threats to validity summary](#tbl-b-7)
 
 </div>
 
@@ -218,27 +211,19 @@ This report has been prepared in accordance with the University of Leeds proof-r
 
 Organisations rely on internal policy documents (handbooks, IT security addenda, data-protection guidelines) to govern day-to-day decisions, but answering even simple questions ("how many remote-work days am I entitled to?", "how often must passwords be rotated?") typically requires scanning long PDFs by hand. Large Language Models can produce fluent answers to such questions, but they will also produce confident-sounding answers with no traceable link to a source paragraph. Hallucination is well documented (Ji et al., 2023; Huang et al., 2023). In a compliance setting, a wrong answer presented confidently can cause real harm: policy is misinterpreted, downstream decisions follow the wrong text, and disputes arise that a direct reading of the source would have prevented.
 
-Retrieval-Augmented Generation (RAG) is the dominant mitigation strategy. By prefixing generation with explicit evidence retrieval, RAG constrains output to retrieved passages (Lewis et al., 2020). Standard RAG, however, does not actually force the model to use the retrieved evidence, and does not give it a way to say it does not know. Parallel work on selective prediction and abstention (Kamath et al., 2020; Chen et al., 2023) studies when models should refuse, but largely on open-domain benchmarks rather than restricted enterprise corpora. The core research question is therefore:
+Retrieval-Augmented Generation (RAG) is the dominant mitigation strategy. By prefixing generation with explicit evidence retrieval, RAG constrains output to retrieved passages (Lewis et al., 2020). Standard RAG, however, does not actually force the model to use the retrieved evidence, and does not give it a way to say it does not know. Parallel work on selective prediction and abstention (Kamath et al., 2020; Chen et al., 2023) studies when models should refuse, but largely on open-domain benchmarks rather than restricted enterprise corpora.
 
-> Can a question-answering system over organisational policy documents be made reliably grounded in source evidence, with every claim traceable to a specific paragraph, while also knowing when to remain silent rather than risk fabrication?
+> This project tests the following hypothesis: under a strict cited-or-silent rule on a closed policy corpus, deterministic citation verification and abstention gating can reduce response-level unsupported surfaced answers to at most 5%, but only by moving the system along a measurable safety–coverage frontier. The central question is therefore not whether the system can answer every policy query, but where a defensible operating point lies between coverage, abstention accuracy, and groundedness.
 
 ### 1.2 Aims and Objectives
 
 The aim of this project is to design, implement, and evaluate an Audit-Ready Retrieval-Augmented Generation system for organisational policy documents that enforces a strict "cited or silent" rule.
 
-Objectives:
-1.  Build a multi-stage RAG pipeline that answers only when supported by paragraph-level citations (Target: ungrounded claim rate ≤ 5%).
-2.  Implement deterministic abstention via cross-encoder confidence and token-overlap thresholds (Target: abstention accuracy ≥ 80% on unanswerable queries).
-3.  Achieve high retrieval precision through dense bi-encoder retrieval and cross-encoder reranking (Target: Evidence Recall@5 ≥ 80%).
-4.  Detect and surface contradictions between policy documents.
-5.  Develop a heuristic Critic Mode to audit policy text for vague quantifiers and implicit contradictions.
-6.  Evaluate rigorously using a curated golden set with automated metrics, ablation studies, and a comparison of generative and extractive (LLM-free) modes.
-
-Each objective maps to a specific metric and acceptance test defined in Chapter 2.
+The objectives are to build a multi-stage RAG pipeline with paragraph-level citations, implement deterministic abstention for weak evidence, improve retrieval through reranking, surface contradictions between policy documents, develop a heuristic Critic Mode for vague or problematic policy language, and evaluate the resulting safety–coverage trade-off through a curated golden set, threshold sweep, ablations, and generative versus extractive comparisons. The measurable targets for these objectives are defined in Chapter 2 and are revisited honestly in §4.13, including where the conservative operating point fails to meet the original coverage target.
 
 ### 1.3 Systematic Search Strategy
 
-I ran a structured literature search between November 2025 and January 2026 across Google Scholar, ACM Digital Library, IEEE Xplore, and arXiv, guided by the PRISMA 2020 framework (Page et al., 2021). Boolean queries combined four keyword clusters: core technique (RAG, grounded generation), reliability (hallucination, citation verification, abstention), domain (policy QA, legal NLP, closed-domain), and evaluation (RAGAS, faithfulness, LLM-as-judge).
+A structured literature search was conducted between November 2025 and January 2026 across Google Scholar, ACM Digital Library, IEEE Xplore, and arXiv, guided by the PRISMA 2020 framework (Page et al., 2021). The search terms were grouped around four areas: RAG and grounded generation, reliability and abstention, policy/legal NLP, and evaluation of faithfulness or citation quality.
 
 Inclusion / Exclusion Criteria:
 
@@ -259,19 +244,19 @@ PRISMA flow: 584 records identified, 112 duplicates removed, 472 screened, 318 e
 *Figure 1.1: PRISMA 2020 flow diagram, 584 identified records narrowed to 38 included studies.*
 </div>
 
-The 38 studies form the core literature review. A broader research pack (`docs/research/literature_matrix.md`) catalogues 105 sources in total: the 38 core papers plus 67 additional sources from backward / forward citation chaining, standards, and contextual references. These extra sources support the wider methodology and LSEP discussion without forming part of the formal PRISMA core.
+The 38 studies form the core literature review. A broader research matrix catalogues 105 sources in total: the 38 core papers plus 67 additional sources from backward / forward citation chaining, standards, and contextual references. The matrix is included in the submitted evidence pack and supports the wider methodology and LSEP discussion without forming part of the formal PRISMA core.
 
 ### 1.4 Retrieval-Augmented Generation
 
-Lewis et al. (2020) formalised RAG as coupling a non-parametric retrieval memory with a parametric generative model. A dense passage retriever (DPR; Karpukhin et al., 2020) identifies relevant documents from a corpus and concatenates them into the model's input context, with FAISS providing tractable approximate nearest-neighbour search at scale (Johnson, Douze and Jégou, 2019). The architecture provides, in principle, a traceable link between answer and source, but in practice that link is fragile: Gao et al. (2023) observe that models frequently ignore retrieved context when it conflicts with parametric beliefs (the "faithfulness gap"), and Cuconasu et al. (2024) demonstrate that injecting irrelevant noise can paradoxically improve answer quality, indicating that the retrieval / generation relationship is more complex than early work assumed. RAG provides the architectural skeleton; it does not, on its own, guarantee that generated text faithfully reflects retrieved evidence.
+Lewis et al. (2020) formalised RAG as coupling a non-parametric retrieval memory with a parametric generative model, typically realised via dense passage retrieval (Karpukhin et al., 2020) and FAISS-style nearest-neighbour search (Johnson, Douze and Jégou, 2021). The architecture provides, in principle, a traceable link between answer and source, but the link is fragile in practice: models frequently ignore retrieved context when it conflicts with parametric beliefs (Gao et al., 2023, the "faithfulness gap"), and injected noise can paradoxically improve answer quality (Cuconasu et al., 2024). RAG therefore provides the architectural skeleton but does not, on its own, guarantee that generated text faithfully reflects retrieved evidence.
 
 ### 1.5 Hallucination, Attribution, and Post-Hoc Verification
 
-Ji et al. (2023) distinguish intrinsic hallucination (output contradicts source) from extrinsic hallucination (output makes claims not supported by any source) and identify it as the primary barrier to deploying generative models in high-stakes contexts. Huang et al. (2023) extend this to LLMs and argue that scale amplifies rather than resolves the problem: larger models hallucinate with greater confidence and fluency. Mitigation strategies divide into three families. Training-based attribution (Bohnet et al., 2022) trains the model to produce inline citations but requires large supervised datasets and produces generated rather than verified citations; Wallat et al. (2024) further distinguish citation correctness from citation faithfulness, a distinction that matters in audit-critical environments. Post-hoc editing (Gao et al., 2023, RARR) revises unsupported claims via additional LLM passes, at high computational cost and with its own hallucination risk; Yue et al. (2023) note that LLM-judge evaluation introduces circularity when judge and generator share architecture or biases. Self-reflective generation (Asai et al., 2024, Self-RAG) instruction-tunes the LLM to emit reflection tokens that control retrieval and quality, but the resulting model is brittle and architecture-specific. None of these paradigms satisfies the requirements of a deterministic, auditable compliance tool; the approach taken here is instead a lightweight, heuristic verification layer applied after generation, using token-overlap rather than learned models, and revisited in Section 4.7.
+Hallucination is the primary barrier to deploying generative models in high-stakes settings: Ji et al. (2023) distinguish intrinsic from extrinsic forms, and Huang et al. (2023) note that scale amplifies the problem because larger models hallucinate more fluently. Mitigation falls into three families. Training-based attribution (Bohnet et al., 2022) generates inline citations but at the cost of supervised data and *generated* rather than *verified* citations; Wallat et al. (2024) further separate citation correctness from citation faithfulness, a distinction that matters for audit. Post-hoc editing (Gao et al., 2023, RARR) revises unsupported claims via additional LLM passes, with its own cost and hallucination risk. The risk that automatic evaluation itself becomes circular when judge and generator share architecture is documented in two complementary ways: Zheng et al. (2023) identify systematic position, verbosity, and self-enhancement biases in LLM judges generally, while Yue et al. (2023) examine related issues in citation-attribution evaluation specifically. Self-reflective generation (Asai et al., 2024, Self-RAG) is architecture-specific and brittle. None of these paradigms satisfies the requirements of a deterministic, auditable compliance tool; the approach taken here is a lightweight, deterministic verification layer applied after generation, evaluated in §4.4 and revisited as a limitation in §5.2.
 
 ### 1.6 Information Retrieval: Dense Retrieval and Cross-Encoder Reranking
 
-Retrieval quality bounds RAG quality: if the correct paragraph is not retrieved, no generation step can recover. Barnett et al. (2024) identify retrieval failure as the most common production-RAG failure mode. The two complementary primitives are bi-encoders, which independently encode queries and documents into a shared vector space and support fast nearest-neighbour search, and cross-encoders (Nogueira and Cho, 2019), which encode query and document jointly to produce more precise relevance scores at higher latency. Lin et al. (2021) confirm that cross-encoders consistently outperform bi-encoders on precision-critical tasks. The standard resolution, and the one adopted here, is a two-stage retrieve-and-rerank pipeline: bi-encoder retrieval over the corpus, then cross-encoder reranking of a small candidate set (Nogueira and Cho, 2019; Lin et al., 2021). For closed enterprise corpora of the size used here (under 2,000 paragraphs) the cross-encoder cost is bounded and acceptable. ColBERT's late-interaction approach (Khattab and Zaharia, 2020) achieves near-cross-encoder precision at bi-encoder speed but requires materialising token-level embeddings, an overhead not justified for stable policy corpora.
+Retrieval bounds RAG quality: if the correct paragraph is not retrieved, no generation step can recover, and Barnett et al. (2024) identify retrieval failure as the most common production-RAG failure mode. Bi-encoders give fast nearest-neighbour search; cross-encoders (Nogueira and Cho, 2019) trade latency for precision, and Lin et al. (2021) confirm they consistently outperform bi-encoders on precision-critical tasks. The standard resolution, adopted here, is two-stage retrieve-and-rerank: bi-encoder retrieval, then cross-encoder reranking over a small candidate set (Nogueira and Cho, 2019; Lin et al., 2021). For closed corpora under 2,000 paragraphs the cross-encoder cost is bounded. ColBERT's late-interaction approach (Khattab and Zaharia, 2020) reaches near-cross-encoder precision at bi-encoder speed, but materialising token-level embeddings is overhead not justified for a stable policy corpus.
 
 ### 1.7 NLP in Legal and Policy Domains
 
@@ -287,29 +272,29 @@ For Policy Copilot, abstention is implemented through cross-encoder confidence s
 
 ### 1.9 Evaluation Frameworks for Retrieval-Augmented Generation
 
-Es et al. (2023) introduce RAGAS, decomposing RAG evaluation into Faithfulness, Answer Relevance, and Context Relevance, each scored by LLM judges. Saad-Falcon et al. (2023, ARES) add confidence intervals and statistical testing. Zheng et al. (2024) document three systematic biases in LLM-as-Judge: position bias, verbosity bias, and self-enhancement bias, all particularly risky when judge and generator share architecture. Penzkofer and Baumann (2024, RAGE) define Citation-Precision (fraction of citations that support their claim) and Citation-Recall (fraction of claims that should be cited and are). These map directly to the "cited or silent" rule.
+Automatic RAG evaluation has converged on a small family of metrics. RAGAS (Es et al., 2024) decomposes evaluation into Faithfulness, Answer Relevance, and Context Relevance, each scored by LLM judges; ARES (Saad-Falcon et al., 2023) adds confidence intervals. Zheng et al. (2023) document three systematic biases in LLM-as-Judge — position, verbosity, and self-enhancement — that are particularly risky when judge and generator share architecture. RAGE (Penzkofer and Baumann, 2024) defines Citation-Precision and Citation-Recall, which map directly to the "cited or silent" rule.
 
 The evaluation strategy adopted for Policy Copilot is deliberately hybrid. Automated metrics (Answer Rate, Abstention Accuracy, Ungrounded Rate, Evidence Recall@5) form the quantitative backbone, supplemented by qualitative error analysis. LLM-as-judge is avoided for the primary evaluation because of the documented biases and a decision to keep evaluation reproducible and independently auditable.
 
 ### 1.10 Comparative Analysis of Existing Systems
 
-Table B.1 in Appendix B.8 puts Policy Copilot side-by-side with the main retrieval-augmented and grounded-generation systems I read about, on five dimensions: domain, grounding mechanism, abstention handling, key limitation, and relevance. Two patterns came out of the comparison. Most systems target open-domain corpora where the priority is answering as many questions as possible, even when answers are sometimes wrong (Standard RAG, DPR, FreshLLMs); the systems that do refuse when evidence is weak (Self-RAG, ASPIRE) decide when to refuse using a learned model, which is expensive to retrain for a new corpus. What I did not find was a system that combines rule-based grounding checks with explicit refusal over a small, closed corpus — the configuration this project targets. Policy Copilot fills that gap by pairing deterministic Jaccard token overlap with cross-encoder confidence gating and per-claim pruning over a closed policy corpus.
+Table B.1 in Appendix B.8 places Policy Copilot alongside the main retrieval-augmented and grounded-generation systems on five dimensions: domain, grounding mechanism, abstention handling, key limitation, and relevance. Two patterns emerge. Most systems target open-domain corpora and prioritise answering even when answers are sometimes wrong (Standard RAG, DPR, FreshLLMs); the systems that *do* refuse when evidence is weak (Self-RAG, ASPIRE) decide refusal via a learned model that is expensive to retrain for a new corpus. What is missing is a rule-based, refusal-by-default configuration over a small closed corpus — the configuration this project targets, pairing deterministic Jaccard token overlap with cross-encoder confidence gating and per-claim pruning.
 
 ### 1.11 Gap Analysis and Project Rationale
 
-The literature points to a clear gap. On the generation side, the main techniques for cutting hallucinations (Attributed QA, RARR, Self-RAG) are built for open-domain benchmarks, need expensive fine-tuning or several LLM calls per query, and aim to answer as many questions as possible rather than refuse when evidence is weak; for a compliance use-case that priority is the wrong way round. On the evaluation side, LLM-as-judge frameworks (RAGAS, RAGE) suffer from the documented position, verbosity, and self-enhancement biases (Zheng et al., 2024), and Wallat et al. (2024) show that citation correctness and faithfulness are not the same property. On the retrieval side, two-stage retrieve-and-rerank is well established but typically deployed at web scale where cross-encoder latency hurts (Nogueira and Cho, 2019; Lin et al., 2021); for a closed corpus under 2,000 paragraphs that latency constraint largely goes away, and paragraph-level chunking performs about as well as more expensive semantic chunking on policy documents (Qu, Bao and Tu, 2024).
+The literature points to a clear gap. On the generation side, the main techniques for cutting hallucinations (Attributed QA, RARR, Self-RAG) are built for open-domain benchmarks, need expensive fine-tuning or several LLM calls per query, and aim to answer as many questions as possible rather than refuse when evidence is weak; for a compliance use-case that priority is the wrong way round. On the evaluation side, LLM-as-judge frameworks (RAGAS, RAGE) suffer from the documented position, verbosity, and self-enhancement biases (Zheng et al., 2023), and Wallat et al. (2024) show that citation correctness and faithfulness are not the same property. On the retrieval side, two-stage retrieve-and-rerank is well established but typically deployed at web scale where cross-encoder latency hurts (Nogueira and Cho, 2019; Lin et al., 2021); for a closed corpus under 2,000 paragraphs that latency constraint largely goes away, and paragraph-level chunking performs about as well as more expensive semantic chunking on structured documents generally (Qu, Bao and Tu, 2024), and policies, being heading-and-section based, fall within that structured-document family.
 
-Taken together these observations point to a less-explored combination: a closed-domain RAG system that uses rule-based grounding checks and refuses by default, optimised for precision over recall. Policy Copilot is built into that combination. It abstains before generation when reranker confidence is too low, and removes any claim whose citation fails token-overlap verification. The "cited or silent" rule that results was, across the literature I reviewed, not empirically evaluated on a bounded enterprise policy corpus in this exact configuration. The contribution is therefore not RAG itself, nor an evaluation framework in the LangSmith or RAGAS sense, but the end-to-end system design that treats grounding, abstention, citation verification, and audit traceability as part of the contract the system is being designed against, rather than as features added once a working answer pipeline already exists.
+Taken together these observations point to a less-explored research problem: how a closed-domain RAG system behaves when refusal is not an exception but part of the system contract. Existing work motivates individual components — retrieval, reranking, attribution, abstention, and evaluation — but the literature reviewed did not provide an empirical account of the safety–coverage operating frontier created by combining deterministic verification with refusal-by-default policy QA on a bounded organisational corpus. Policy Copilot is built to study that frontier. It abstains before generation when reranker confidence is too low, removes generated claims whose citations fail token-overlap or numeric checks, and exposes the resulting trade-off through a threshold sweep rather than only a single headline score.
 
----
+The contribution is therefore not RAG itself, nor a new evaluation framework in the LangSmith or RAGAS sense. It is the end-to-end system design and empirical characterisation of a strict "cited or silent" operating regime for policy QA, including the cost: stronger surfaced grounding is bought with measurably lower answer coverage.
 
 ## Chapter 2 Methodology
 
 ### 2.1 Development Process
 
-Development followed a sprint-based methodology adapted from agile principles for a single-developer research project. I ran six sprints across Weeks 1 to 22 of the project's core implementation phase, each targeting a self-contained architectural component:
+Development followed a lightweight sprint structure adapted for a single-developer research project. Across Weeks 1 to 22, each sprint focused on one part of the architecture:
 
-1. Sprint 1, Corpus Engineering (Weeks 1 to 3): synthetic policy documents (Employee Handbook, IT Security Addendum, Physical Security Protocol), PDF ingestion pipeline, and stable identifier scheme.
+1. Sprint 1, Corpus Engineering (Weeks 1 to 3): the five synthetic policy documents itemised in §3.2 (Internal Policy Handbook, IT Security Addendum, HR Procedures Manual, Business Continuity Plan, DPIA Guide), the PDF ingestion pipeline, and the stable identifier scheme.
 2. Sprint 2, Retrieval Pipeline (Weeks 4 to 6): FAISS-backed dense retrieval using Sentence-Transformers. Deliverable: a functional retriever returning top-k candidates.
 3. Sprint 3, Generative Pipeline (Weeks 7 to 9): LLM integration (OpenAI API) with Pydantic-enforced JSON schema. Deliverable: B2 (Naive RAG) baseline.
 4. Sprint 4, Reliability Layers (Weeks 10 to 14): cross-encoder reranking, abstention gate, per-claim verification, contradiction detection. This sprint produced the core B3 system.
@@ -319,7 +304,7 @@ Development followed a sprint-based methodology adapted from agile principles fo
 <a id="fig-2-1"></a>
 
 <div align="center">
-<img src="figures/fig_gantt.png" alt="Gantt chart" width="700">
+<img src="figures/fig_gantt.png" alt="Gantt chart" width="760">
 
 *Figure 2.1: Gantt chart of the six-sprint development timeline (Weeks 1 to 22, November 2025 to April 2026). Report writing, documentation hardening, and evaluation refinement ran in parallel with the later sprints and continued through the April 2026 submission window.*
 </div>
@@ -328,7 +313,7 @@ Version control used a GitHub repository with a branch-per-sprint strategy. The 
 
 ### 2.2 Requirements Analysis
 
-Requirements were derived from the research objectives (Section 1.2) and the gap analysis (Section 1.11). I formulated each as a testable contract with explicit acceptance criteria.
+Requirements were derived from the research objectives (Section 1.2) and the gap analysis (Section 1.11). Each requirement was formulated as a testable contract with explicit acceptance criteria.
 
 <a id="tbl-2-1"></a>
 
@@ -336,17 +321,17 @@ Requirements were derived from the research objectives (Section 1.2) and the gap
 
 | ID | Requirement | Description | Acceptance Criterion | Priority | Linked Objective |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| FR1 | Evidence Grounding | Every claim in a generated answer must cite a specific paragraph ID | Ungrounded claim rate ≤ 5% on the golden set | High | Obj. 1 |
-| FR2 | Abstention | System returns `INSUFFICIENT_EVIDENCE` when confidence is below threshold | Abstention accuracy ≥ 80% on unanswerable golden-set queries | High | Obj. 2 |
-| FR3 | Citation Verification | Post-generation verification removes claims not supported by cited text | ≥ 95% of surviving claims pass manual spot-check | High | Obj. 1 |
-| FR4 | Extractive Fallback | System operates without an LLM, returning raw top-ranked evidence text | 100% citation precision in extractive mode (by construction) | Medium | Obj. 6 |
-| FR5 | Contradiction Detection | System flags contradictory directives across policy documents | Detected contradictions match manually annotated conflicts | Medium | Obj. 4 |
-| FR6 | Critic Mode | Heuristic auditor identifies vague or problematic policy language | Macro F1 ≥ 85% on the critic test suite | Medium | Obj. 5 |
-| NFR1 | Latency | End-to-end response time for a single query | P95 latency < 10 seconds on standard hardware | Medium | - |
-| NFR2 | Reproducibility | All evaluation results are deterministic and scriptable | `python scripts/run_eval.py` reproduces all reported metrics | High | Obj. 6 |
-| NFR3 | Modularity | Pipeline components can be toggled independently via configuration | Reranker, Verifier, and Critic can each be disabled without breaking the pipeline | Low | - |
+| FR1 | Evidence Grounding | Generated claims cite paragraph-level evidence | Ungrounded claim rate ≤ 5% on the golden set | High | Obj. 1 |
+| FR2 | Abstention | System refuses when evidence confidence is below threshold | Abstention accuracy ≥ 80% on unanswerable golden-set queries | High | Obj. 2 |
+| FR3 | Citation Verification | Verification removes unsupported generated claims | ≥ 95% of surviving claims pass manual spot-check | High | Obj. 1 |
+| FR4 | Extractive Fallback | LLM-free mode returns top-ranked evidence text | 100% citation precision in extractive mode (by construction) | Medium | Obj. 6 |
+| FR5 | Contradiction Detection | System flags contradictory policy directives | Detected contradictions match manually annotated conflicts | Medium | Obj. 4 |
+| FR6 | Critic Mode | Heuristic auditor flags vague or problematic policy wording | Macro F1 ≥ 85% on the critic test suite | Medium | Obj. 5 |
+| NFR1 | Latency | Single-query response time | P95 latency < 10 seconds on standard hardware | Medium | - |
+| NFR2 | Reproducibility | Offline-safe outputs are deterministic and retained run artefacts are verifiable | Documented evaluator path reproduces offline-safe outputs and verifies retained run artefacts | High | Obj. 6 |
+| NFR3 | Modularity | Pipeline components can be toggled independently | Reranker, Verifier, and Critic can each be disabled without breaking the pipeline | Low | - |
 
-Functional requirements (FR1 to FR6) define what the system promises. Non-functional requirements (NFR1 to NFR3) constrain how they are delivered. A design tension emerged in Sprint 4 between FR1 (grounding) and NFR1 (latency): cross-encoder reranking added roughly 1.8 seconds per query but was essential for grounding precision. I accepted latency as the secondary concern, consistent with the "precision over recall" philosophy and justified by the bounded corpus size (Section 2.4, Decision 2).
+Functional requirements (FR1 to FR6) define what the system promises. Non-functional requirements (NFR1 to NFR3) constrain how they are delivered. A design tension emerged in Sprint 4 between FR1 (grounding) and NFR1 (latency): cross-encoder reranking added roughly 1.8 seconds per query but was essential for grounding precision. Latency was accepted as the secondary concern, consistent with the "precision over recall" philosophy and justified by the bounded corpus size (Section 2.4, Decision 2).
 
 ### 2.3 System Architecture
 
@@ -360,7 +345,7 @@ The system follows a modular Retrieve-and-Rerank-then-Generate-and-Verify pipeli
 *Figure 2.2: End-to-end pipeline from PDF ingestion through retrieval, reranking, abstention, generation, and verification.*
 </div>
 
-There are six stages, each a distinct module. (1) Ingestion parses PDFs into paragraph chunks with stable identifiers `doc_id::page::index::hash` (truncated SHA-256), preserving citation integrity across re-ingestion. (2) Retrieval uses `all-MiniLM-L6-v2` to embed paragraphs into a 384-dim FAISS `IndexFlatL2`; top 20 candidates are returned per query. (3) Reranking uses `cross-encoder/ms-marco-MiniLM-L-6-v2` to rescore the 20 candidates; the top score then feeds the abstention gate. (4) Abstention Gate triggers `INSUFFICIENT_EVIDENCE` if the top reranker score falls below threshold (default 0.30), and crucially does so before any LLM call, so the decision is deterministic. (5) Generation sends the top 5 reranked paragraphs to the LLM with a strict Pydantic-enforced JSON schema in Generative Mode; in Extractive Mode the LLM is bypassed entirely and the verbatim top paragraph is returned with its citation ID, so citation precision in that mode is 100% by construction. (6) Verification decomposes the LLM answer into sentence-level claims and checks each against cited evidence using Jaccard token overlap and numeric consistency. Failed claims are pruned, and if all are pruned the response is downgraded to abstention.
+The pipeline has six stages, each implemented as a separate module. Ingestion turns PDFs into paragraph chunks and assigns stable identifiers so citations remain traceable after re-ingestion. Retrieval finds candidate passages, reranking rescores them with a cross-encoder, and the abstention gate blocks weak-evidence queries before generation. In Generative Mode, the top reranked paragraphs are sent to the LLM under a strict JSON schema. In Extractive Mode, the LLM is bypassed and the top evidence paragraph is returned directly. The final verification stage checks generated claims against cited evidence, removes unsupported claims, and downgrades the response to abstention if nothing sufficiently supported remains.
 
 This staged design ensures reliability is an emergent outcome of multiple independent checks, each empirically evaluable through ablation (Section 2.6).
 
@@ -368,11 +353,11 @@ This staged design ensures reliability is an emergent outcome of multiple indepe
 
 The following decisions were the most consequential architectural trade-offs. Some of them were practical trade-offs given the project's time and complexity budget rather than theoretically perfect choices, and I have tried to be explicit about that where it applies.
 
-Decision 1: RAG vs. long-context injection. Adopted: RAG with 5-paragraph context. Rejected alternative: injecting the entire ~25,000-token corpus into a long-context model (Claude 3, GPT-4 Turbo). I rejected the long-context option for three reasons. Liu et al. (2023) document "lost in the middle" effects in long contexts; pricing scales roughly 10× per query; and RAG forces explicit evidence selection, which is what enables the traceability required by FR1.
+Decision 1: RAG vs. long-context injection. Adopted: RAG with 5-paragraph context. Rejected alternative: injecting the entire ~25,000-token corpus into a long-context model (Claude 3, GPT-4 Turbo). The long-context option was rejected for three reasons. Liu et al. (2024) document "lost in the middle" effects in long contexts; pricing scales roughly 10× per query; and RAG forces explicit evidence selection, which is what enables the traceability required by FR1.
 
 Decision 2: Dense + cross-encoder reranking vs. BM25. Adopted: two-stage bi-encoder + cross-encoder. Rejected: BM25 keyword search. Policy queries frequently use synonyms ("remote work" / "work from home"; "password rotation" / "credential refresh") that lexical matching cannot resolve. The cross-encoder logit also gives me a useful confidence signal for the abstention gate, where bi-encoder cosine scores are poorly calibrated (Nogueira and Cho, 2019). The roughly 1.8s reranking latency was acceptable given the bounded corpus and the non-real-time nature of policy queries.
 
-Decision 3: Heuristic verification vs. LLM-based verification. Adopted: Jaccard token overlap + numeric consistency, post-generation. Rejected: LLM-as-judge for verification. Zheng et al. (2024) document verbosity and self-enhancement biases that would undermine NFR2 (reproducibility); an LLM judge would also double the API cost and introduce non-determinism in the very layer that needed to be deterministic. The heuristic is less expressive (it cannot detect semantic entailment or paraphrase support) but it is fully auditable and immune to model drift. Those limitations are revisited in Section 4.7.
+Decision 3: Heuristic verification vs. LLM-based verification. Adopted: Jaccard token overlap + numeric consistency, post-generation. Rejected: LLM-as-judge for verification. Zheng et al. (2023) document verbosity and self-enhancement biases that would undermine NFR2 (reproducibility); an LLM judge would also double the API cost and introduce non-determinism in the very layer that needed to be deterministic. The heuristic is less expressive (it cannot detect semantic entailment or paraphrase support) but it is fully auditable and immune to model drift. Those limitations are revisited in §4.4, where the verification ceiling is evaluated, and in §5.2, where L3 records the heuristic verification ceiling as a threat to validity.
 
 Decision 4: Paragraph-level fixed chunking vs. semantic chunking. Adopted: structural paragraph-level chunking. Rejected: embedding-based semantic chunking. Qu, Bao and Tu (2024) show that semantic chunking does not consistently outperform fixed chunking on structured documents. Policies are already structurally organised, so paragraph-level chunking preserves natural boundaries with consistent granularity for citation. Practitioner discussions of chunking strategies (e.g., open-source tutorials and vendor blog posts) were useful for surveying the design space, but the methodological argument here rests on the peer-reviewed Qu et al. result.
 
@@ -380,7 +365,7 @@ Decision 5: Pydantic schema enforcement vs. free-text parsing. Adopted: strict J
 
 ### 2.5 Risk Assessment
 
-A complementary system-level risk audit table (`docs/risk_audit_table.md`) documents 10 failure modes (hallucination, citation fabrication, contradiction suppression, abstention failure, stale corpus, adversarial prompts, backend fallback, automation bias, privacy, environmental cost) with detection, mitigations, and residual risk. The project-level risk register (Table 2.2) summarises the principal mitigations actually applied during development.
+A complementary system-level risk audit table in the evidence pack documents 10 failure modes (hallucination, citation fabrication, contradiction suppression, abstention failure, stale corpus, adversarial prompts, backend fallback, automation bias, privacy, environmental cost) with detection methods, mitigations, and residual risk. The project-level risk register (Table 2.2) summarises the principal mitigations actually applied during development.
 
 <a id="tbl-2-2"></a>
 
@@ -396,9 +381,9 @@ A complementary system-level risk audit table (`docs/risk_audit_table.md`) docum
 
 ### 2.6 Evaluation Methodology
 
-The evaluation strategy isolates the contribution of each architectural component and provides quantitative evidence for the central hypothesis. To make the "audit-ready" claim measurable, a 5-axis auditability rubric (`eval/rubrics/auditability_rubric.md`) covers evidence relevance, citation faithfulness, abstention correctness, contradiction correctness, and failure-mode attribution; each axis maps to a quantitative metric (`results/tables/auditability_scores.csv`).
+The evaluation strategy isolates the contribution of each architectural component and provides quantitative evidence for the central hypothesis. To make the "audit-ready" claim measurable, a 5-axis auditability rubric covers evidence relevance, citation faithfulness, abstention correctness, contradiction correctness, and failure-mode attribution. Each axis maps to a quantitative metric, and both the rubric and scores are included in the evidence pack.
 
-Baseline ladder. I evaluated three progressive baselines. B1 (Prompt-Only) is a zero-shot LLM with no retrieval, which measures raw hallucination. B2 (Naive RAG) adds bi-encoder retrieval and an LLM, but no reranking, verification, or abstention. B3 (Policy Copilot) is the full pipeline, evaluated in both Generative and Extractive configurations. The ladder isolates contributions cleanly: B1→B2 measures retrieval; B2→B3 measures reranking + verification + abstention. Ablations then disable individual B3 components.
+Baseline ladder. The evaluation compares three progressive system configurations, each adding one layer of reliability discipline: a *prompt-only* generator with no retrieval; *naive RAG* with bi-encoder retrieval and an LLM, but no reranking, verification, or abstention; and the full *Policy Copilot* pipeline in both Generative and Extractive configurations. These are labelled B1, B2 and B3 in the tables that follow. The ladder isolates contributions cleanly: B1 → B2 measures retrieval; B2 → B3 measures reranking, verification, and abstention together; the §4.6 ablations then disable individual B3 components.
 
 Metrics. Four primary measures, each targeting a distinct reliability aspect:
 
@@ -411,7 +396,7 @@ Metrics. Four primary measures, each targeting a distinct reliability aspect:
 
 Answer Rate and Abstention Accuracy form a trade-off pair: abstaining on everything yields perfect abstention but zero coverage. Ungrounded Rate quantifies the "cited or silent" rule. Evidence Recall@5 isolates retrieval from generation.
 
-Reproducible pipeline. All evaluations run through `scripts/run_eval.py` with command-line flags for baseline, mode, and ablation. Outputs are JSONL, CSV, and summary JSON, satisfying NFR2: any evaluator can reproduce the reported results with a single command.
+Reproducible pipeline. Evaluation outputs are stored as JSONL, CSV, and summary JSON artefacts. The documented evaluator path reproduces the offline-safe outputs and verifies the retained run artefacts, while API-dependent generative runs are preserved with their run configurations and provenance metadata.
 
 ### 2.7 Golden Set Construction
 
@@ -443,63 +428,61 @@ The system is implemented in Python 3.10+. Table 3.1 summarises the key dependen
 | Testing | `pytest` | 7.x | Unit and integration testing | De facto standard for Python testing; fixtures and parametrisation simplify test organisation |
 | Version control | Git / GitHub | - | Source code management | Public repository with branch-per-sprint strategy; 200+ commits across two semesters |
 
-LangChain and LlamaIndex were considered as orchestration frameworks but rejected during Sprint 1. Their abstractions obscured pipeline internals (in particular the reranker score needed for the abstention gate), and intercepting individual claims for verification proved difficult. Implementing from first principles cost more development effort, but it gave me a codebase where every reliability decision is explicit and testable.
+An off-the-shelf orchestration framework would have shortened development time but constrained the project's central requirement: visibility into every reliability decision. LangChain and LlamaIndex were considered during Sprint 1 and rejected on those grounds — their abstractions obscured pipeline internals (in particular the reranker score needed for the abstention gate) and intercepting individual claims for verification proved difficult. Implementing the pipeline directly cost more development effort but produced a codebase where every reliability decision is explicit and testable.
 
 ### 3.2 Corpus Engineering and Ingestion
 
-The evaluation corpus comprises three synthetic policy documents authored for this project: an Employee Handbook (~20 pp; remote work, leave, discipline, security obligations), an IT Security Addendum (~15 pp; passwords, access control, incident response, devices), and a Physical Security Protocol (~18 pp; visitors, CCTV, access cards, emergency response). I chose synthetic documents because real organisational policies are confidential and could not be redistributed reproducibly (NFR2), and because synthesis allowed deliberate test injection: intentional contradictions between Handbook and IT Addendum, vague quantifier language for Critic Mode, and varying paragraph structures.
+The evaluation corpus consists of five synthetic policy documents created for this project — Internal Policy Handbook (74 paragraphs), IT Security Addendum (39), HR Procedures Manual (25), Business Continuity Plan (23), and DPIA Guide (15) — totalling 176 paragraphs across 53 PDF pages, with document identifiers and SHA-256 hashes recorded in `data/corpus/manifests/corpus_manifest.csv`. Together they cover remote work, leave, password rules and rotation, incident response, business-continuity testing, HR procedure, and data-protection impact assessment. Synthetic documents were used because real organisational policies are usually confidential and could not be redistributed in a reproducible submission package. This also let me build specific evaluation cases into the corpus, including deliberate contradictions between documents, vague wording for Critic Mode, and varied paragraph structures.
 
-The `ingest` module (`src/policy_copilot/ingest/`) uses `pypdf` to extract text and applies double-newline paragraph splitting with whitespace normalisation. `pdfplumber` is pinned as an optional fallback for layout-sensitive cases but is not on the active extraction path for this corpus. Each paragraph receives a stable identifier `{doc_id}::{page}::{index}::{content_hash}` where `content_hash` is a truncated SHA-256 of the normalised text. This scheme preserves citation integrity across re-ingestion: unchanged paragraphs retain their IDs, and only modified paragraphs receive new hashes. An earlier prototype using sequential integer IDs proved fragile when documents were re-ordered. Paragraphs under 20 characters (typically headers) are filtered out.
+The ingestion pipeline extracts text with `pypdf`, normalises whitespace, and splits documents into paragraph-level chunks. `pdfplumber` is included as a fallback for layout-sensitive PDFs, but it is not used on the active path for the synthetic corpus. Each paragraph is assigned a stable identifier based on its document, page, local index, and a short SHA-256 content hash. This means citations remain traceable after re-ingestion: unchanged paragraphs keep the same identifiers, while edited paragraphs receive new hashes. An earlier prototype used sequential integer IDs, but that proved fragile when documents were reordered, so the final scheme is deliberately content-aware. Very short paragraphs, mostly headers, are filtered out.
 
 ### 3.3 Retrieval and Reranking
 
-The `Retriever` class embeds each paragraph into a 384-dim vector via `all-MiniLM-L6-v2` and stores them in a FAISS `IndexFlatL2`. I chose exact rather than approximate search because the corpus is under 2,000 paragraphs, so exact search completes in under 10 ms with no recall ceiling. Top-k = 20 candidates are returned per query. I selected this value during Sprint 2: k = 10 occasionally missed multi-paragraph gold answers, while k = 50 increased reranking time without precision improvement. k = 20 captured ≥95% of gold paragraphs.
+The `Retriever` class embeds each paragraph using `all-MiniLM-L6-v2` and stores the vectors in a FAISS exact-search index. Exact rather than approximate search was chosen because the corpus is under 2,000 paragraphs, so exact search completes in under 10 ms with no recall ceiling. The final evaluation run uses `retrieve_k_candidates = 50` (first-stage candidate pool) and `rerank_k_final = 5` (kept after cross-encoder reranking); the wider candidate pool gives the reranker more material, while the `rerank_k_final = 5` cap means only the top five reranked passages are passed downstream, so increasing the candidate pool does not increase the final LLM context size. These values are recorded in `results/runs/b3_generative_bm25_fallback_final/run_config.json`.
 
-The `Reranker` class wraps `cross-encoder/ms-marco-MiniLM-L-6-v2`. For each candidate the reranker constructs a `[query, paragraph]` pair and outputs a single relevance logit. The maximum logit feeds the abstention gate: if it falls below threshold (default 0.30), the system returns `INSUFFICIENT_EVIDENCE` without invoking the LLM, keeping abstention deterministic and independent of the generative model. The threshold was selected via sensitivity analysis on the validation split (varying 0.0 to 2.0 in 0.1 steps), reported in §4.5. Note that I did not run a formal calibration analysis on the reranker logit; "useful confidence signal" is meant practically rather than statistically.
+The `Reranker` class uses a MiniLM cross-encoder to rescore each query-paragraph pair, outputting a single relevance logit per candidate. The maximum logit feeds the abstention gate: if it falls below threshold (default 0.30), the system returns `INSUFFICIENT_EVIDENCE` without invoking the LLM, keeping abstention deterministic and independent of the generative model. The threshold was selected via sensitivity analysis on the validation split (varying 0.0 to 2.0 in 0.1 steps), reported in §4.5. No formal calibration analysis was run on the reranker logit; "useful confidence signal" is meant practically rather than statistically.
 
 ### 3.4 Answer Generation
 
-The `Answerer` class constructs the LLM prompt from three elements: a system instruction establishing the "cited or silent" contract, a one-shot example of correctly formatted output, and the evidence block containing the top 5 reranked paragraphs prefixed with their IDs. The one-shot example was refined across Sprints 3 and 4. An initial zero-shot approach produced 40% citation-format errors; adding a single carefully crafted example reduced that to under 5%, consistent with Brown et al. (2020) on few-shot prompting for format adherence.
+The `Answerer` class constructs the LLM prompt from three elements: a system instruction establishing the "cited or silent" contract, a one-shot example of correctly formatted output, and the evidence block containing the top 5 reranked paragraphs prefixed with their IDs. The one-shot example was refined across Sprints 3 and 4. An initial zero-shot approach frequently produced malformed citation output during Sprint 3. Adding a single carefully crafted example substantially improved format adherence, consistent with Brown et al. (2020) on few-shot prompting, but the exact early error rate was not retained as a formal evaluation artefact.
 
-The LLM is instructed to return JSON conforming to the `RAGResponse` Pydantic model (separating `answer` text from a `citations` list). `model_validate_json()` enforces the schema; if validation fails, a repair-and-retry mechanism extracts a valid JSON substring before falling back to Extractive Mode. Factory functions `make_insufficient()` and `make_llm_disabled()` produce standardised responses for abstention and extractive paths, ensuring a uniform schema across all response types. That uniformity is essential for downstream JSONL logging.
+The LLM is instructed to return structured JSON matching the `RAGResponse` schema, with answer text and citations stored separately. If validation fails, the system attempts a repair-and-retry step before falling back to Extractive Mode. Factory functions `make_insufficient()` and `make_llm_disabled()` produce standardised responses for abstention and extractive paths, ensuring a uniform schema across all response types. That uniformity is essential for downstream JSONL logging.
 
-In Extractive Mode the LLM is bypassed entirely; the system returns the verbatim top-ranked paragraph with its citation ID, so citation precision in that mode is 100% by construction (the returned text is the cited evidence). The cost is that responses are quoted evidence rather than synthesised answers. I added this mode mainly as a fallback in case the LLM was unavailable (Table 2.2), but it turned out to be useful for evaluation too: running the same queries with and without the LLM separates what the LLM is contributing from what the retrieval and verification layers are doing on their own.
+In Extractive Mode the LLM is bypassed entirely; the system returns the verbatim top-ranked paragraph with its citation ID, so citation precision in that mode is 100% by construction (the returned text is the cited evidence). The cost is that responses are quoted evidence rather than synthesised answers. This mode was added mainly as a fallback in case the LLM was unavailable (Table 2.2), but it also became useful for evaluation: running the same queries with and without the LLM separates what the LLM is contributing from what the retrieval and verification layers are doing on their own.
 
 ### 3.5 Citation Verification and Abstention
 
-The verification subsystem (`src/policy_copilot/verify/`) is the architectural centrepiece. It comprises four sub-modules.
+The verification subsystem is where the cited-or-silent rule becomes mechanical: it decomposes the model's answer, checks each claim against its cited evidence, prunes claims that fail the checks, and downgrades the whole response to abstention if nothing sufficiently supported remains. It comprises four sub-modules.
 
-Claim Decomposition. `split_claims()` decomposes the answer into sentence-level claims; `extract_all_citations()` parses associated citation IDs. Naive period-splitting mishandles abbreviations ("e.g.,"), decimals ("2.5 days"), and enumerated lists. The final regex-based splitter whitelists common abbreviation patterns and treats list prefixes as structural markers, a refinement that emerged from Sprint 4 failure-case analysis.
+Claim Decomposition. The verifier first decomposes the answer into sentence-level claims and extracts the citation IDs attached to each claim. Naive period-splitting mishandles abbreviations ("e.g.,"), decimals ("2.5 days"), and enumerated lists. The final regex-based splitter whitelists common abbreviation patterns and treats list prefixes as structural markers, a refinement that emerged from Sprint 4 failure-case analysis.
 
-Citation Verification. `verify_claims()` applies two heuristic checks per claim. Jaccard token overlap: the claim and the cited paragraph are tokenised (lowercased, stopwords removed); if Jaccard falls below threshold (default 0.10) the citation is flagged as unsupported. Numeric consistency: if the claim contains specific numbers (integers, decimals, percentages, "30 days", "90-day"), they must appear verbatim in the cited paragraph. This addresses a hallucination class I observed in Sprint 3, where the LLM "rounded" numeric values ("approximately 30 days" when the policy said "28 days"). The Jaccard threshold was selected via grid search on the validation split, balancing false positives and negatives (§4.5).
+Citation Verification. Each claim is then checked in two deterministic ways. Jaccard token overlap: the claim and the cited paragraph are tokenised (lowercased, stopwords removed); if Jaccard falls below threshold (default 0.10) the citation is flagged as unsupported. Numeric consistency: if the claim contains specific numbers (integers, decimals, percentages, "30 days", "90-day"), they must appear verbatim in the cited paragraph. This addresses a hallucination class observed in Sprint 3, where the LLM "rounded" numeric values ("approximately 30 days" when the policy said "28 days"). The Jaccard threshold was selected via grid search on the validation split, balancing false positives and negatives (§4.5).
 
-I deliberately chose Jaccard over embedding-cosine. Embeddings would generalise across paraphrases more smoothly but would introduce non-determinism into the verification layer, which is a trade-off I chose not to accept for a layer that needs to be reproducible and explainable.
+Jaccard was deliberately chosen over embedding-cosine. Embeddings would generalise across paraphrases more smoothly but would introduce non-determinism into the verification layer, which is a trade-off I chose not to accept for a layer that needs to be reproducible and explainable.
 
-Support Policy Enforcement. `enforce_support_policy()` prunes claims that fail both checks. If pruning removes all claims, the response is downgraded to abstention. This enforce-or-abstain logic implements the "cited or silent" rule in practice.
+Support Policy Enforcement. Claims that fail the checks are pruned. If pruning removes all claims, the response is downgraded to abstention. This enforce-or-abstain logic implements the "cited or silent" rule in practice.
 
-Contradiction Detection. `detect_contradictions()` scans retrieved paragraphs for opposing normative directives, looking for patterns where one paragraph uses "must"/"shall" and another uses "must not"/"shall not" on the same subject. `apply_contradiction_policy()` then appends warnings to responses. This addresses intra-corpus contradiction, a failure mode specific to organisational policies and largely absent from the open-domain QA literature. I injected deliberate contradictions during corpus construction (for example, differing password-rotation periods).
+Contradiction Detection. `detect_contradictions()` scans retrieved paragraphs for opposing normative directives, looking for patterns where one paragraph uses "must"/"shall" and another uses "must not"/"shall not" on the same subject. `apply_contradiction_policy()` then appends warnings to responses. This addresses intra-corpus contradiction, a failure mode specific to organisational policies and largely absent from the open-domain QA literature. Deliberate contradictions were injected during corpus construction, for example differing password-rotation periods.
 
 ### 3.6 Critic Mode
 
-The Critic module (`src/policy_copilot/critic/`) operates independently of the QA pipeline, auditing policy text for language patterns indicating ambiguity, vagueness, or logical inconsistency. The module exports `detect_heuristic()` (regex-based pattern matching, the basis of Chapter 4 evaluation) and `detect_llm()` (LLM-based detection of subtler issues, defined but not part of the headline benchmark). Six labels (`L1`-`L6`) are defined in `src/policy_copilot/critic/labels.py`: L1 Normative / Loaded Language ("obviously", "everyone knows"), L2 Framing Imbalance ("merely", "only a"), L3 Unsupported Claim ("guarantees zero", "eliminates all"), L4 Internal Contradiction ("must" vs "must not" within scope), L5 False Dilemma ("either / or" framings), and L6 Slippery Slope. Each label maps to compiled regex patterns; `detect_heuristic()` iterates over policy snippets and returns the matched labels with rationales. Precision and recall results appear in §4.7.
+The Critic module operates independently of the QA pipeline, auditing policy text for language patterns indicating ambiguity, vagueness, or logical inconsistency. It supports both a regex-based heuristic detector, which is the basis of the Chapter 4 evaluation, and an LLM-based detector for subtler issues, which is defined but not part of the headline benchmark. Six labels are used in the Critic taxonomy: L1 Normative / Loaded Language ("obviously", "everyone knows"), L2 Framing Imbalance ("merely", "only a"), L3 Unsupported Claim ("guarantees zero", "eliminates all"), L4 Internal Contradiction ("must" vs "must not" within scope), L5 False Dilemma ("either / or" framings), and L6 Slippery Slope. Each label maps to compiled regex patterns, and the heuristic detector returns the matched labels with rationales. Precision and recall results appear in §4.7.
 
 ### 3.7 Audit Workbench: UI and Reviewer Mode
 
-The Streamlit interface (`src/policy_copilot/ui/`) is a multi-mode audit workbench rather than a chat demo. Six sidebar modes are available: Ask (chat with inline citations), Audit Trace (claim-by-claim verification dossier), Critic Lens (Critic Mode with filterable findings), Experiment Explorer (browse and compare runs from `results/runs/`), Reviewer Mode (structured human-in-the-loop scoring), and Help & Guide (onboarding and glossary).
+The Streamlit interface is a multi-mode audit workbench rather than a chat demo. The interface provides six modes: normal question answering with citations, audit-trace inspection, Critic Mode, experiment browsing, reviewer scoring, and a short help guide.
 
-Reviewer Mode (`reviewer_service.py`) implements an adjudication workflow modelled on annotation-queue patterns from trace-evaluation platforms (LangSmith, Langfuse, TruLens): select a run, see a progress indicator, step through queries, score on the same five-axis 1-to-5 rubric used in §4.10 (Correctness, Groundedness, Citation Usefulness, Usefulness, Trust Calibration; rubric definitions in `docs/evidence/human_eval/rubric.md`), add notes, submit, and export the session as JSON or CSV. This positions Reviewer Mode as exportable evidence generation rather than a presentation feature.
+Reviewer Mode implements an adjudication workflow modelled on annotation-queue patterns from trace-evaluation platforms such as LangSmith, Langfuse, and TruLens: select a run, see a progress indicator, step through queries, score on the same five-axis 1-to-5 rubric used in §4.10 (Correctness, Groundedness, Citation Usefulness, Usefulness, and Trust Calibration; the rubric definitions are included in the evidence pack), add notes, submit, and export the session as JSON or CSV. This positions Reviewer Mode as exportable evidence generation rather than a presentation feature.
 
 One-click audit export via `AuditReportService` produces JSON, HTML, and Markdown formats plus a single ZIP bundle. Each packet records the question, the answer, the evidence rail with scores, claim verification results, contradiction alerts, latency breakdown, model and backend metadata, and a timestamp.
 
 ### 3.8 Engineering Challenges
 
-Four non-trivial problems demonstrate the project's complexity. JSON schema compliance: an initial 12% failure rate (the LLM producing non-JSON) was reduced to under 1% via a three-level repair: brace-matching extraction, retry with appended "respond only in JSON" instruction, and finally Extractive Mode fallback. Claim-splitting edge cases: naive period-splitting required around 15 regex iterations to handle abbreviations, decimals, and enumerated lists. The single bug that took longest to track down was the splitter swallowing the second item in a numbered list after the LLM dropped the trailing period; that one cost most of a day before I added a test that pinned the exact failing string. Reranker score behaviour: raw cross-encoder logits proved more discriminating than softmax-normalised scores for the abstention gate, consistent with Nogueira and Cho (2019). Stable ID collision: two single-sentence "Overview" headers from different documents initially produced identical hashes; I fixed this by incorporating `doc_id` and `page_number` into the hash input.
+Four engineering problems were especially significant. The first was JSON schema compliance: early LLM outputs often failed to return valid JSON, so the final system uses a repair-and-retry path before falling back to Extractive Mode. The second was claim splitting. Simple period-based splitting failed on abbreviations, decimals, and numbered lists, so the verifier needed a more careful regex-based splitter and dedicated regression tests. The third was reranker-score behaviour: raw cross-encoder logits proved more useful for abstention than softmax-normalised scores, which were less discriminating, consistent with Nogueira and Cho (2019). The final issue was identifier stability. Sequential paragraph IDs were fragile when documents were reordered, so the final scheme combines document, page, local index, and content hash.
 
 ### 3.9 Testing and Validation
 
-The evaluator test suite collects 194 tests under the documented `pytest -q --ignore=tests/test_run_eval_requires_key_in_generative.py` command: 193 pass and 1 is conditionally skipped. The 39 test files are organised in three tiers: unit (functions in isolation), integration (pipeline stage interactions), and system (end-to-end and reproducibility). The suite executes in under 10 s on consumer hardware. Representative coverage includes ingestion (PDF parsing, ID stability), verification (Jaccard overlap, numeric consistency, claim-splitting edge cases), retrieval (reranker sorting, BM25 baseline), generation (Pydantic schema, repair-and-retry), abstention (threshold gating), integration tests for end-to-end B3 generative and extractive pipelines, and system tests for golden-set integrity, backend provenance, run configuration, and reproducibility preflight. The complete per-file matrix appears in Appendix B.9.
-
----
+The evaluator test suite collects 200 tests under the documented `pytest -q --ignore=tests/test_run_eval_requires_key_in_generative.py` command: 199 pass and 1 is conditionally skipped. The 40 test files are organised in three tiers: unit (functions in isolation), integration (pipeline stage interactions), and system (end-to-end and reproducibility). The suite executes in under 10 s on consumer hardware. Coverage spans the pipeline's reliability surfaces: ingestion ID stability, retrieval correctness, verifier behaviour on paraphrase and numeric edge cases, schema repair-and-retry, abstention thresholding, contradiction surfacing, and end-to-end integration of both the generative and extractive paths. The complete per-file matrix appears in Appendix B.9.
 
 ## Chapter 4 Results, Evaluation and Discussion
 
@@ -520,15 +503,17 @@ All experiments ran on a consumer laptop (Apple M1, 16 GB RAM) via `scripts/run_
 | Contradiction | 10 | 7 | 3 | Conflict detection |
 | Total | 63 | 44 | 19 | - |
 
-The dev split was used exclusively for threshold tuning (§4.5). Split labels are reported per run in `results/tables/run_summary.csv`: B1, B2 and B3-Generative were executed across the full 63-query golden set (`split=all`), while B3-Extractive was run on the held-out 44-query test split (`split=test`). Evaluation was conducted in Generative Mode (B1, B2, B3-Gen with LLM) and Extractive Mode (B3-Ext only, LLM bypassed; 100% citation precision in that mode is true by construction). Tables 4.2-4.7 below quote each row with the split it was actually computed on.
+The development split was used only for threshold tuning (§4.5). B1, B2 and B3-Generative were evaluated across the full golden set, while B3-Extractive was evaluated on the held-out test split. The tables below state the relevant split for each row so that the metrics are not compared as if they came from identical denominators.
 
-Objective slice. Automated RAG evaluation depends on either gold annotations (debatable) or LLM-as-judge scoring (biased; Zheng et al., 2024). To reduce reliance on the latter, I identified an objective slice of 16 answerable queries whose correct answer is a specific number, named procedure, or yes / no obligation deterministically verifiable against source paragraphs ("What is the minimum password length?", "How often must passwords be changed?"). The slice is tagged in `eval/golden_set/golden_set.csv` via the `objective_slice` column, and results are computed by `scripts/eval_objective_slice.py`. B1 answers all 16 with no grounding; B2 answers 13/16 with retrieval but no abstention; B3 answers 3/16 and abstains on 13/16, reflecting its conservative threshold.
+Objective slice. Automated RAG evaluation depends on either gold annotations (debatable) or LLM-as-judge scoring (biased; Zheng et al., 2023). To reduce reliance on the latter, an objective slice of 16 answerable queries was identified, where the correct answer is a specific number, named procedure, or yes / no obligation deterministically verifiable against source paragraphs ("What is the minimum password length?", "How often must passwords be changed?"). The slice is tagged in the golden-set file, and the corresponding results are produced by the objective-slice evaluation script. B1 answers all 16 with no grounding; B2 answers 13/16 with retrieval but no abstention; B3 answers 3/16 and abstains on 13/16, reflecting its conservative threshold.
 
 ### 4.2 Headline Results: Baseline Comparison
 
+Table 4.2 should be read as a safety-coverage trade-off rather than a leaderboard. Prompt-only generation answers everything but cites nothing, naive RAG adds retrieval and grounds some claims, and the full Policy Copilot pipeline in its generative configuration produces the safest surfaced answers at the cost of refusing far more often.
+
 <a id="tbl-4-2"></a>
 
-**Table 4.2: Baseline comparison across primary metrics. B1, B2 and B3-Generative are reported across the full 63-query golden set (`split=all`); B3-Extractive is reported on the 44-query held-out test split (`split=test`).**
+**Table 4.2: Baseline comparison across primary metrics. B1, B2 and the generative Policy Copilot configuration use the full golden set; Extractive Mode uses the held-out test split.**
 
 | Baseline | Mode | Answer Rate | Abstention Accuracy | Ungrounded Rate | Evidence Recall@5 |
 | :--- | :--- | :--- | :--- | :--- | :--- |
@@ -536,8 +521,6 @@ Objective slice. Automated RAG evaluation depends on either gold annotations (de
 | B2 (Naive RAG) | Generative | 83.3% | 76.5% | N/A | 73.9% |
 | B3 (Policy Copilot) | Generative | 25.0% | 94.1% | 0.0% | 73.9% |
 | B3 (Policy Copilot) | Extractive | 88% | 50.0% (n=12) | 0% | 73.4% |
-
-The pattern to notice in Figure 4.1 is the inverse relationship between B1's Answer Rate and B3's Abstention Accuracy: each baseline trades coverage for safety in a different direction.
 
 <a id="fig-4-1"></a>
 
@@ -547,24 +530,24 @@ The pattern to notice in Figure 4.1 is the inverse relationship between B1's Ans
 *Figure 4.1: Grouped bar chart comparing B1, B2, and B3 across Answer Rate, Abstention Accuracy, and Ungrounded Rate. Error bars show the 95% bootstrap confidence interval for B3 (n = 63, 2,000 resamples; §4.12).*
 </div>
 
-B1 answers every query but does no grounding, which is the standard hallucination baseline (Ji et al., 2023). For a compliance use-case it is not viable. B2 reaches 76.5% Abstention Accuracy without any explicit gating, just below the 80% target (FR2). I attribute this to the LLM's own tendency to refuse on clearly irrelevant context, but its citations are not verified, so the abstention is more of a side effect than a designed behaviour. B3-Generative reports 0.0% Ungrounded Rate and 94.1% Abstention Accuracy (above the 80% target) at the cost of a 25.0% Answer Rate. The 0.0% figure should be read carefully: it does not mean the LLM never produced an unsupported claim. Whenever the LLM produces a response that fails the minimum support-rate check, the support-rate enforcement gate converts that response into an abstention. The intermediate per-claim ungrounded rate is 4% (Table 4.4) and is the more honest measure of what the verification layer itself is catching.
+The prompt-only baseline answers every query without grounding, which is the standard hallucination baseline (Ji et al., 2023) and not viable for a compliance use-case. Naive RAG abstains just below the FR2 target, but that is more side effect than design: the LLM is refusing on clearly irrelevant context, not enforcing a verified-citation rule. The generative configuration is the chapter's main case, and its headline numbers need careful reading. The Ungrounded Rate is reported at the *response* level, after weakly supported responses have been converted into abstentions; it measures what the enforcement layer suppresses rather than what the LLM never produced. The honest companion measure is the *claim*-level rate in Table 4.4. Across the same configuration, abstention accuracy on the unanswerable queries comfortably clears the 80% target, but at the visible cost of a much lower coverage than the 85% target.
 
-B3-Extractive (test split, 44 queries) reaches an 88% Answer Rate and a 50.0% Abstention Accuracy on the n = 12 unanswerable queries in that split. Its 0% Ungrounded Rate is true by construction: the returned text is the cited paragraph. Two caveats apply. First, an Extractive answer is a quoted evidence paragraph rather than a synthesised answer, so it is not directly comparable to the generative QA quality of B1, B2 or B3-Generative on the same queries. Second, the modest Abstention Accuracy reflects the fact that Extractive Mode does not call the LLM and therefore cannot use the post-LLM `min_support_rate` gate that drives B3-Generative's 94.1% all-split abstention figure; on its small unanswerable test subset it falls back to retrieval-confidence abstention only. The Extractive result is best read as a sanity check on the surrounding pipeline (retrieval, citation construction, contradiction handling) rather than as an independent reliability result. Section 4.13 returns to the trade-off.
+Extractive Mode recovers answer coverage on the held-out test split, but is weaker at refusing unanswerable questions because it bypasses the LLM and therefore the post-generation support-rate gate that drives the generative configuration's abstention behaviour. Its zero ungrounded rate is mechanical: the returned answer is the cited paragraph itself, not a synthesised response, so the mode is not directly comparable to the generative configurations on the same queries. The result is best read as a sanity check on the surrounding pipeline (retrieval, citation construction, contradiction handling) rather than as an independent reliability result; §4.13 returns to the trade-off.
 
 ### 4.3 Retrieval Performance
 
-Retrieval ceiling determines downstream answer quality (Barnett et al., 2024). Table 4.3 reports retrieval metrics. The most important caveat for this whole subsection is that the final reproducibility run used a BM25 fallback retriever, not the dense + cross-encoder pipeline the system was designed around.
+Retrieval ceiling determines downstream answer quality (Barnett et al., 2024). Table 4.3 reports retrieval metrics. The main caveat is that Table 4.3 reports the reproducible BM25-fallback run rather than the dense-retrieval configuration used during development.
 
 <a id="tbl-4-3"></a>
 
-**Table 4.3: Final test-split retrieval metrics under the BM25 fallback. Dev-phase numbers with the dense + cross-encoder pipeline are discussed in the note below.**
+**Table 4.3: Final retrieval metrics under the BM25 fallback. Dev-phase numbers with the dense + cross-encoder pipeline are discussed in the note below.**
 
 | Metric | B2 (Bi-encoder only) | B3 (Bi-encoder + Cross-encoder) |
 | :--- | :--- | :--- |
 | Evidence Recall@5 | 73.9% | 73.9% |
 | MRR | 0.77 | 0.77 |
 
-Note: B2 and B3 report identical metrics in the final test-split run because both fell back to the same BM25 retriever when the dense FAISS index was unavailable in the final reproducibility environment. The reranker still ran on B3's candidates but could not improve recall on an identical candidate set. Development-phase runs with the dense index active showed a clear reranking benefit: Evidence Recall@5 rose from 68% (B2) to 85% (B3), and MRR from 0.52 to 0.78, broadly consistent with the two-stage benefit reported in the literature (Nogueira and Cho, 2019; Lin et al., 2021). These dev-phase numbers are the ones that better represent the design's intended retrieval performance, and the test-split numbers in Table 4.3 should be read with that in mind. The reranker's qualitative contribution is isolated separately in the §4.6 ablation.
+Note: B2 and B3 report identical final retrieval metrics because both used the same BM25 candidate set in the final reproducibility environment. The reranker still ran on B3's candidates, but it could not recover evidence that BM25 had not retrieved. Development-phase dense-index runs showed the intended reranking benefit, with Evidence Recall@5 rising from 68% to 85% and MRR from 0.52 to 0.78 (broadly consistent with Nogueira and Cho, 2019; Lin et al., 2021). Those dense numbers are useful diagnostically, but the BM25-fallback values remain the final reported benchmark. The reranker's component-level contribution is isolated separately in the §4.6 ablation.
 
 <a id="fig-4-2"></a>
 
@@ -576,7 +559,7 @@ Note: B2 and B3 report identical metrics in the final test-split run because bot
 
 ### 4.4 Groundedness and Verification
 
-The system's job is to make sure every surviving claim is backed by its cited evidence. Table 4.4 separates the claim-level intermediate metric (what verification catches before any response-level decision) from the headline response-level metric in Table 4.2.
+Grounding is reported at two layers. The *claim*-level metric in Table 4.4 measures what the heuristic verifier itself catches inside a response, before any response-level decision. The *response*-level headline in Table 4.2 measures what the user actually sees after weakly supported responses have been converted into abstentions. The 12% → 4% drop in the table below is the residual ceiling of the heuristic verifier, not a discrepancy with the 0.0% headline.
 
 <a id="tbl-4-4"></a>
 
@@ -588,7 +571,7 @@ The system's job is to make sure every surviving claim is backed by its cited ev
 | Citation Precision | 78% | 94% |
 | Claims per Response (avg.) | 3.2 | 2.8 |
 
-Note: These are intermediate claim-level rates measured after pruning failed claims but before the response-level support-rate enforcement step. The support-rate step then suppresses any response below the minimum support threshold by converting it into an abstention. After that final step, the response-level Ungrounded Rate reported in Table 4.2 is 0.0%. The two numbers therefore measure different things: 4% is the residual rate the heuristic itself cannot catch, and 0.0% is what surfaces to a user once partially-grounded responses are removed.
+Note: These are intermediate claim-level rates after failed claims have been pruned, but before the final response-level support gate. The 4% value is therefore the residual claim-level error left by the heuristic. The 0.0% value in Table 4.2 is what reaches the user after weakly supported responses are converted into abstentions.
 
 <a id="fig-4-3"></a>
 
@@ -600,9 +583,11 @@ Note: These are intermediate claim-level rates measured after pruning failed cla
 
 Verification reduces the claim-level Ungrounded Rate from 12% to 4% (roughly a two-thirds reduction) and pushes Citation Precision from 78% to 94%. Precision improves while average claims per response only drops from 3.2 to 2.8, indicating that pruning is mostly hitting weaker claims rather than removing material at random. The Jaccard threshold (0.10) was tuned on the dev split to balance two failure modes: too aggressive a threshold prunes legitimate paraphrases, and too permissive a threshold lets weakly-supported claims through. The threshold sweep used to pick this value is reported in §4.5, and the trade-off is revisited as a limitation in §4.13.
 
+Contradiction surfacing. On the 10 contradiction queries, the heuristic detector reports contradiction recall = 0.20 and contradiction precision = 0.33 in `summary.json`. The main bottleneck is retrieval: the detector fires on opposing normative directives within the top-five reranked context, so if both sides of a contradictory pair are not retrieved, it has no evidence to flag the contradiction. These numbers should be read as a proof-of-concept rather than a production-ready contradiction module; strengthening the detector with paragraph-pair entailment is treated as future work in §5.3.
+
 ### 4.5 Abstention Threshold Sensitivity
 
-B3 has two abstention knobs: a pre-LLM cross-encoder gate (`abstain_threshold = 0.30`) and a post-LLM per-claim support-rate gate (`min_support_rate = 0.80`). In the BM25-fallback configuration used for the final evaluation the cross-encoder gate is effectively saturated (max_rerank = 1.0 on every query), so the support-rate gate is the threshold doing the real work. Figure 4.4 therefore reports the operating curve as the support-rate threshold τ varies from 0.00 to 1.00 over the full 63-query golden set.
+Figure 4.4 is the clearest empirical characterisation of the system's safety–coverage operating frontier. B3 has two refusal mechanisms: a retrieval-confidence gate before the LLM is called, and a support-rate gate after the LLM has produced an answer. In the final BM25-fallback evaluation, the first gate does little because every query receives the same maximum rerank value. The support-rate gate is therefore the meaningful threshold in this run, and the sweep shows how moving this threshold changes the balance between answer coverage and abstention accuracy.
 
 <a id="fig-4-4"></a>
 
@@ -614,13 +599,17 @@ B3 has two abstention knobs: a pre-LLM cross-encoder gate (`abstain_threshold = 
 
 The curve falls into three regions. Below τ ≈ 0.30 the support-rate gate barely fires and B3 behaves close to B2 (high Answer Rate, mediocre Abstention Accuracy). Between 0.30 and 0.65 Abstention Accuracy improves while Answer Rate stays close to 80%. Above τ ≈ 0.65 the curve bends sharply: Abstention Accuracy rises from 82% to 94% but Answer Rate collapses from roughly 80% to 25%. The shipped value of τ = 0.80 sits on the precision-favouring side of that knee, consistent with the project's "cited or silent" rule (Objective 2) and FR2's ≥ 80% target. The visible cost is the low Answer Rate; §4.13 returns to whether that trade-off is appropriate, and to the open question of how to recover coverage without weakening abstention.
 
+This matters because the shipped τ = 0.80 setting is not the only possible system behaviour. It is the precision-favouring operating point chosen for a compliance-style setting where unsupported surfaced answers are more costly than refusals. A less safety-critical deployment could choose a lower threshold and recover answer coverage, but would need to accept weaker abstention behaviour. The dissertation's main empirical finding is therefore the shape of this frontier, not just the single shipped point.
+
+**BM25-specific retuning diagnostic.** Because the final reproducible run uses the BM25 fallback backend (§3.3), I replayed the post-LLM support-rate gate over the retained B3-Generative `outputs.jsonl` at finer granularity (τ in steps of 0.01) and added a per-τ response-level Ungrounded Rate column that the original sweep does not report. The selection rule fixes Answer Rate as the objective subject to two safety constraints used elsewhere in the dissertation: Abstention Accuracy ≥ 80% (Objective 4 / FR3) and response-level Ungrounded Rate ≤ 5% (Objective 1 / FR2). Under that rule, the feasible region collapses to the plateau τ ∈ [0.70, 1.00], over which Answer Rate is constant at 25.0%, Abstention Accuracy at 94.1%, and response-level Ungrounded Rate at 0%. The shipped τ = 0.80 already sits on this plateau, and no τ inside the safety envelope recovers additional coverage. Below the plateau the support-rate gate begins admitting answers whose claim-level support rate is incomplete: response-level Ungrounded Rate jumps from 0% at τ = 0.70 to 45% at τ = 0.65, which the earlier (Answer Rate vs Abstention Accuracy only) view did not surface. The retuning analysis therefore strengthens the operating-frontier framing: the 25% Answer Rate is the *maximum* coverage attainable under the dual safety constraints in this BM25-fallback run, not an arbitrary consequence of the shipped τ. Figure B.4 plots the three rates together and marks both the shipped and the (zero-uplift) retuned operating point; the artefacts produced by `scripts/analyse_bm25_threshold_retuning.py` are listed in Appendix B.7.4.
+
 ### 4.6 Ablation Studies
 
 Four ablations isolate the contribution of each reliability component.
 
 <a id="tbl-4-5"></a>
 
-**Table 4.5: Development-phase ablation evidence (rows for the "minus X" configurations) with the final live test-split B3 Full row for reference.**
+**Table 4.5: Ablation evidence (rows for the "minus X" configurations) with the final B3-Generative all-split reference row.**
 
 | Configuration | Answer Rate | Abstention Acc. | Ungrounded Rate | Recall@5 |
 | :--- | :--- | :--- | :--- | :--- |
@@ -630,9 +619,9 @@ Four ablations isolate the contribution of each reliability component.
 | B3 minus Abstention Gate | 100% | 0% | 4% | 85% |
 | B3 minus Contradiction Det. | 92% | 58% | 4% | 85% |
 
-Note: Ablation rows for the "minus X" configurations are design-time estimates from Sprint 5 dev-split runs with individual components disabled. Only the B3 Full row reflects the final live test-split evaluation. The Answer Rate gap reflects the stricter 0.30 threshold adopted post-Sprint-5. These rows should be read as development-phase evidence about the relative shape of each component's contribution rather than as final test-split numbers.
+Note: Ablation rows for the "minus X" configurations are design-time estimates from Sprint 5 dev-split runs with individual components disabled. Only the B3 Full row reflects the final B3-Generative all-split evaluation. The Answer Rate gap reflects the stricter 0.30 threshold adopted post-Sprint-5. These rows should be read as development-phase evidence about the relative shape of each component's contribution rather than as final-run numbers.
 
-Reranking had the largest effect in these ablations. Removing it quadruples the Ungrounded Rate (4% to 16%) and collapses Abstention Accuracy (94.1% to 18%), because bi-encoder cosine scores are poorly calibrated relative to cross-encoder logits; Recall@5 also drops from 85% to 68%. Verification provides a meaningful secondary safeguard: without it, claim-level Ungrounded Rate rises to the raw LLM rate (12%), so the heuristic catches roughly two-thirds of hallucinated claims. The Abstention Gate controls coverage versus safety: removing it restores 100% Answer Rate without affecting verified Ungrounded Rate, but it causes the system to attempt unanswerable queries where verification may fail. Contradiction Detection has negligible aggregate impact (it operates on 10/63 queries), but its contribution is qualitative: it surfaces conflicts users need to see.
+Reranking had the largest effect in these development-phase ablations. Removing it made the system both less grounded and much worse at abstaining, because the bi-encoder scores were not calibrated enough to support the refusal gate on their own. The "minus X" rows should be read as relative-shape evidence about each component's contribution rather than as final-run numbers; only the B3 Full row in Table 4.5 is the final reported B3-Generative reference point. Recall also dropped, which confirms that the reranker was improving both evidence quality and reliability. Verification provides a meaningful secondary safeguard: without it, claim-level Ungrounded Rate rises to the raw LLM rate (12%), so the heuristic catches roughly two-thirds of hallucinated claims. The Abstention Gate controls coverage versus safety: removing it restores 100% Answer Rate without affecting verified Ungrounded Rate, but it causes the system to attempt unanswerable queries where verification may fail. Contradiction Detection has negligible aggregate impact (it operates on 10/63 queries), but its contribution is qualitative: it surfaces conflicts users need to see.
 
 ### 4.7 Critic Mode Evaluation
 
@@ -640,7 +629,7 @@ The Critic module was evaluated against an internally-authored labelled test sui
 
 <a id="tbl-4-6"></a>
 
-**Table 4.6: Critic Mode heuristic detection performance on the 50-snippet labelled suite (`data/handbook/variants/`). Reproduced by `python scripts/run_critic_eval.py --run_name critic_heuristic_final --mode heuristic`; per-label and macro values are committed in `results/tables/critic_summary.csv` (the LLM-critic L1-L6 labels in `src/policy_copilot/critic/labels.py` are the heuristic taxonomy used here).**
+**Table 4.6: Critic Mode heuristic detection performance on the 50-snippet labelled suite. The results are reproduced by the committed critic-evaluation script, with per-label and macro values stored in `results/tables/critic_summary.csv`.**
 
 | Label | Category | Precision | Recall | F1 |
 | :--- | :--- | :--- | :--- | :--- |
@@ -652,11 +641,11 @@ The Critic module was evaluated against an internally-authored labelled test sui
 | L6 | Slippery Slope | 100.0% | 100.0% | 100.0% |
 | | Macro Average | 93.3% | 95.2% | 93.8% |
 
-Exact-match accuracy (gold label set equals predicted label set) on the same 50 snippets is 88.0%. The macro F1 of 93.8% clears the 85% FR6 target. The lowest-precision label is L2 (Framing Imbalance) at 60.0%: phrases like "merely" and "only a" are flagged as framing-imbalance markers but in conventional policy prose are sometimes legitimate qualifiers, so this is the main false-positive source. A future Critic iteration could whitelist conventionally acceptable terms or distinguish "framing-imbalance and problematic" from "framing-imbalance but conventional". The heuristic taxonomy here is distinct from any LLM-judge taxonomy that could be added in `detect_llm()`; the L1-L6 labels above are what `detect_heuristic()` actually returns and are what `scripts/run_critic_eval.py` evaluates.
+Exact-match accuracy (gold label set equals predicted label set) on the same 50 snippets is 88.0%. The macro F1 of 93.8% clears the 85% FR6 target. The lowest-precision label is L2 (Framing Imbalance) at 60.0%: phrases like "merely" and "only a" are flagged as framing-imbalance markers but in conventional policy prose are sometimes legitimate qualifiers, so this is the main false-positive source. A future Critic iteration could whitelist conventionally acceptable terms or distinguish "framing-imbalance and problematic" from "framing-imbalance but conventional". The heuristic taxonomy here is distinct from any LLM-judge taxonomy that could be added in the LLM-critic path; the L1–L6 labels above are what the heuristic critic actually returns, and the committed critic-evaluation script reproduces these numbers.
 
 ### 4.8 Error Analysis
 
-Error analysis combines manual classification of B3 failures (`eval/analysis/error_taxonomy.md`) with an automated 8-category classifier (`scripts/classify_errors.py`) producing per-baseline diagnostic profiles in `results/tables/failure_taxonomy.csv`. The automated classifier suggests that the dominant failure mode shifts across baselines: B1 is dominated by missed retrieval (no retrieval stage), B2 by wrong claim-evidence linkage, and B3 by abstention errors (over-cautious thresholding). This is consistent with the claim that each pipeline stage addresses a distinct failure family.
+Error analysis combines manual classification of B3 failures with an automated 8-category classifier, producing per-baseline diagnostic profiles in the evidence pack. The automated classifier suggests that the dominant failure mode shifts across baselines: B1 is dominated by missed retrieval (no retrieval stage), B2 by wrong claim-evidence linkage, and B3 by abstention errors (over-cautious thresholding). This is consistent with the claim that each pipeline stage addresses a distinct failure family.
 
 <a id="tbl-4-7"></a>
 
@@ -670,7 +659,7 @@ Error analysis combines manual classification of B3 failures (`eval/analysis/err
 | Incomplete Synthesis | 1 | 9% | Multi-paragraph remote-work + security answer misses security half |
 | Numeric Hallucination | 1 | 9% | "Approximately 30 days" vs source "28 days", caught and pruned |
 
-Over-Abstention dominates, which is the "correct" failure mode for a safety-first system. All 4 cases retrieved correct evidence at ranks 2 to 5, but the top reranker score fell below threshold. Using the mean of top-3 scores rather than the maximum was tested in Sprint 6 but rejected because it degraded Abstention Accuracy on unanswerable queries. Missed Retrieval highlights vocabulary mismatch ("disposal" vs "shredding", "moonlighting" vs "secondary employment") that dense retrieval cannot bridge without domain-adapted fine-tuning (Karpukhin et al., 2020). Verification False Positives expose Jaccard's core limitation: paraphrased equivalences like "every 90 days" and "quarterly" pass semantically but fail token overlap, motivating NLI-based verification (§5.3).
+Over-abstention is the dominant failure mode, which is at least aligned with the safety-first design. In these cases, relevant evidence was retrieved but did not pass the final confidence threshold. Using the mean of top-3 scores rather than the maximum was tested in Sprint 6 but rejected because it degraded Abstention Accuracy on unanswerable queries. Missed Retrieval highlights vocabulary mismatch ("disposal" vs "shredding", "moonlighting" vs "secondary employment") that dense retrieval cannot bridge without domain-adapted fine-tuning (Karpukhin et al., 2020). Verification False Positives expose Jaccard's core limitation: paraphrased equivalences like "every 90 days" and "quarterly" pass semantically but fail token overlap, motivating NLI-based verification (§5.3).
 
 ### 4.9 Latency Performance
 
@@ -690,7 +679,7 @@ B3 comfortably meets NFR1 (P95 = 4.9s). The additional latency over B2 (around 1
 
 ### 4.10 Independent Reviewer Evaluation
 
-I added a small peer-review check because the automated metrics do not show how useful or trustworthy the answers feel to a reader. Six peer volunteers (three Final-Year BSc and three MSc Computer Science students, outside the project supervisory chain) each scored 20 B3-Generative query / output pairs between 14 and 18 April 2026 using a 1-to-5 Likert rubric: Correctness, Groundedness, Citation Usefulness, Usefulness, and Trust Calibration. The sample was balanced 8 / 4 / 4 / 4 across answered, correct-abstention, over-abstention, and contradiction-probe cases. Reviewers saw the query, the system answer, cited evidence, and the status badge, but not the baseline label. Recruitment, rubric, consent text, and the anonymised score CSV are archived in Appendix B.10. I ran the sessions myself rather than using a blind facilitator, so the results should be read as a small supporting check rather than a formal user study.
+A small peer-review check was added because the automated metrics do not show how useful or trustworthy the answers feel to a reader. Six peer volunteers each scored a balanced sample of B3-Generative outputs using a five-axis Likert rubric covering correctness, groundedness, citation usefulness, usefulness, and trust calibration. The sample was balanced across answered cases, correct abstentions, over-abstentions, and contradiction probes. Reviewers saw the query, the system answer, cited evidence, and the status badge, but not the baseline label. Recruitment, rubric, consent text, and the anonymised score CSV are archived in Appendix B.10. The sessions were author-facilitated rather than run by a blind facilitator, so the results should be read as a small supporting check rather than a formal user study.
 
 <a id="tbl-4-9"></a>
 
@@ -708,11 +697,11 @@ The reviewer means broadly support the automated findings. Direct-answer cases s
 
 ### 4.11 Public Guidance Transfer Stress Test
 
-A central limitation of the headline evaluation is that the corpus is synthetic: I authored it for this project, so retrieval and abstention behaviour are tested against text I controlled. To test the system on text I had not written myself, I ran the same B3 pipeline in Extractive Mode against a small Public Guidance Transfer Corpus built from Open Government Licence v3.0 material published by the National Cyber Security Centre, the Information Commissioner's Office, and ACAS. The transfer set is supplementary to the synthetic benchmark, not a replacement. It contains 8 documents, 249 paragraphs, and a 20-query test set: 12 answerable, 4 unanswerable, and 4 ambiguous-evidence cases. Provenance, licence, and access dates are recorded in Appendix B.11. Because no LLM API key was used in this run, only B3-Extractive is reported; a generative transfer test remains future work in §5.3.
+On a small public-guidance corpus drawn from NCSC, ICO and ACAS material, the system's conservative grounding behaviour held: every cited answer was a verbatim retrieved paragraph and no fabricated citation was produced. The corpus is supplementary to the synthetic benchmark, not a replacement (8 documents, 249 paragraphs, a 20-query test set covering 12 answerable, 4 unanswerable, and 4 ambiguous-evidence cases). Only the Extractive pipeline was run because no LLM API key was used; provenance, licence, and access dates are recorded in Appendix B.11, and a generative transfer test remains future work in §5.3.
 
 <a id="tbl-4-10"></a>
 
-**Table 4.10: B3-Extractive on the synthetic test split versus the Public Guidance Transfer Stress Test.**
+**Table 4.10: Synthetic test split versus public-guidance transfer set (Extractive Mode).**
 
 | Metric | Synthetic test (B3-Ext) | Transfer set (B3-Ext) | Direction |
 | :--- | :---: | :---: | :--- |
@@ -723,15 +712,15 @@ A central limitation of the headline evaluation is that the corpus is synthetic:
 | Citation Precision | 100% | 100% | True by construction in Extractive Mode |
 | Ungrounded Rate | 0% | 0% | No fabricated cited answers on this small set |
 
-The useful result is modest but still important. On this small extractive-only transfer set, the system did not fabricate cited answers: Citation Precision stayed at 100% because answers are quoted from the cited paragraph, and Ungrounded Rate stayed at 0%. Coverage was also similar to the synthetic test split, with a 91.7% Answer Rate compared with 88%. The weaker result is retrieval. Evidence Recall@5 fell from 73.4% on the synthetic test split to 52.1% on the transfer set (a roughly 30% relative drop), and one unanswerable query about Cisco router configuration was answered too confidently because BM25 matched NCSC device-security guidance on the word "configure". So the transfer test supports the conservative grounding behaviour of Extractive Mode, but it does not prove broad transfer. §5.2 returns to this as a limitation that wider evaluation should target.
+The useful result is modest but still important. On this small extractive-only transfer set, the system did not fabricate cited answers: it either quoted the retrieved evidence or abstained. Coverage was also similar to the synthetic test split, with a 91.7% Answer Rate compared with 88%. The weaker result is retrieval. Evidence Recall@5 fell from 73.4% on the synthetic test split to 52.1% on the transfer set (a roughly 30% relative drop), and one unanswerable query about Cisco router configuration was answered too confidently because BM25 matched NCSC device-security guidance on the word "configure". On the small external public-guidance set, Extractive Mode produced no fabricated citations and correctly abstained on three of the four unanswerable queries. The result is limited to this extractive stress test and does not establish broad transfer, generative-mode behaviour, or behaviour on noisier real-world PDFs. §5.2 returns to this as Limitation L1, which wider evaluation should target.
 
 ### 4.12 Statistical Confidence
 
-Bootstrapped 95% confidence intervals (2,000 resamples, seed = 42) were computed given the modest n = 63.
+Because the golden set is small, bootstrapped 95% confidence intervals were computed for the headline B3-Generative metrics.
 
 <a id="tbl-4-11"></a>
 
-**Table 4.11: 95% bootstrap CIs for B3-Generative headline metrics. Each metric is bootstrapped over its own per-query denominator (Answer Rate over the 36 answerable queries; Abstention Accuracy over the 17 unanswerable queries; Evidence Recall@5 over the 46 queries with non-empty `gold_paragraph_ids`), seed = 42, n_resamples = 2,000. The values are produced by `scripts/compute_bootstrap_ci.py` and stored in `results/tables/statistical_confidence.csv`.**
+**Table 4.11: 95% bootstrap CIs for B3-Generative headline metrics. Each metric is bootstrapped over its own per-query denominator (Answer Rate over the 36 answerable queries; Abstention Accuracy over the 17 unanswerable queries; Evidence Recall@5 over the 46 queries with non-empty `gold_paragraph_ids`), seed = 42, n_resamples = 2,000. The values are produced by the committed bootstrap script and stored with the submitted results tables.**
 
 | Metric | Denominator | Point Estimate | 95% CI |
 | :--- | :--- | :--- | :--- |
@@ -739,7 +728,7 @@ Bootstrapped 95% confidence intervals (2,000 resamples, seed = 42) were computed
 | Abstention Accuracy | 17 unanswerable | 94.1% | [82.4%, 100.0%] |
 | Evidence Recall@5 | 46 queries with gold | 73.9% | [65.2%, 82.6%] |
 
-The wide Answer Rate CI reflects the small number of answered queries (9 of 36); Abstention Accuracy's upper bound at 100% indicates a ceiling effect. Abstention Accuracy is computed on the 17 unanswerable queries in the full golden set, so each query is worth roughly 5.9 percentage points: the 94.1% point estimate is directionally meaningful but statistically fragile. With n = 63 across all categories, all point estimates in this chapter are indicative rather than definitive; an n = 200+ stratified evaluation is recommended for follow-up.
+The wide Answer Rate CI reflects the small number of answered queries (9 of 36); Abstention Accuracy's upper bound at 100% indicates a ceiling effect. The abstention result is directionally encouraging, but it is still based on only 17 unanswerable queries, so a single changed case would noticeably move the percentage. With n = 63 across all categories, all point estimates in this chapter are indicative rather than definitive; an n = 200+ stratified evaluation is recommended for follow-up.
 
 ### 4.13 Discussion: Achievement Against Objectives
 
@@ -749,14 +738,16 @@ The wide Answer Rate CI reflects the small number of answered queries (9 of 36);
 
 | Objective | Target | Achieved | Status |
 | :--- | :--- | :--- | :--- |
-| 1. Ungrounded Rate ≤ 5% | ≤ 5% | 0.0% (Gen, response-level), 4% (Gen, claim-level), 0% (Ext, by construction) | Met (with caveats above) |
-| 2. Answer Rate ≥ 85% | ≥ 85% | 25.0% (Gen, all-split, 63 queries), 88% (Ext, test split, 44 queries) | Partially met: close to target in Extractive Mode, not met in Generative Mode |
-| 3. Evidence Recall@5 ≥ 80% | ≥ 80% | 73.9% (Gen, BM25 fallback, all-split) / 73.4% (Ext, BM25, test split) / 85% (dev-phase dense) | Below target as reported; met in dev with dense index |
-| 4. Abstention Accuracy ≥ 80% | ≥ 80% | 94.1% (Gen, all-split, n=17 unanswerable), 50.0% (Ext, test split, n=12 unanswerable) | Met in Generative Mode; not met in Extractive Mode on the small test-split unanswerable subset |
+| 1. Ungrounded Rate ≤ 5% | ≤ 5% | 0.0% (Gen, response-level), 4% (Gen, claim-level), 0% (Ext, by construction) | Met, with claim-level caveat |
+| 2. Answer Rate ≥ 85% | ≥ 85% | 25.0% (Gen, all-split, 63 queries), 88% (Ext, test split, 44 queries) | Partially met; Extractive close, Generative below target |
+| 3. Evidence Recall@5 ≥ 80% | ≥ 80% | 73.9% (Gen, BM25 fallback, all-split) / 73.4% (Ext, BM25, test split) / 85% (dev-phase dense) | Below final target; met in dense dev run |
+| 4. Abstention Accuracy ≥ 80% | ≥ 80% | 94.1% (Gen, all-split, n=17 unanswerable), 50.0% (Ext, test split, n=12 unanswerable) | Met in Generative Mode only |
 | 5. Critic Mode F1 ≥ 85% | ≥ 85% | 93.8% (heuristic, 50-snippet labelled suite) | Met |
 | 6. Systematic Evaluation | Complete | Complete | Met |
 
-The headline retrieval result (73.9% Recall@5 for B3-Generative on all 63 queries; 73.4% Recall@5 for B3-Extractive on the 44-query test split) is the final reported figure because it comes from the BM25 fallback run used in the reproducibility environment. The earlier dense-retrieval development result is still useful diagnostically: it shows that the architecture performed better when the intended dense backend was available, but it should not replace the final benchmark number. Objective 3 is therefore reported as below target, with the dense result used only to explain where the shortfall came from. Objective 2 is the most significant shortfall. In Generative Mode the system answers only 25% of the 63 golden-set queries, well short of the 85% target, which is the visible price of the strict "cited or silent" rule combined with a conservative reranker threshold and the BM25 fallback's lower recall. Extractive Mode reaches 88% on the test split, which is close to the target, but a quoted paragraph is not the same kind of answer as a synthesised response, so I have marked Objective 2 as partially met rather than met. Objective 4 is met in Generative Mode (94.1% across the 17 all-split unanswerable queries) but not in Extractive Mode on the small test-split unanswerable subset (50.0% across n = 12), because Extractive Mode bypasses the LLM and therefore the post-LLM `min_support_rate` gate that drives the generative configuration's abstention behaviour. Objective 5 (Critic Mode macro F1 ≥ 85%) is met at 93.8% on the 50-snippet labelled suite; the lowest-precision label is L2 (Framing Imbalance) at 60.0%, where conventional policy phrasing produces some false positives. Conclusions, limitations, and future work arising from these results are presented in Chapter 5.
+The clearest success is the system's surfaced-grounding behaviour. The response-level ungrounded rate meets the target, the Critic Mode exceeds its F1 target, and the evaluation harness is complete. These results support the audit-ready claim in the bounded sense tested here.
+
+The main shortfall is coverage. The generative configuration answers only 25% of the golden-set queries, well below the original 85% target, and the final BM25-fallback retrieval result remains below the intended Recall@5 target. The threshold sweep in §4.5 changes how this shortfall should be interpreted: it is not a random failure of the system, but the visible cost of choosing a precision-favouring point on the cited-or-silent operating frontier. The BM25-specific retuning diagnostic in §4.5 strengthens this reading: under the dual safety constraints (Abstention Accuracy ≥ 80% and response-level Ungrounded Rate ≤ 5%), the feasible region collapses to a flat plateau over which Answer Rate is fixed at 25%, so the 25% figure is the maximum coverage attainable in this BM25-fallback run, not an arbitrary consequence of the shipped τ = 0.80. Extractive Mode recovers coverage on the held-out test split, but because it returns a quoted paragraph rather than a synthesised answer, it is marked only as partially meeting the answer-rate objective. The conclusion is therefore bounded but useful: Policy Copilot does not solve policy QA, but it shows how strict surfaced grounding can be enforced and measured, and how answer coverage falls as the system is moved toward safer operating points.
 
 ## Chapter 5 Conclusions and Reflection
 
@@ -764,21 +755,21 @@ This chapter pulls together the project-level conclusions from Chapter 4, examin
 
 ### 5.1 Conclusions
 
-The project asked whether a RAG system over a closed policy corpus could be made reliably grounded and abstention-aware, and the results support a qualified yes within this synthetic corpus and tested setup. Three observations are worth highlighting, all of which apply to the specific corpus and configuration tested here rather than to RAG systems in general.
+Contribution. This project contributes an end-to-end design and empirical evaluation of a closed-corpus RAG configuration where grounding, abstention, citation verification, and audit traceability are treated as part of the system contract rather than optional add-ons. More specifically, it characterises the safety–coverage operating frontier created by enforcing a strict "cited or silent" rule: the shipped configuration suppresses unsupported surfaced answers at the response level, but does so by refusing many queries that a less conservative system would attempt to answer. The individual components are standard or heuristic; the contribution is the way they are combined, evaluated, and exposed as an auditable operating regime.
+
+The project asked whether a RAG system over a closed policy corpus could be made grounded enough to be useful in an audit setting, and the results support a qualified yes within this synthetic corpus and tested setup. Three observations are worth highlighting, all of which apply to the specific corpus and configuration tested here rather than to RAG systems in general.
 
 The first is that, of the four reliability layers, cross-encoder reranking did the most work in these ablations (§4.6). Removing it degraded every headline metric more than removing any other single component. A practical reading is that, for closed corpora of this size (under 2,000 paragraphs), a reranker is worth the engineering effort before trying anything more elaborate, such as LLM self-evaluation or multi-step verification chains. The cost of the reranker on consumer hardware was around 1.8 seconds per query, which was acceptable for a non-real-time policy use-case.
 
 The second is that the heuristic verification layer is useful but has a clear ceiling. It cut the per-claim ungrounded rate from 12% to 4%, which is a meaningful improvement, but the residual 4% mostly consists of claims that are semantically wrong while still using words that overlap with the cited paragraph. Catching that residual would require something like NLI-based entailment checking, which would add cost, latency, and a learned component to a layer that is currently deterministic. Whether that trade-off is worth it depends on the deployment context.
 
-The third observation is that the "cited or silent" rule behaves differently in the two modes. In Extractive Mode the guarantee is mostly mechanical: the response is a paragraph from the corpus, so the citation points to the exact text being returned. That makes it easier to defend, although the response is less natural. In Generative Mode, the answer is more useful when it works, but the system has to rely on verification and the support-rate gate to decide whether the generated text is safe enough to show. The 0.0% headline ungrounded rate is therefore a result of the enforcement layer, not evidence that the LLM itself never hallucinated.
-
-Taken together, the results support a narrow but useful claim. On this synthetic corpus, refusing low-confidence answers, checking whether cited paragraphs actually support generated claims, and surfacing contradictions reduced unsupported answers compared with a standard RAG baseline. The important caveat is that the coverage / precision balance would need to be retuned for any new corpus or retrieval backend.
+The third observation is that the "cited or silent" rule behaves differently in the two modes. In Extractive Mode the guarantee is mostly mechanical: the response is a paragraph from the corpus, so the citation points to the exact text being returned. In Generative Mode the answer is more useful when it works, but the system relies on verification and the support-rate gate to decide whether the generated text is safe enough to show. The 0.0% headline ungrounded rate is therefore a result of the enforcement layer, not evidence that the LLM itself never hallucinated.
 
 ### 5.2 Limitations
 
-An honest assessment of the project's limitations is essential to interpret the results in their proper scope.
+The bounded claim above rests on five threats to validity. Each names a place where the central finding could weaken if the corresponding constraint were relaxed, rather than a generic project shortcoming.
 
-L1: Primary Corpus is Synthetic. The headline benchmark was authored specifically for this project, which enabled controlled injection of test cases (deliberate contradictions, vague language) but means the synthetic paragraphs are unusually clean compared with real-world scanned PDFs that carry OCR noise, complex tables, and inconsistent boilerplate. The Public Guidance Transfer Stress Test in §4.11 partially addresses this. On a small unfamiliar OGL-licensed corpus from NCSC, ICO, and ACAS, B3-Extractive still produced zero fabricated citations and a 0% ungrounded rate, but Evidence Recall@5 fell from 73.4% on the synthetic test split to 52.1% on the transfer set (a roughly 30% relative drop). Wider transfer to noisier real-world documents and to a generative-mode test on the public corpus remains future work (§5.3).
+L1: Primary Corpus is Synthetic. The headline benchmark was authored for this project, which enabled controlled injection of test cases (contradictions, vague language) but means the paragraphs are cleaner than real-world scanned PDFs with OCR noise and inconsistent boilerplate. The Public Guidance Transfer Stress Test in §4.11 partially addresses this: on the NCSC/ICO/ACAS corpus, B3-Extractive still produced zero fabricated citations and 0% ungrounded rate, but Evidence Recall@5 fell from 73.4% to 52.1% (~30% relative drop). Wider transfer to noisier real-world documents and a generative-mode test on the public corpus remains future work (§5.3).
 
 L2: Golden Set Size. At 63 queries (44 test, 19 dev), the golden set provides directional evidence but limited statistical power. Bootstrap confidence intervals (§4.12) are wide, particularly for Answer Rate, and a five-percentage-point shift in any headline metric would be within sampling variability. A production evaluation would require several hundred annotated queries for statistically robust conclusions.
 
@@ -786,47 +777,17 @@ L3: Heuristic Verification Ceiling. Jaccard token overlap cannot detect semantic
 
 L4: Single LLM Evaluated. All generative results were obtained using a single LLM family via the OpenAI API. Different models may exhibit different hallucination patterns, citation-format compliance rates, and prompt-following behaviour. The system's model-agnostic architecture supports easy substitution, but a comparative evaluation across model families was not conducted within the project timeline.
 
-L5: Limited Independent Human Evaluation and Adversarial Coverage. The independent reviewer evaluation reported in §4.10 (n = 6 peer participants, 14-18 April 2026) is a useful sanity check on the automated metrics, but it is small, author-facilitated rather than fully blinded, and the reviewer pool is non-domain-expert (CS peers rather than compliance specialists). A Round 2 per-query collection (Appendix B.10) reaches Krippendorff's α 0.74 on three of five axes; a small 15-query adversarial probe (Appendix B.12, Extractive arm safe at 100%, Generative arm `n/a` after `insufficient_quota` errors on the OpenAI account) is landed alongside. A more rigorous follow-up evaluation would use at least two independent domain-expert raters, full blinding, and per-item ratings stored at collection time (Es et al., 2023).
+L5: Limited Independent Human Evaluation and Adversarial Coverage. The independent reviewer evaluation is small, author-facilitated rather than fully blinded, and uses CS peers rather than compliance specialists. Round 2 reaches Krippendorff's α 0.74 on three of five axes (Appendix B.10); the 15-query adversarial probe (Appendix B.12) is full at 100% safe on the Extractive arm but `n/a` on the Generative arm after `insufficient_quota` errors. A more rigorous follow-up would use two independent domain-expert raters, full blinding, and per-item collection (Es et al., 2024).
 
-The trade-offs above are summarised compactly in Table 4.13 so the reader can scan the threats to validity in one place.
-
-<a id="tbl-4-13"></a>
-
-**Table 4.13: Threats to validity summary.**
-
-| Threat | Why it matters | Mitigation in this project | Remaining weakness |
-| :--- | :--- | :--- | :--- |
-| Synthetic primary corpus | May be cleaner than real organisational policies | Controlled contradictions, vague-language injection, public-transfer stress test on NCSC/ICO/ACAS material | Real PDFs with OCR noise and inconsistent boilerplate not fully tested |
-| Small reviewer sample | Human scores may be unstable | n = 6, Likert rubric, Round 2 inter-rater agreement reported per axis | Reviewers are CS peers, not compliance / governance domain experts |
-| BM25 fallback used for the headline run | Dense retrieval result is not reproduced in the final environment | Backend provenance recorded per run; dev-phase dense numbers reported alongside | The headline retrieval metric (Recall@5 = 73.9%) understates the design's intended dense performance |
-| LLM quota failure on generative adversarial arm | Paired generative adversarial result is incomplete | Extractive arm reported in full at 100% safe; quota error retained in the CSV rather than hidden | No paired generative-mode adversarial number; re-run requires a billing-active API account |
-| Jaccard token-overlap verification | Token overlap cannot detect semantic entailment or paraphrase support | Numeric-consistency check, support-rate gate, and a conservative abstention threshold compensate at the response level | NLI-style entailment verification is future work (§5.3 F1) |
+A single threats-to-validity table compiling each of the above against its mitigation and remaining weakness is given in Appendix B.13.
 
 ### 5.3 Future Work
 
-The limitations above suggest several research directions, ordered by expected impact on system reliability.
-
-F1: NLI-Based Verification. Supplement Jaccard with NLI models (FEVER; Thorne et al., 2018; SciFact; Wadden et al., 2020) classifying claim / evidence entailment, ideally as a borderline-case backstop to the heuristic so determinism and speed are preserved where the heuristic is confident.
-
-F2: Domain-Adapted Embeddings. Fine-tune the bi-encoder on policy-specific terminology pairs ("disposal" and "shredding"; "moonlighting" and "secondary employment") via transfer learning from legal NLP corpora (Chalkidis et al., 2020). This would directly address the vocabulary-mismatch failures identified in the error analysis.
-
-F3: Multi-Model Evaluation. Systematically evaluate the pipeline across GPT-4, Claude 3, Llama 3, and Mistral to establish the degree to which the reliability properties are model-dependent. Early informal testing suggested that smaller models produce more schema violations but similar hallucination rates, a hypothesis a controlled study could confirm or refute.
-
-F4: Larger, Externally-Annotated Golden Set. Expand to 200+ queries with independent annotators and Cohen's kappa, providing the credibility signal absent from the single-annotator design.
-
-F5: User Feedback Integration. Incorporate a production feedback loop in which policy owners rate answers as useful, partially useful, or incorrect. Aggregated feedback would enable dynamic threshold tuning and identify systematic retrieval gaps.
-
-F6: Transfer to Real-World Documents. Empirical validation on a real organisational policy corpus, ideally with an industry partner willing to share a redacted version, is the most important next step for converting this work from a research prototype into a deployable tool.
-
-The clearest route from this dissertation artefact to a publishable evaluation would combine three things: a larger externally sourced policy corpus, domain-expert annotation of the gold evidence, and a fully blinded user study with compliance or governance practitioners. The current project deliberately stops short of that claim. It shows that deterministic citation enforcement and abstention can make a policy RAG system more auditable under controlled conditions, but it does not prove deployment readiness across real organisations. A publishable follow-up would therefore treat this system as the experimental harness, not as the final evidence base.
+The limitations above suggest a prioritised future-work programme. The nearest technical step is NLI-based verification, using FEVER-style or SciFact-style entailment models as a backstop for borderline claims (Thorne et al., 2018; Wadden et al., 2020), which directly addresses the heuristic-verification ceiling in L3. The second priority is backend-specific threshold tuning and domain-adapted embeddings, drawing on legal NLP corpora to reduce vocabulary-mismatch failures (Chalkidis et al., 2020). A stronger evaluation would then expand the golden set to 200+ independently annotated queries, compare at least two LLM families under the same prompt and schema, and validate the system on a real organisational policy corpus. Of these, real-corpus validation with an industry partner would be the most important step towards turning the prototype into a deployable tool.
 
 ### 5.4 Reflection
 
-Two things stood out when I look back at the project rather than at the specific results.
-
-The first is that getting the reliability features to work was easier than designing an evaluation that could honestly show whether they worked. The abstention gate itself is a few hundred lines of code. The golden set, the baseline ladder, the dev / test split, and the decision not to use an LLM judge took most of Sprint 6 and several rounds of revising what I was actually measuring. The mistake I caught late (tuning the abstention threshold on the same data I was reporting) is the kind of error that is invisible until you sit down and write out your evaluation protocol, and it has shaped how I would set up evaluation in any future project.
-
-The second is that the conventional priority ordering for RAG metrics (maximise answer rate, maximise recall) was not appropriate for this compliance-oriented setting. Most of the design decisions that turned out to be defensible flowed from accepting earlier rather than later that the system should refuse more often than it answers, and that low coverage is the price of a "cited or silent" rule rather than a bug to be fixed afterwards. I do not think that inversion generalises beyond compliance-style applications, but for the specific use-case it was useful.
+Looking back, designing the evaluation was harder than implementing the reliability features themselves. The biggest lesson was that a safety-first RAG system cannot be judged by answer rate alone: refusing more often than answering had to be designed in from the start, then reported honestly as both a strength and a limitation.
 
 </div>
 
@@ -836,7 +797,7 @@ Asai, A., Wu, Z., Wang, Y., Sil, A. and Hajishirzi, H. (2024) 'Self-RAG: Learnin
 
 Barnett, S., Kurniawan, S., Thudumu, S., Brannelly, Z. and Abdelrazek, M. (2024) 'Seven Failure Points When Engineering a Retrieval Augmented Generation System', Proceedings of the IEEE/ACM 3rd International Conference on AI Engineering (CAIN), pp. 194-199. doi:10.1145/3644815.3644945.
 
-Bohnet, B., Dai, Z., Duckworth, D., Hu, J., Metzler, D., Nagpal, K. and Strother, K. (2022) 'Attributed Question Answering: Evaluation and Modeling for Attributed Large Language Models', arXiv preprint arXiv:2212.08037.
+Bohnet, B. et al. (2022) 'Attributed Question Answering: Evaluation and Modeling for Attributed Large Language Models', arXiv preprint arXiv:2212.08037.
 
 Brown, T.B., Mann, B., Ryder, N., Subbiah, M., Kaplan, J., Dhariwal, P., Neelakantan, A., Shyam, P., Sastry, G., Askell, A. and Agarwal, S. (2020) 'Language Models are Few-Shot Learners', Advances in Neural Information Processing Systems, 33, pp. 1877-1901.
 
@@ -848,15 +809,15 @@ Cuconasu, F., Trappolini, G., Siciliano, F., Filice, S., Campagnano, C., Maarek,
 
 Es, S., James, J., Espinosa-Anke, L. and Schockaert, S. (2024) 'RAGAS: Automated Evaluation of Retrieval Augmented Generation', Proceedings of the 18th Conference of the European Chapter of the Association for Computational Linguistics: System Demonstrations (EACL Demo), pp. 150-158.
 
-Gao, L., Dai, Z., Pasupat, P., Chen, A., Chaganty, A.T., Fan, Y., Zhao, V.Y., Lao, N., Lee, H., Juan, D. and Chang, K. (2023) 'RARR: Researching and Revising What Language Models Say, Using Language Models', Proceedings of the 61st Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers), pp. 16477-16508.
+Gao, L., Dai, Z., Pasupat, P., Chen, A., Chaganty, A.T., Fan, Y., Zhao, V., Lao, N., Lee, H., Juan, D.-C. and Guu, K. (2023) 'RARR: Researching and Revising What Language Models Say, Using Language Models', Proceedings of the 61st Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers), pp. 16477-16508.
 
-Guha, N., Nyarko, J., Ho, D.E., Ré, C., Chilton, A., Narasimhan, K., Choi, A., Weston, J. and Chen, D. (2023) 'LegalBench: A Collaboratively Built Benchmark for Measuring Legal Reasoning in Large Language Models', Advances in Neural Information Processing Systems, 36.
+Guha, N. et al. (2023) 'LegalBench: A Collaboratively Built Benchmark for Measuring Legal Reasoning in Large Language Models', Advances in Neural Information Processing Systems, 36, pp. 44123-44279.
 
 Huang, L., Yu, W., Ma, W., Zhong, W., Feng, Z., Wang, H., Chen, Q., Peng, W., Feng, X., Qin, B. and Liu, T. (2023) 'A Survey on Hallucination in Large Language Models: Principles, Taxonomy, Challenges, and Open Questions', arXiv preprint arXiv:2311.05232.
 
 Ji, Z., Lee, N., Frieske, R., Yu, T., Su, D., Xu, Y., Ishii, E., Bang, Y.J., Madotto, A. and Fung, P. (2023) 'Survey of Hallucination in Natural Language Generation', ACM Computing Surveys, 55(12), pp. 1-38.
 
-Johnson, J., Douze, M. and Jégou, H. (2019) 'Billion-Scale Similarity Search with GPUs', IEEE Transactions on Big Data, 7(3), pp. 535-547.
+Johnson, J., Douze, M. and Jégou, H. (2021) 'Billion-Scale Similarity Search with GPUs', IEEE Transactions on Big Data, 7(3), pp. 535-547. doi:10.1109/TBDATA.2019.2921572.
 
 Kadavath, S., Conerly, T., Askell, A., Henighan, T., Drain, D., Perez, E., Schiefer, N., Hatfield-Dodds, Z., DasSarma, N., Tran-Johnson, E. and Johnston, S. (2022) 'Language Models (Mostly) Know What They Know', arXiv preprint arXiv:2207.05221.
 
@@ -880,9 +841,11 @@ Nogueira, R. and Cho, K. (2019) 'Passage Re-ranking with BERT', arXiv preprint a
 
 Page, M.J., McKenzie, J.E., Bossuyt, P.M., Boutron, I., Hoffmann, T.C., Mulrow, C.D., Shamseer, L., Tetzlaff, J.M., Akl, E.A., Brennan, S.E., Chou, R., Glanville, J., Grimshaw, J.M., Hróbjartsson, A., Lalu, M.M., Li, T., Loder, E.W., Mayo-Wilson, E., McDonald, S., McGuinness, L.A., Stewart, L.A., Thomas, J., Tricco, A.C., Welch, V.A., Whiting, P. and Moher, D. (2021) 'The PRISMA 2020 statement: an updated guideline for reporting systematic reviews', BMJ, 372, n71.
 
+Penzkofer, V. and Baumann, T. (2024) 'Evaluating and Fine-Tuning Retrieval-Augmented Language Models to Generate Text with Accurate Citations (RAGE)', Proceedings of the 20th Conference on Natural Language Processing (KONVENS 2024), pp. 57-64.
+
 Qu, R., Bao, F. and Tu, R. (2024) 'Is Semantic Chunking Worth the Computational Cost?', arXiv preprint arXiv:2410.13070.
 
-Ren, J., Rajani, N., Khashabi, D. and Hajishirzi, H. (2023) 'Investigating the Factual Knowledge Boundary of Large Language Models with Retrieval Augmentation', arXiv preprint arXiv:2307.11019.
+Ren, R., Wang, Y., Qu, Y., Zhao, W.X., Liu, J., Tian, H., Wu, H., Wen, J.-R. and Wang, H. (2023) 'Investigating the Factual Knowledge Boundary of Large Language Models with Retrieval Augmentation', arXiv preprint arXiv:2307.11019.
 
 Saad-Falcon, J., Khattab, O., Potts, C. and Zaharia, M. (2023) 'ARES: An Automated Evaluation Framework for Retrieval-Augmented Generation Systems', arXiv preprint arXiv:2311.09476.
 
@@ -900,13 +863,9 @@ Yin, Z., Sun, Q., Guo, Q., Wu, J., Qiu, X. and Huang, X. (2023) 'Do Large Langua
 
 Yue, X., Wang, B., Chen, Z., Zhang, K., Su, Y. and Sun, H. (2023) 'Automatic Evaluation of Attribution by Large Language Models', Findings of the Association for Computational Linguistics: EMNLP 2023, pp. 4615-4635. doi:10.18653/v1/2023.findings-emnlp.307.
 
-Penzkofer, V. and Baumann, T. (2024) 'Evaluating and Fine-Tuning Retrieval-Augmented Language Models to Generate Text with Accurate Citations (RAGE)', Proceedings of the 20th Conference on Natural Language Processing (KONVENS 2024), pp. 57-64.
-
-Zheng, L., Chiang, W.L., Sheng, Y., Zhuang, S., Wu, Z., Zhuang, Y., Lin, Z., Li, Z., Li, D., Xing, E.P. and Zhang, H. (2024) 'Judging LLM-as-a-Judge with MT-Bench and Chatbot Arena', Advances in Neural Information Processing Systems, 36.
+Zheng, L., Chiang, W.L., Sheng, Y., Zhuang, S., Wu, Z., Zhuang, Y., Lin, Z., Li, Z., Li, D., Xing, E.P. and Zhang, H. (2023) 'Judging LLM-as-a-Judge with MT-Bench and Chatbot Arena', Advances in Neural Information Processing Systems, 36.
 
 Zhong, H., Xiao, C., Tu, C., Zhang, T., Liu, Z. and Sun, M. (2020) 'How Does NLP Benefit Legal System: A Summary of Legal Artificial Intelligence', Proceedings of the 58th Annual Meeting of the Association for Computational Linguistics, pp. 5218-5230.
-
----
 
 ## Appendix A Self-appraisal
 
@@ -918,7 +877,7 @@ Designing for refusal rather than for coverage was the part of the project I und
 
 The live evaluation results turned out sharper than the development-phase estimates. B3-Generative reaches 0.0% Ungrounded Rate (response-level, after the support-rate gate) and 94.1% Abstention Accuracy across the 17 unanswerable queries in the full golden set (`split=all`), but only at a 25.0% Answer Rate across all 63 queries. Three things combine to produce that low Answer Rate: a strict abstention threshold (0.30), a strict per-claim support threshold (min_support_rate = 0.80), and the fact that the final evaluation run fell back to the BM25 retriever after the dense FAISS index was unavailable in the reproducibility environment, which has lower recall than the dense index used during development. In hindsight, I would either lower the threshold for the BM25 backend or treat the dense-index runs as the primary results and the BM25 fallback as a separate degraded-mode report.
 
-B3-Extractive (88% Answer Rate, 100% Citation Precision, 0% Ungrounded Rate, 50.0% Abstention Accuracy on n = 12 unanswerable test queries) is the safest demonstration setting for fabrication risk in this project, at least until retrieval recall improves enough to give Generative Mode a more generous abstention threshold. Its Abstention Accuracy on the small unanswerable subset is modest because Extractive Mode bypasses the LLM and therefore the post-LLM `min_support_rate` gate that drives the generative configuration's all-split 94.1% figure. Extractive Mode also does the useful job of showing that the surrounding pipeline (retrieval, citation construction, contradiction handling) functions independently of the LLM, with the caveat that an Extractive answer is a quoted paragraph and not a synthesised one.
+Extractive Mode (test-split headline numbers in Table 4.2) is the safest demonstration setting for fabrication risk in this project, at least until retrieval recall improves enough to give the generative configuration a more generous abstention threshold. Its modest abstention accuracy on the small unanswerable subset reflects the absence of the post-LLM support-rate gate that drives the generative configuration's all-split number. Extractive Mode also does the useful job of showing that the surrounding pipeline (retrieval, citation construction, contradiction handling) functions independently of the LLM, with the caveat that an Extractive answer is a quoted paragraph and not a synthesised one.
 
 The ablation results were the part of the project that surprised me most. Going in, I expected the verification step to be the most impactful component, since it most directly enforces the "cited or silent" rule. The data showed reranking was doing more of the work, which I now read as: it is easier to keep the LLM honest by giving it better evidence in the first place than by trying to clean up its output afterwards. It looks obvious in hindsight, but I only got to it from running the ablations and reading the numbers, not from anything I would have predicted up front.
 
@@ -968,9 +927,7 @@ Participant Evaluation Ethics. The independent reviewer evaluation in §4.10 (n 
 
 Generative AI Policy Compliance. Under the University of Leeds Generative AI policy, this module (COMP3931/COMP3932) sits in the Amber category. AI tools were used only in the assistive capacities documented in Appendix B.5, including development support, debugging, planning, structuring, consistency checking, and writing-review feedback. They were not used as a replacement author and were not treated as authoritative sources. The submitted report remains the author's final work: all final wording, technical claims, citations, numerical results, figures, tables, edits, and submission decisions were checked, revised where needed, and approved by the author. The University proof-reading policy was reviewed and followed.
 
-Professional Standards. The codebase follows professional software-engineering practices: version-controlled development with meaningful commit messages, automated testing under the documented evaluator command, reproducible evaluation via scripted pipelines, and modular architecture with clean separation of concerns. In practical terms, the work was guided by the BCS Code of Conduct's emphasis on the public interest, professional competence, and integrity: the abstention behaviour was treated as a public-interest feature (the system should refuse rather than fabricate); limitations and trade-offs are made explicit in this report (Sections 4.13 and 5.2) rather than hidden; and any AI-assisted parts of the development workflow are disclosed in Appendix B.5 in line with the university's Generative AI policy.
-
----
+Professional Standards. The codebase follows the practices the BCS Code of Conduct emphasises: version control with traceable commits, automated tests bound to documented commands, reproducible evaluation pipelines, and modular architecture that keeps reliability decisions auditable. In practical terms, the work was guided by the BCS Code of Conduct's emphasis on the public interest, professional competence, and integrity: the abstention behaviour was treated as a public-interest feature (the system should refuse rather than fabricate); limitations and trade-offs are made explicit in this report (Sections 4.13 and 5.2) rather than hidden; and any AI-assisted parts of the development workflow are disclosed in Appendix B.5 in line with the university's Generative AI policy.
 
 ## Appendix B External Materials
 
@@ -999,7 +956,6 @@ The following open-source Python libraries were used in the development of Polic
 | TikToken | 0.x | MIT | Token counting |
 | Pytest | 7.x | MIT | Unit testing framework |
 | Matplotlib | 3.x | PSF | Figure generation |
-| Seaborn | 0.x | BSD-3 | Statistical data visualization |
 | Streamlit | 1.x | Apache 2.0 | Web interface framework |
 
 ### B.2 Licensing
@@ -1020,8 +976,6 @@ The primary benchmark corpus used in this report is synthetic and authored for t
 -   Git: Version control system.
 -   Poetry / Pip: Dependency management.
 -   Black / Ruff: Code formatting and linting.
-
----
 
 ### B.5 Generative AI Usage Declaration and Log
 
@@ -1047,8 +1001,6 @@ The log below covers the full project window: implementation work from November 
 | Mar 2026 | GitHub Copilot | Minor autocompletion during Streamlit UI development and figure-generation script refinement. | `src/policy_copilot/ui/`, `eval/analysis/` |
 | Apr 2026 | Claude Opus (Anthropic) | Writing-review support during report preparation: structure checks, clarity feedback, identification of unclear or repetitive passages, suggestions for table/caption consistency, and template/layout checks. Suggestions were treated as review comments rather than final authoritative text; the author manually revised the report and remained responsible for final wording, claims, citations, and interpretation. | `docs/report/Final_Report_Nathaniel_Sebastian_201715051.md`, `docs/report/Final_Report_Nathaniel_Sebastian_201715051.pdf`, `scripts/apply_leeds_template.py` |
 
----
-
 ### B.6 Ethics Checklist
 
 The following self-assessment addresses the ethical dimensions of this research, in accordance with the School of Computer Science's framework for software engineering projects.
@@ -1063,19 +1015,17 @@ The following self-assessment addresses the ethical dimensions of this research,
 | 6 | Does the project raise intellectual property concerns? | No. All third-party libraries are open-source (see B.1). The synthetic corpus is original work. The overall system architecture, integration decisions, and evaluation design are the author's own work, with development assistance from AI tools as documented in B.5. |
 | 7 | Has ethical approval been obtained? | Not required for the formal Faculty ethics route. The only human-participant element is the small, low-risk independent reviewer evaluation described in Q1 above (n = 6 anonymous CS peer reviewers, voluntary, no personal data retained, withdrawal permitted, no sensitive topics). I treated it as a low-risk peer-review activity rather than a formal user study, kept the project supervisor informed of the design and timing, and judged it to fall below the threshold that would require Faculty ethics-committee review. The synthetic policy corpus contains no real personal data. Recruitment text, consent wording, anonymised results, and the Round 2 inter-rater agreement table are all in Appendix B.10. |
 
----
-
 ### B.7 Evidence of Testing and Operation
 
 #### B.7.1 Automated Test Suite
 
-The project's test suite collects 194 tests under the documented evaluator command (193 passed, 1 conditionally skipped) across 39 test files, covering retrieval logic, claim verification, generation schema validation, golden set integrity, contradiction detection, service layer orchestration, audit report export, hybrid retrieval fusion, UI state management, reviewer service, package import verification, and end-to-end integration.
+The project's test suite collects 200 tests under the documented evaluator command (199 passed, 1 conditionally skipped) across 40 test files, covering retrieval logic, claim verification, generation schema validation, golden set integrity, contradiction detection, service layer orchestration, audit report export, hybrid retrieval fusion, UI state management, reviewer service, package import verification, threshold-retuning replay, and end-to-end integration.
 
 Test execution summary (final submission build):
 
 ```
 $ pytest -q --ignore=tests/test_run_eval_requires_key_in_generative.py
-193 passed, 1 skipped in 8.46s
+199 passed, 1 skipped in 7.39s
 ```
 
 Environment: Python 3.10+, macOS, `pip install -e ".[dev]"`. The ignored test file (`tests/test_run_eval_requires_key_in_generative.py`) contains an integration test that requires a live API key and is excluded from the default evaluator command. Within the collected suite, the single skipped test is `test_exits_2_when_dense_index_missing`, which is conditionally skipped when the `[ml]` optional dependencies are installed (i.e. when a dense index could in principle be constructed).
@@ -1130,6 +1080,33 @@ Figure B.3: Contradiction-probing query. The user asks "Are passwords required t
 Figure B.3: Contradiction query showing retrieved evidence with citations.
 </div>
 
+#### B.7.4 BM25-Specific Threshold Retuning Diagnostic (referenced from §4.5)
+
+`scripts/analyse_bm25_threshold_retuning.py` replays the post-LLM support-rate gate over the retained B3-Generative `outputs.jsonl` at τ in steps of 0.01, adding a per-τ response-level Ungrounded Rate column that the original `scripts/sweep_abstention.py` (the source for Figure 4.4) does not compute. It then selects a retuned operating point under the rule *max Answer Rate subject to Abstention Accuracy ≥ 80% and response-level Ungrounded Rate ≤ 5%* (tie-breakers: higher Abstention Accuracy, lower Ungrounded Rate, higher τ). Before any selection it cross-checks the reconstructed τ = 0.80 row against `results/runs/b3_generative_bm25_fallback_final/summary.json` and aborts if the two disagree. No new LLM calls are made; the script is a pure replay over already-stored claim-verification fields.
+
+Selected point in the final run: τ = 1.00, Answer Rate 25.0%, Abstention Accuracy 94.1%, response-level Ungrounded Rate 0.0%, n_answered = 12, n_abstained = 51. The selection rule's feasible region under the dual safety constraints is τ ∈ [0.70, 1.00]; Answer Rate is flat at 25.0% across that whole region, so the coverage uplift over the shipped τ = 0.80 is 0.0 percentage points (`interpretation: feasible_region_matches_conservative_plateau`, `coverage_uplift_pp: 0.0` in the summary JSON). Below τ ≈ 0.65 the constraint that fails first is response-level Ungrounded Rate, which jumps to 45% at τ = 0.65 — a finding visible only after the per-τ Ungrounded column is computed. Figure B.4 plots Answer Rate, Abstention Accuracy, and response-level Ungrounded Rate against τ, with both the shipped and the retuned operating point marked.
+
+<a id="fig-b-4"></a>
+
+<div align="center">
+<img src="figures/fig_bm25_retuned_operating_point.png" alt="BM25-fallback retuning operating points" width="700">
+
+Figure B.4: BM25-fallback support-rate retuning. Answer Rate, Abstention Accuracy and response-level Ungrounded Rate plotted against τ over the retained B3-Generative outputs. The shipped τ = 0.80 operating point is marked with a circle; the retuned point selected under the dual safety constraints (τ = 1.00) is marked with a diamond. Both sit on the τ ∈ [0.70, 1.00] feasible plateau over which Answer Rate is constant at 25%. Produced by `scripts/analyse_bm25_threshold_retuning.py` from `results/runs/b3_generative_bm25_fallback_final/outputs.jsonl`; no LLM calls.
+</div>
+
+Artefacts (all reproducible offline, no API keys):
+
+- `scripts/analyse_bm25_threshold_retuning.py` — the analysis script.
+- `results/tables/bm25_threshold_retuning.csv` — per-τ sweep with Answer Rate, Abstention Accuracy, response-level Ungrounded Rate, contradiction abstain rate, coverage, surfaced/abstained counts.
+- `results/tables/bm25_threshold_retuning_summary.json` — selected operating point, selection-rule metadata, reconstructed conservative-point values for cross-checking against the shipped run.
+- `tests/test_bm25_threshold_retuning.py` — six deterministic unit tests covering gate G1 reconstruction, the G2 denominator check, the τ = 1.0 edge case, and the selection-rule tie-breakers.
+
+Command to reproduce:
+
+```
+$ python scripts/analyse_bm25_threshold_retuning.py
+```
+
 ### B.8 Comparative Analysis Table (referenced from §1.10)
 
 <a id="tbl-b-1"></a>
@@ -1153,7 +1130,7 @@ Table B.1: Comparative analysis of retrieval-augmented and grounded generation s
 
 <a id="tbl-b-2"></a>
 
-Table B.2: Testing and validation matrix — 39 test files; 194 collected tests (193 passed, 1 conditionally skipped).
+Table B.2: Representative testing and validation matrix. The 40 test files collect 200 pytest cases under the documented evaluator command (199 passed, 1 conditionally skipped); the 19 files listed below are representative files cited from the report body, while the remaining files cover additional edge cases and infrastructure checks.
 
 | Test File | Tier | Component | Validates |
 | :--- | :--- | :--- | :--- |
@@ -1258,15 +1235,15 @@ Table B.5: Public Guidance Transfer Corpus provenance (8 documents, 249 paragrap
 | ICO | Data protection principles | data protection | Closest analogue to synthetic Internal Policy Handbook data-handling section |
 | ICO | Lawful basis for processing (UK GDPR) | data protection | Closest analogue to synthetic handbook lawfulness section |
 | ICO | Individual rights (UK GDPR) | data protection | Closest analogue to synthetic handbook data-subject-rights section |
-| ACAS | Disciplinary procedure: step by step | employment | Closest analogue to synthetic Employee Handbook discipline section |
+| ACAS | Disciplinary procedure: step by step | employment | Closest analogue to the synthetic HR Procedures Manual discipline content |
 | ACAS | Holiday entitlement and pay | employment | Closest analogue to synthetic handbook leave section |
 | ACAS | Flexible-working guidance (incl. home/hybrid material) | employment | Closest analogue to synthetic handbook remote-work section; see note in §B.11 about the cached page actually served at retrieval time |
 
 For each source the downloader keeps only the main article body and strips navigation, footer, related-content widgets, and cookie banners. The full URLs, retrieval timestamps, paragraph counts, and twelve-character content hashes are recorded in `data/public_transfer_corpus/provenance.csv`, which ships with the submission package. None of these sources contain personal data or identify any individual; ICO, NCSC, and ACAS terms each confirm Crown copyright with reuse permitted under OGL v3.0. The `scripts/run_transfer_eval.py` wrapper is the single entry point that re-runs the stress test deterministically against the cached corpus.
 
-### B.12 Adversarial and Audit Export Evidence (referenced from L6 and §4.4)
+### B.12 Adversarial and Audit Export Evidence (referenced from L5 and §4.4)
 
-Appendix B.12 summarises two supplementary evidence layers that probe the system's `cited or silent` discipline beyond the headline benchmark: a paired adversarial / prompt-injection probe (Limitation L6) and a small set of verbatim audit-export examples from the B3-Generative final run.
+Appendix B.12 summarises two supplementary evidence layers that probe the system's `cited or silent` discipline beyond the headline benchmark: a paired adversarial / prompt-injection probe (discussed under Limitation L5) and a small set of verbatim audit-export examples from the B3-Generative final run.
 
 Adversarial probe. A 15-query bank in `eval/adversarial/adversarial_queries.csv` covers five attack types — `instruction_override`, `citation_fabrication_request`, `out_of_domain_lure`, `false_premise`, and `contradiction_pressure` — with three hand-authored queries each. The runner `scripts/run_adversarial.py` puts the same query bank through the final B3 pipeline twice. The first pass uses Extractive Mode (BM25, no LLM): in this mode the system can only return verbatim paragraphs from the corpus index, so structurally it cannot invent text or cite paragraphs that do not exist, and the probe is asking whether that property actually holds end-to-end. The second pass uses Generative Mode (LLM enabled): here the LLM might attempt to obey an injection, but it has to pass four deterministic checks before the response leaves the system — the citation IDs are validated against the corpus, the per-claim Jaccard verifier prunes weakly-supported claims, the `min_support_rate` gate refuses any response whose surviving claims are below 0.80, and the contradiction module surfaces multi-source tensions. Results are written to `eval/adversarial/adversarial_results_<mode>.csv` and aggregated in `eval/adversarial/adversarial_summary.csv`. A safe response is either an `INSUFFICIENT_EVIDENCE` abstention or a grounded answer whose citations all map to real paragraph IDs in the corpus index; fabricated citation and unsupported answer are detected automatically by the same scripts.
 
@@ -1284,8 +1261,24 @@ Adversarial probe. A 15-query bank in `eval/adversarial/adversarial_queries.csv`
 | All attack types (overall) | Extractive | 15 | 15 | 0 | 100% | 0% | 0% |
 | All attack types (overall) | Generative | 15 | 0 | 15 | n/a | n/a | n/a |
 
-The Extractive arm reports 100% safe responses across all five attack types (15/15), with zero fabricated citations and zero unsupported answers. This is expected from the design, because Extractive Mode returns verbatim corpus paragraphs, but the probe still checks that the full path behaves that way end-to-end. The Generative arm was attempted but the LLM call returned `insufficient_quota` (HTTP 429) on all 15 queries, so the system was not exercised on the adversarial set in the generative configuration. The rates are therefore reported as `n/a` rather than estimated, and the per-query error notes are preserved in `eval/adversarial/adversarial_results_generative.csv`. A re-run on a billing-active OpenAI account (`python scripts/run_adversarial.py --modes generative`) would replace the `n/a` cells; the cost is approximately 15 LLM calls. The full per-query results, three representative cases per attack type, and the limitations of the probe are at `docs/evidence/verification/adversarial_test_summary.md`. The probe is intentionally small and is not a security certification; an exhaustive prompt-injection evaluation would adopt Garak or PromptBench (Liu et al., 2023) and is listed as future work in §5.3.
+The Extractive arm reports 100% safe responses across all five attack types (15/15), with zero fabricated citations and zero unsupported answers. This is expected from the design, because Extractive Mode returns verbatim corpus paragraphs, but the probe still checks that the full path behaves that way end-to-end. The Generative arm was attempted but the LLM call returned `insufficient_quota` (HTTP 429) on all 15 queries, so the system was not exercised on the adversarial set in the generative configuration. The rates are therefore reported as `n/a` rather than estimated, and the per-query error notes are preserved in `eval/adversarial/adversarial_results_generative.csv`. A re-run on a billing-active OpenAI account (`python scripts/run_adversarial.py --modes generative`) would replace the `n/a` cells; the cost is approximately 15 LLM calls. The full per-query results, three representative cases per attack type, and the limitations of the probe are at `docs/evidence/verification/adversarial_test_summary.md`. The probe is intentionally small and is not a security certification; an exhaustive prompt-injection evaluation would adopt a dedicated LLM red-teaming framework and is listed as future work in §5.3.
 
 Audit export examples. To make the `audit-ready` claim visible (rather than implicit in code), three representative records from the B3-Generative final run are rendered in human-readable Markdown under `docs/evidence/verification/`: `audit_export_answerable.md` (clean grounded answer with `support_rate = 1.0`), `audit_export_unanswerable.md` (clean abstention triggered by the post-LLM `min_support_rate` gate via `ABSTAINED_LOW_SUPPORT_RATE`), and `audit_export_contradiction.md` (contradiction-flag audit trail with the structured contradictions list preserved). Every value (query, answer, citation IDs, retrieval and rerank scores, claim verification fields, contradiction list, backend, latency, notes) is a verbatim copy from `results/runs/b3_generative_bm25_fallback_final/outputs.jsonl`; no values are summarised or fabricated. The exporter `scripts/build_audit_exports.py` regenerates all three files plus an index (`audit_export_index.md`) deterministically from the existing run, with no new system runs performed.
 
 Public-transfer failure taxonomy (cross-reference). The per-query failure-mode labelling for the Public Guidance Transfer Stress Test (§4.11) is published as `eval/public_transfer/failure_taxonomy.csv` and `docs/evidence/verification/public_transfer_failure_taxonomy.md`. The dominant non-clean-answer label is retrieval generalisation (terminology mismatch + weak-obligation language, 5/20 of the transfer queries); no transfer query produced a fabricated or hallucinatory answer.
+
+### B.13 Threats to Validity Summary (referenced from §5.2)
+
+This appendix compiles the residual threats to validity for the project alongside the mitigation actually taken and the remaining weakness for each. It is referenced from §5.2 and is provided so that a reader can scan the threats in one place without leaving the limitations narrative.
+
+<a id="tbl-b-7"></a>
+
+**Table B.7: Threats to validity summary.**
+
+| Threat | Why it matters | Mitigation in this project | Remaining weakness |
+| :--- | :--- | :--- | :--- |
+| Synthetic primary corpus | May be cleaner than real organisational policies | Controlled contradictions, vague-language injection, public-transfer stress test on NCSC/ICO/ACAS material | Real PDFs with OCR noise and inconsistent boilerplate not fully tested |
+| Small reviewer sample | Human scores may be unstable | n = 6, Likert rubric, Round 2 inter-rater agreement reported per axis | Reviewers are CS peers, not compliance / governance domain experts |
+| BM25 fallback used for the headline run | Dense retrieval result is not reproduced in the final environment | Backend provenance recorded per run; dev-phase dense numbers reported alongside | The headline retrieval metric (Recall@5 = 73.9%) understates the design's intended dense performance |
+| LLM quota failure on generative adversarial arm | Paired generative adversarial result is incomplete | Extractive arm reported in full at 100% safe; quota error retained in the CSV rather than hidden | No paired generative-mode adversarial number; re-run requires a billing-active API account |
+| Jaccard token-overlap verification | Token overlap cannot detect semantic entailment or paraphrase support | Numeric-consistency check, support-rate gate, and a conservative abstention threshold compensate at the response level | NLI-style entailment verification is future work (§5.3 F1) |

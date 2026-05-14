@@ -25,6 +25,10 @@ ALLOWED_TABLES = {
     # Side-tables produced by separate scripts (not by make_figures.py):
     "critic_summary.csv",            # written by scripts/run_critic_eval.py
     "statistical_confidence.csv",    # written by scripts/compute_bootstrap_ci.py
+    "bm25_threshold_retuning.csv",   # written by scripts/analyse_bm25_threshold_retuning.py
+}
+ALLOWED_SIDE_TABLES_JSON = {
+    "bm25_threshold_retuning_summary.json",  # paired with bm25_threshold_retuning.csv
 }
 
 
@@ -137,8 +141,12 @@ def main():
         if not name.lower().endswith(".png"):
             errors.append(f"Orphan figure artifact (unexpected type): results/figures/{name}")
     for name in all_table_files:
-        if not name.lower().endswith(".csv"):
-            errors.append(f"Orphan table artifact (unexpected type): results/tables/{name}")
+        lower = name.lower()
+        if lower.endswith(".csv"):
+            continue
+        if lower.endswith(".json") and name in ALLOWED_SIDE_TABLES_JSON:
+            continue
+        errors.append(f"Orphan table artifact (unexpected type): results/tables/{name}")
 
     for name in actual_figures:
         if name not in ALLOWED_FIGURES:

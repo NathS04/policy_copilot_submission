@@ -70,6 +70,6 @@ one contradiction probe, see
   corpus and its provenance file (referenced from Appendix B.11).
 - `eval/golden_set/golden_set.csv` and `public_transfer_set.csv` -
   the synthetic and transfer query sets.
-- `tests/` - the test suite (194 collected under the documented
-  evaluator command: 193 passed, 1 conditionally skipped) that
+- `tests/` - the test suite (200 collected under the documented
+  evaluator command: 199 passed, 1 conditionally skipped) that
   validates the reproducibility contract.
