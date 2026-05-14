@@ -52,6 +52,12 @@ BANNED_SUBSTRINGS = [
     "95% of gold paragraphs",
     "design-time estimates",
     "design-time estimates from Sprint 5",
+    # Phase 9 (residual-gap-closure): catch new failure modes
+    "production-ready contradiction module",  # contradiction detector is still partial
+    "production-grade contradiction",
+    "contradiction detector is production",
+    "generative adversarial completed",       # only valid if API key was used
+    "generative adversarial arm completed",
 ]
 
 # FR cross-reference mistakes
@@ -146,7 +152,7 @@ def check_table_traces(text: str) -> List[str]:
         ("100%", ROOT / "results/runs/b3_generative_v2/summary.json", "abstention_accuracy"),
         ("92.5%", ROOT / "results/runs/b3_extractive_hybrid_v2_final/summary.json", "answer_rate"),
         ("78.0%", ROOT / "results/runs/b3_extractive_hybrid_v2_final/summary.json", "evidence_recall_at_5"),
-        ("45.0%", ROOT / "results/runs/b4_conservative_hybrid_replay_v2_final/summary.json", "answer_rate"),
+        ("50.0%", ROOT / "results/runs/b4_conservative_hybrid_replay_v2_final/summary.json", "answer_rate"),
     ]
     for number_str, run_path, key in checks:
         if not run_path.exists():
@@ -180,6 +186,109 @@ def check_table_traces(text: str) -> List[str]:
     return issues
 
 
+def check_b4_backend_claim(text: str) -> List[str]:
+    """Phase 9: if the report claims B4 uses Hybrid as its primary retrieval
+    backend, the B4 run_config must agree. The current B4 replay uses
+    BM25-source outputs, so saying 'B4 on hybrid' would be a misclaim."""
+    issues = []
+    b4_cfg_path = ROOT / "results/runs/b4_conservative_hybrid_replay_v2_final/run_config.json"
+    if not b4_cfg_path.exists():
+        return issues
+    try:
+        cfg = json.loads(b4_cfg_path.read_text())
+    except Exception:
+        return issues
+    backend_used = cfg.get("backend_used", "")
+    # Look for claims like "B4 ... hybrid backend" or "B4 uses dense" near each B4 mention.
+    if backend_used == "bm25":
+        # The report should NOT claim B4 runs on hybrid/dense exclusively.
+        bad_patterns = [
+            r"B4 .{0,40}(?:on|using|with) the hybrid backend\b",
+            r"B4 .{0,40}(?:on|using|with) the dense backend\b",
+        ]
+        for pat in bad_patterns:
+            if re.search(pat, text, flags=re.IGNORECASE):
+                issues.append(
+                    f"B4 run_config says backend_used={backend_used!r} but report "
+                    f"claims B4 on hybrid/dense (pattern: {pat!r})"
+                )
+    return issues
+
+
+def check_objective_claims(text: str) -> List[str]:
+    """Phase 9: catch overclaims on Recall@5 and B4 Answer Rate."""
+    issues = []
+    # Recall@5 claim must not say 'met' if best run < 0.80.
+    best_recall_path = ROOT / "results/runs/b3_extractive_hybrid_v2_final/summary.json"
+    if best_recall_path.exists():
+        try:
+            best = float(json.loads(best_recall_path.read_text()).get("evidence_recall_at_5", 0))
+        except Exception:
+            best = 0.0
+        # Match phrases that claim the recall objective is met
+        if best < 0.80:
+            patterns = [
+                r"Recall@5 .{0,30}target\s*met",
+                r"Objective 3.{0,40}\bMet\b(?!\s*\(near)",
+                r"Evidence Recall@5.{0,40}\bMet\b(?!\s*\(near|.*near.miss)",
+            ]
+            for pat in patterns:
+                if re.search(pat, text, flags=re.IGNORECASE):
+                    issues.append(
+                        f"Recall@5 best run is {best:.3f} (<0.80) but report claims "
+                        f"objective met (pattern: {pat!r})"
+                    )
+
+    # B4 Answer Rate >= 85% claim must not be made if B4 AR < 0.85.
+    b4_path = ROOT / "results/runs/b4_conservative_hybrid_replay_v2_final/summary.json"
+    if b4_path.exists():
+        try:
+            b4_ar = float(json.loads(b4_path.read_text()).get("answer_rate", 0))
+        except Exception:
+            b4_ar = 0.0
+        if b4_ar < 0.85:
+            patterns = [
+                r"B4.{0,40}meets.{0,40}85",
+                r"B4.{0,40}reaches.{0,30}85%",
+                r"B4.{0,40}Answer Rate.{0,30}target.{0,20}\bmet\b",
+            ]
+            for pat in patterns:
+                if re.search(pat, text, flags=re.IGNORECASE):
+                    issues.append(
+                        f"B4 AR is {b4_ar:.3f} (<0.85) but report claims B4 meets the "
+                        f"85% target (pattern: {pat!r})"
+                    )
+
+    return issues
+
+
+def check_adversarial_completion(text: str) -> List[str]:
+    """Phase 9: report must not say 'generative adversarial completed' if the
+    summary CSV's generative rows are still n/a."""
+    issues = []
+    adv_csv = ROOT / "eval/adversarial/adversarial_summary.csv"
+    if not adv_csv.exists():
+        return issues
+    import csv as _csv
+    with adv_csv.open() as f:
+        rows = list(_csv.DictReader(f))
+    gen_rates = [r["safe_response_rate"] for r in rows if r.get("mode") == "generative"]
+    all_na = gen_rates and all(v == "n/a" for v in gen_rates)
+    if all_na:
+        patterns = [
+            r"generative adversarial.{0,30}completed",
+            r"completed.{0,30}generative adversarial",
+            r"adversarial.{0,30}\barm\b.{0,30}completed",
+        ]
+        for pat in patterns:
+            if re.search(pat, text, flags=re.IGNORECASE):
+                issues.append(
+                    f"adversarial_summary.csv generative rows are all n/a but report claims "
+                    f"generative arm completed (pattern: {pat!r})"
+                )
+    return issues
+
+
 def main() -> int:
     if not REPORT.exists():
         print(f"ERROR: report markdown not found at {REPORT}", file=sys.stderr)
@@ -190,6 +299,9 @@ def main() -> int:
     all_issues += check_fr_cross_references(text)
     all_issues += check_figures_disk_vs_report(text)
     all_issues += check_table_traces(text)
+    all_issues += check_b4_backend_claim(text)
+    all_issues += check_objective_claims(text)
+    all_issues += check_adversarial_completion(text)
 
     if all_issues:
         print("FAILED: final_consistency_check.py found issues:")
