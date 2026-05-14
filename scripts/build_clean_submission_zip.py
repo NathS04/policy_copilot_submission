@@ -217,6 +217,12 @@ RESULTS_RUNS = [
     "results/runs/b3_extractive_hybrid_v2_contra_upgraded",
     "results/runs/b4_conservative_hybrid_replay_v2_final",
     "results/runs/b5_evidence_gated_hybrid_v3_final",     # B5 final round
+    # Component ablation runs (referenced by Table 4.5 + verify_artifacts manifest)
+    "results/runs/ablation_full_hybrid_v2",
+    "results/runs/ablation_no_abstain_hybrid_v2",
+    "results/runs/ablation_no_contra_hybrid_v2",
+    "results/runs/ablation_no_rerank_hybrid_v2",
+    "results/runs/ablation_no_verify_hybrid_v2",
 ]
 
 DOCS_INCLUDE = [

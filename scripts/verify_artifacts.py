@@ -193,23 +193,40 @@ def main():
             errors.append(f"Manifest-declared table missing on disk: results/tables/{name}")
 
     # If a make_figures manifest exists, listed runs should still exist.
-    # Exception: timestamped ephemeral test runs (e.g. `b2_test_extractive_bm25_<YYYYMMDD>_<HHMMSS>`)
-    # produced by `scripts/reproduce_offline.py` are transient — they may
-    # appear in a manifest captured during one pytest run and be cleaned
-    # by the time the next call to verify_artifacts runs. Skip them when
-    # checking for missing-on-disk; surface as informational only.
+    # Exceptions:
+    #  - Timestamped ephemeral test runs (e.g. `b2_test_extractive_bm25_<YYYYMMDD>_<HHMMSS>`)
+    #    produced by `scripts/reproduce_offline.py` are transient — they may
+    #    appear in a manifest captured during one pytest run and be cleaned
+    #    by the time the next call to verify_artifacts runs.
+    #  - The B2 integration-test run dir `test_b2_extractive_bm25_integration`
+    #    is intentionally excluded from the submission ZIP (see
+    #    `scripts/build_clean_submission_zip.py` FORBIDDEN_SUBSTRINGS); the
+    #    manifest may still list it on the author's local tree but a marker
+    #    extracting the ZIP will not see it. Tolerated for the same reason.
+    # Skip these when checking missing-on-disk; surface as informational only.
     import re as _re
     EPHEMERAL_RUN_RE = _re.compile(r"^b[23]_test_extractive_bm25_\d{8}_\d{6}$")
+    EXPECTED_MISSING_RUNS = {"test_b2_extractive_bm25_integration"}
     if expected_runs:
         missing_runs = sorted(expected_runs - set(run_ids))
-        permanent_missing = [r for r in missing_runs if not EPHEMERAL_RUN_RE.match(r)]
+        permanent_missing = [
+            r for r in missing_runs
+            if not EPHEMERAL_RUN_RE.match(r) and r not in EXPECTED_MISSING_RUNS
+        ]
         ephemeral_missing = [r for r in missing_runs if EPHEMERAL_RUN_RE.match(r)]
+        expected_missing = [r for r in missing_runs if r in EXPECTED_MISSING_RUNS]
         if permanent_missing:
             errors.append(f"Manifest references missing runs: {permanent_missing}")
         if ephemeral_missing:
             warnings.append(
                 f"Manifest references {len(ephemeral_missing)} ephemeral "
                 f"reproduce_offline run dir(s) no longer on disk (ignored)."
+            )
+        if expected_missing:
+            warnings.append(
+                f"Manifest references {len(expected_missing)} integration-test "
+                f"run dir(s) intentionally excluded from the submission ZIP "
+                f"(ignored): {expected_missing}"
             )
 
     # 4) Write verification manifest (retains make_figures source identity)
