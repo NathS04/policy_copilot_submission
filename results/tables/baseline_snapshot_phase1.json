@@ -1,0 +1,90 @@
+{
+  "captured_at": "2026-05-14T09:52:58.194736+00:00",
+  "github_head_main": "7b52626f73",
+  "test_status": {
+    "pytest_passed": 291,
+    "pytest_skipped": 2,
+    "pytest_collected": 293,
+    "ruff": "All checks passed",
+    "final_consistency_check": "OK",
+    "verify_artifacts": "passed"
+  },
+  "env": {
+    "openai_api_key_present": false,
+    "anthropic_api_key_present": false,
+    "env_file_present": false
+  },
+  "run_metrics": {
+    "b3_generative_v2": {
+      "label": "B3-Generative v2 (BM25 replay)",
+      "answer_rate": 0.25,
+      "abstention_accuracy": 1.0,
+      "evidence_recall_at_5": 0.73,
+      "evidence_mrr": 0.7557,
+      "citation_precision": 1.0,
+      "citation_recall": 0.6,
+      "ungrounded_rate": 0.0,
+      "contradiction_recall": 0.2,
+      "contradiction_precision": 0.3333
+    },
+    "b3_extractive_hybrid_v2_final": {
+      "label": "B3-Extractive hybrid v2",
+      "answer_rate": 0.925,
+      "abstention_accuracy": 0.7692,
+      "evidence_recall_at_5": 0.78,
+      "evidence_mrr": 0.8657,
+      "citation_precision": 1.0,
+      "citation_recall": 0.5225,
+      "ungrounded_rate": 0.0,
+      "contradiction_recall": 0.4,
+      "contradiction_precision": 0.1905
+    },
+    "b4_conservative_hybrid_replay_v2_final": {
+      "label": "B4 Conservative Hybrid v2",
+      "answer_rate": 0.45,
+      "abstention_accuracy": 1.0,
+      "evidence_recall_at_5": 0.73,
+      "evidence_mrr": 0.7557,
+      "citation_precision": 1.0,
+      "citation_recall": 0.5417,
+      "ungrounded_rate": 0.0,
+      "contradiction_recall": 0.2,
+      "contradiction_precision": 0.3333
+    }
+  },
+  "contradiction_evaluation": [
+    {
+      "run_name": "b3_extractive_hybrid_v2_final",
+      "label": "B3-Extractive hybrid (pre-upgrade detector)",
+      "contradiction_recall": "0.4",
+      "contradiction_precision": "0.1905",
+      "f1": "0.2581",
+      "note": ""
+    },
+    {
+      "run_name": "b3_extractive_hybrid_v2_contra_upgraded",
+      "label": "B3-Extractive hybrid (POST-upgrade detector)",
+      "contradiction_recall": "0.5",
+      "contradiction_precision": "0.1852",
+      "f1": "0.2703",
+      "note": ""
+    },
+    {
+      "run_name": "b3_generative_v2",
+      "label": "B3-Generative replay (BM25, post-upgrade source unaffected)",
+      "contradiction_recall": "0.2",
+      "contradiction_precision": "0.3333",
+      "f1": "0.25",
+      "note": ""
+    }
+  ],
+  "adversarial_summary": {
+    "extractive_safe_rate": [
+      "1.0"
+    ],
+    "generative_safe_rate": [
+      "n/a"
+    ],
+    "n_rows": 12
+  }
+}

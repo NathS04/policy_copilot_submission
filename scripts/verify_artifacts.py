@@ -31,9 +31,12 @@ ALLOWED_TABLES = {
     "contradiction_evaluation_v2.csv",  # Phase I aggregate
     "statistical_confidence_v2.csv",  # Phase J
     "run_summary_v2.csv",             # Phase L aggregator
+    "b4_threshold_tune_dev.csv",      # Phase 2 (residual-gap-closure)
+    "retrieval_v3_sweep.csv",         # Phase 4 (residual-gap-closure)
 }
 ALLOWED_SIDE_TABLES_JSON = {
     "bm25_threshold_retuning_summary.json",  # paired with bm25_threshold_retuning.csv
+    "baseline_snapshot_phase1.json",         # Phase 1 of the residual-gap-closure plan
 }
 
 
@@ -98,10 +101,16 @@ def main():
 
             b_req = cfg.get("backend_requested", cfg.get("backend"))
             b_used = cfg.get("backend_used", cfg.get("backend"))
+            replay_from_bm25 = bool(cfg.get("replay_from_bm25_source"))
             if b_req and b_used and b_req != b_used:
                 msg = f"Run {p.name}: backend_requested={b_req} but backend_used={b_used}"
-                if args.strict and not args.allow_backend_mismatch:
+                if args.strict and not args.allow_backend_mismatch and not replay_from_bm25:
                     errors.append(msg)
+                elif replay_from_bm25:
+                    # The replay-from-BM25-source case is documented metadata,
+                    # not a silent fallback. Surface it as an explicit notice
+                    # rather than a warning that looks like a regression.
+                    warnings.append("__REPLAY_NOTICE__::" + msg)
                 else:
                     warnings.append(msg)
 
@@ -214,6 +223,14 @@ def main():
         "b3_generative_bm25_fallback_final",
     }
     for w in warnings:
+        if w.startswith("__REPLAY_NOTICE__::"):
+            inner = w.removeprefix("__REPLAY_NOTICE__::")
+            print(
+                f"EXPECTED NOTICE: {inner}. This run is a replay over the retained "
+                "BM25-source outputs (see run_config.replay_provenance.backend_source_run); "
+                "backend_used reflects the original source run."
+            )
+            continue
         is_expected_fallback = (
             "backend_requested=dense but backend_used=bm25" in w
             and any(run in w for run in expected_fallback_runs)
