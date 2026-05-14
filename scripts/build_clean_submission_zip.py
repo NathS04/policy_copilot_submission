@@ -39,6 +39,7 @@ TOP_LEVEL_FILES = [
     "INSTRUCTIONS_FOR_EVALUATOR.md",
     "LICENSE",
     "README.md",
+    "SEBASTIAN26-FINAL.pdf",
     "pyproject.toml",
     "requirements-ml.lock",
     "requirements.txt",
