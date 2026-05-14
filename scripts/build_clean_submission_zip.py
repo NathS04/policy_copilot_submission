@@ -54,8 +54,15 @@ TOP_LEVEL_DIRS = [
 ]
 
 SCRIPTS_INCLUDE = [
+    "aggregate_v2_run_summary.py",          # Phase L
     "analyse_bm25_threshold_retuning.py",
     "apply_leeds_template.py",
+    "audit_golden_set_labels.py",           # Phase A
+    "compute_bootstrap_ci_v2.py",           # Phase J
+    "final_consistency_check.py",           # Phase N
+    "replay_score_runs.py",                 # Phase B
+    "run_b4_replay.py",                     # Phase F
+    "run_component_ablations.py",           # Phase G
     "auto_label_gold.py",
     "build_audit_exports.py",
     "build_clean_submission_zip.py",
@@ -122,6 +129,7 @@ EVAL_INCLUDE = [
     "eval/golden_set/golden_set.csv",
     "eval/golden_set/golden_set_README.md",
     "eval/golden_set/golden_set_frozen_v1.csv",
+    "eval/golden_set/golden_set_v2_corrected.csv",        # Phase A
     "eval/golden_set/public_transfer_set.csv",
     "eval/metrics/__init__.py",
     "eval/metrics/abstention_metrics.py",
@@ -167,11 +175,16 @@ RESULTS_INCLUDE = [
     "results/tables/auditability_scores.csv",
     "results/tables/bm25_threshold_retuning.csv",
     "results/tables/bm25_threshold_retuning_summary.json",
+    "results/tables/component_ablation_final.csv",        # Phase G
+    "results/tables/contradiction_evaluation_v2.csv",     # Phase I
     "results/tables/critic_summary.csv",
     "results/tables/failure_taxonomy.csv",
+    "results/tables/golden_set_label_audit.csv",          # Phase A
     "results/tables/objective_slice_results.csv",
     "results/tables/run_summary.csv",
+    "results/tables/run_summary_v2.csv",                  # Phase L
     "results/tables/statistical_confidence.csv",
+    "results/tables/statistical_confidence_v2.csv",       # Phase J
     "results/tables/threshold_sweep.csv",
 ]
 
@@ -183,6 +196,17 @@ RESULTS_RUNS = [
     "results/runs/b3_extractive_public_transfer",
     "results/runs/b3_generative_bm25_fallback_final",
     "results/runs/critic_heuristic_final",
+    # v2 runs after the corrected-golden-set hardening pass (Phases A-J)
+    "results/runs/b1_generative_v2",
+    "results/runs/b2_generative_v2",
+    "results/runs/b2_extractive_dense_v2_final",
+    "results/runs/b2_extractive_hybrid_v2_final",
+    "results/runs/b3_generative_v2",
+    "results/runs/b3_extractive_v2",
+    "results/runs/b3_extractive_dense_v2_final",
+    "results/runs/b3_extractive_hybrid_v2_final",
+    "results/runs/b3_extractive_hybrid_v2_contra_upgraded",
+    "results/runs/b4_conservative_hybrid_replay_v2_final",
 ]
 
 DOCS_INCLUDE = [
@@ -219,6 +243,7 @@ DOCS_INCLUDE = [
     "docs/evidence/verification/audit_export_index.md",
     "docs/evidence/verification/audit_export_unanswerable.md",
     "docs/evidence/verification/fresh_install_log.md",
+    "docs/evidence/verification/golden_set_label_audit.md",  # Phase A
     "docs/evidence/verification/vertical_slice_case_study.md",
     "docs/evidence/verification/public_transfer_failure_taxonomy.md",
     "docs/meetings/000_template.md",
