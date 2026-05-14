@@ -191,10 +191,24 @@ def main():
             errors.append(f"Manifest-declared table missing on disk: results/tables/{name}")
 
     # If a make_figures manifest exists, listed runs should still exist.
+    # Exception: timestamped ephemeral test runs (e.g. `b2_test_extractive_bm25_<YYYYMMDD>_<HHMMSS>`)
+    # produced by `scripts/reproduce_offline.py` are transient — they may
+    # appear in a manifest captured during one pytest run and be cleaned
+    # by the time the next call to verify_artifacts runs. Skip them when
+    # checking for missing-on-disk; surface as informational only.
+    import re as _re
+    EPHEMERAL_RUN_RE = _re.compile(r"^b[23]_test_extractive_bm25_\d{8}_\d{6}$")
     if expected_runs:
         missing_runs = sorted(expected_runs - set(run_ids))
-        if missing_runs:
-            errors.append(f"Manifest references missing runs: {missing_runs}")
+        permanent_missing = [r for r in missing_runs if not EPHEMERAL_RUN_RE.match(r)]
+        ephemeral_missing = [r for r in missing_runs if EPHEMERAL_RUN_RE.match(r)]
+        if permanent_missing:
+            errors.append(f"Manifest references missing runs: {permanent_missing}")
+        if ephemeral_missing:
+            warnings.append(
+                f"Manifest references {len(ephemeral_missing)} ephemeral "
+                f"reproduce_offline run dir(s) no longer on disk (ignored)."
+            )
 
     # 4) Write verification manifest (retains make_figures source identity)
     verification_manifest = {
