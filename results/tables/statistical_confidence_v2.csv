@@ -1,0 +1,25 @@
+run_name,label,baseline,metric,denominator_n,point_estimate,ci95_lo,ci95_hi,n_resamples,seed
+b1_generative_v2,"B1 (replay, v2 corrected)",b1,answer_rate,40,1.0,1.0,1.0,2000,42
+b1_generative_v2,"B1 (replay, v2 corrected)",b1,abstention_accuracy,13,0.0,0.0,0.0,2000,42
+b1_generative_v2,"B1 (replay, v2 corrected)",b1,evidence_recall_at_5,50,0.0,0.0,0.0,2000,42
+b1_generative_v2,"B1 (replay, v2 corrected)",b1,citation_precision,40,0.0,0.0,0.0,2000,42
+b2_generative_v2,"B2-Generative (replay, v2)",b2,answer_rate,40,0.825,0.7,0.925,2000,42
+b2_generative_v2,"B2-Generative (replay, v2)",b2,abstention_accuracy,13,0.9231,0.7692,1.0,2000,42
+b2_generative_v2,"B2-Generative (replay, v2)",b2,evidence_recall_at_5,50,0.73,0.65,0.81,2000,42
+b2_generative_v2,"B2-Generative (replay, v2)",b2,citation_precision,33,1.0,1.0,1.0,2000,42
+b2_extractive_hybrid_v2_final,B2-Extractive hybrid (v2),b2,answer_rate,40,1.0,1.0,1.0,2000,42
+b2_extractive_hybrid_v2_final,B2-Extractive hybrid (v2),b2,abstention_accuracy,13,0.0,0.0,0.0,2000,42
+b2_extractive_hybrid_v2_final,B2-Extractive hybrid (v2),b2,evidence_recall_at_5,50,0.74,0.66,0.82,2000,42
+b2_extractive_hybrid_v2_final,B2-Extractive hybrid (v2),b2,citation_precision,40,1.0,1.0,1.0,2000,42
+b3_generative_v2,"B3-Generative (replay, v2)",b3,answer_rate,40,0.25,0.125,0.4,2000,42
+b3_generative_v2,"B3-Generative (replay, v2)",b3,abstention_accuracy,13,1.0,1.0,1.0,2000,42
+b3_generative_v2,"B3-Generative (replay, v2)",b3,evidence_recall_at_5,50,0.73,0.65,0.81,2000,42
+b3_generative_v2,"B3-Generative (replay, v2)",b3,citation_precision,10,1.0,1.0,1.0,2000,42
+b3_extractive_hybrid_v2_final,B3-Extractive hybrid (v2),b3,answer_rate,40,0.925,0.825,1.0,2000,42
+b3_extractive_hybrid_v2_final,B3-Extractive hybrid (v2),b3,abstention_accuracy,13,0.7692,0.5385,1.0,2000,42
+b3_extractive_hybrid_v2_final,B3-Extractive hybrid (v2),b3,evidence_recall_at_5,50,0.78,0.7,0.85,2000,42
+b3_extractive_hybrid_v2_final,B3-Extractive hybrid (v2),b3,citation_precision,37,1.0,1.0,1.0,2000,42
+b4_conservative_hybrid_replay_v2_final,B4 Conservative Hybrid (v2 replay),b4,answer_rate,40,0.45,0.3,0.6,2000,42
+b4_conservative_hybrid_replay_v2_final,B4 Conservative Hybrid (v2 replay),b4,abstention_accuracy,13,1.0,1.0,1.0,2000,42
+b4_conservative_hybrid_replay_v2_final,B4 Conservative Hybrid (v2 replay),b4,evidence_recall_at_5,50,0.73,0.65,0.81,2000,42
+b4_conservative_hybrid_replay_v2_final,B4 Conservative Hybrid (v2 replay),b4,citation_precision,18,1.0,1.0,1.0,2000,42
