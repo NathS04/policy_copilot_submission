@@ -456,7 +456,7 @@ Claim Decomposition. The verifier first decomposes the answer into sentence-leve
 
 Citation Verification. Each claim is then checked in two deterministic ways. Jaccard token overlap: the claim and the cited paragraph are tokenised (lowercased, stopwords removed); if Jaccard falls below threshold (default 0.10) the citation is flagged as unsupported. Numeric consistency: if the claim contains specific numbers (integers, decimals, percentages, "30 days", "90-day"), they must appear verbatim in the cited paragraph. This addresses a hallucination class observed in Sprint 3, where the LLM "rounded" numeric values ("approximately 30 days" when the policy said "28 days"). The Jaccard threshold was selected via grid search on the validation split, balancing false positives and negatives (§4.5).
 
-Jaccard was deliberately chosen over embedding-cosine. Embeddings would generalise across paraphrases more smoothly but would introduce non-determinism into the verification layer, which is a trade-off I chose not to accept for a layer that needs to be reproducible and explainable.
+Jaccard was deliberately chosen over embedding-cosine. Embeddings would generalise across paraphrases more smoothly but would introduce non-determinism into the verification layer, which was not accepted for a layer that needs to be reproducible and explainable.
 
 Support Policy Enforcement. Claims that fail the checks are pruned. If pruning removes all claims, the response is downgraded to abstention. This enforce-or-abstain logic implements the "cited or silent" rule in practice.
 
