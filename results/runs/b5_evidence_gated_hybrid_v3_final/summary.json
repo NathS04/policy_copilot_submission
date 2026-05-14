@@ -1,0 +1,29 @@
+{
+  "baseline": "b5",
+  "total_queries": 63,
+  "answer_rate": 0.9,
+  "abstention_accuracy": 0.8462,
+  "evidence_recall_at_5": 0.78,
+  "evidence_precision_at_5": 0.308,
+  "evidence_mrr": 0.8657,
+  "citation_precision": 1.0,
+  "citation_recall": 0.419,
+  "ungrounded_rate": 0.0,
+  "support_rate_mean": 1.0,
+  "contradiction_recall": 0.4,
+  "contradiction_precision": 0.1905,
+  "b5_mode_counts": {
+    "surfaced": 42,
+    "surfaced_contradiction_aware": 6,
+    "abstained": 15
+  },
+  "b5_gate_cfg": {
+    "rerank_floor": 0.05,
+    "overlap_floor": 0.05,
+    "high_rerank": 0.9,
+    "low_overlap_cutoff": 0.058,
+    "numeric_filter": true,
+    "qualifier_filter": true,
+    "generic_filter": true
+  }
+}

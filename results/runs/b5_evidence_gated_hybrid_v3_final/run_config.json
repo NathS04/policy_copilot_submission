@@ -1,0 +1,88 @@
+{
+  "baseline": "b5",
+  "mode": "evidence_gated_hybrid",
+  "backend_requested": "hybrid",
+  "backend_used": "hybrid",
+  "dataset_version": "golden_set_v2_corrected",
+  "source_run_config": {
+    "provider": "openai",
+    "model": "gpt-4o-mini",
+    "temperature": 0.0,
+    "max_tokens": 600,
+    "top_k": 5,
+    "seed": 42,
+    "enable_llm": false,
+    "embedding_model": "sentence-transformers/all-MiniLM-L6-v2",
+    "run_name": "20260514_011549",
+    "retrieve_k_candidates": 50,
+    "rerank_k_final": 5,
+    "rerank_model": "cross-encoder/ms-marco-MiniLM-L-6-v2",
+    "abstain_threshold": 0.3,
+    "min_support_rate": 0.8,
+    "claim_overlap_threshold": 0.1,
+    "enable_llm_verify": false,
+    "enable_llm_contradictions": false,
+    "contradiction_policy": "surface",
+    "baseline": "b3",
+    "ablations": {
+      "backend": "hybrid",
+      "allow_fallback": true,
+      "no_rerank": false,
+      "no_verify": false,
+      "no_contradictions": false
+    },
+    "split": "all",
+    "mode": "extractive",
+    "backend_requested": "hybrid",
+    "backend": "hybrid",
+    "backend_used": "hybrid",
+    "allow_fallback": true,
+    "cli_args": {
+      "baseline": "b3",
+      "run_name": "b3_extractive_hybrid_v2_final",
+      "golden_set": "eval/golden_set/golden_set_v2_corrected.csv",
+      "split": "all",
+      "config": null,
+      "force": true,
+      "no_rerank": false,
+      "no_verify": false,
+      "no_contradictions": false,
+      "retrieve_k_candidates": 50,
+      "rerank_k_final": null,
+      "abstain_threshold": null,
+      "min_support_rate": null,
+      "enable_llm_verify": null,
+      "enable_llm_contradictions": null,
+      "mode": "extractive",
+      "backend": "hybrid",
+      "allow_no_key": false
+    },
+    "thresholds": {
+      "abstain_threshold": 0.3,
+      "min_support_rate": 0.8
+    },
+    "backend_reason": "explicit_request",
+    "dense_index_path": "data/corpus/processed/index",
+    "dense_index_sha": "fd1b38ac8b29f1e22ecd3997bbdc5887d38fea84786fe57a6ff244ea927e7385"
+  },
+  "b5_gate_cfg": {
+    "rerank_floor": 0.05,
+    "overlap_floor": 0.05,
+    "high_rerank": 0.9,
+    "low_overlap_cutoff": 0.058,
+    "numeric_filter": true,
+    "qualifier_filter": true,
+    "generic_filter": true
+  },
+  "b5_provenance": {
+    "source_run": "b3_extractive_hybrid_v2_final",
+    "applied_at": "2026-05-14T10:50:50.661244+00:00",
+    "script": "scripts/run_b5_evidence_gated_hybrid.py",
+    "no_llm_calls": true,
+    "mode_counts": {
+      "surfaced": 42,
+      "surfaced_contradiction_aware": 6,
+      "abstained": 15
+    }
+  }
+}
