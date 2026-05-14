@@ -483,7 +483,7 @@ Four engineering problems were especially significant. The first was JSON schema
 
 ### 3.9 Testing and Validation
 
-The evaluator test suite collects 292 tests under the documented `pytest -q --ignore=tests/test_run_eval_requires_key_in_generative.py` command: 290 pass and 2 are conditionally skipped. The 49 test files are organised in three tiers: unit (functions in isolation), integration (pipeline stage interactions), and system (end-to-end and reproducibility). The suite executes in under 10 s on consumer hardware. Coverage spans the pipeline's reliability surfaces: ingestion ID stability, retrieval correctness, verifier behaviour on paraphrase and numeric edge cases, schema repair-and-retry, abstention thresholding, contradiction surfacing, and end-to-end integration of both the generative and extractive paths. The complete per-file matrix appears in Appendix B.9.
+The evaluator test suite collects 346 tests under the documented `pytest -q --ignore=tests/test_run_eval_requires_key_in_generative.py` command: 344 pass and 2 are conditionally skipped. The 60 test files are organised in three tiers: unit (functions in isolation), integration (pipeline stage interactions), and system (end-to-end and reproducibility). The suite executes in under 60 s on consumer hardware. Coverage spans the pipeline's reliability surfaces: ingestion ID stability, retrieval correctness, verifier behaviour on paraphrase and numeric edge cases, schema repair-and-retry, abstention thresholding, contradiction surfacing, end-to-end integration of generative and extractive paths, and the B5 evidence-gated answerability gate. The complete per-file matrix appears in Appendix B.9.
 
 ## Chapter 4 Results, Evaluation and Discussion
 
@@ -587,7 +587,7 @@ Note: These are intermediate claim-level rates after failed claims have been pru
 
 Verification reduces the claim-level Ungrounded Rate from 12% to 4% (roughly a two-thirds reduction) and pushes Citation Precision from 78% to 94%. Precision improves while average claims per response only drops from 3.2 to 2.8, indicating that pruning is mostly hitting weaker claims rather than removing material at random. The Jaccard threshold (0.10) was tuned on the dev split to balance two failure modes: too aggressive a threshold prunes legitimate paraphrases, and too permissive a threshold lets weakly-supported claims through. The threshold sweep used to pick this value is reported in §4.5, and the trade-off is revisited as a limitation in §4.13.
 
-Contradiction surfacing. The detector was extended with a quantitative-fact layer (`src/policy_copilot/verify/policy_facts.py`) that catches numeric conflicts the legacy "minimum N" regex missed — e.g. 8 vs 12 character password length, 60 vs 90 day rotation. On the hybrid backend the upgraded detector reports recall = 0.50 (up from 0.40 with the legacy detector, and 0.20 on the BM25-replay run); precision is 0.185 (marginally below 0.19), F1 rises to 0.270 (`results/tables/contradiction_evaluation_v2.csv`). The retrieval bottleneck remains: the detector fires only on opposing or matching subject+unit facts within the top-five reranked context. NLI-based entailment is treated as future work in §5.3.
+Contradiction surfacing. The detector was extended with a quantitative-fact layer (`src/policy_copilot/verify/policy_facts.py`) that catches numeric conflicts the legacy "minimum N" regex missed — e.g. 8 vs 12 character password length, 60 vs 90 day rotation. On the hybrid backend the upgraded detector reports recall = 0.80 (up from 0.40 with the legacy detector, and 0.20 on the BM25-replay run); precision is 0.222, F1 rises to 0.348 (`results/tables/contradiction_evaluation_v2.csv`, row `b3_extractive_hybrid_v2_contra_upgraded`). The retrieval bottleneck remains: the detector fires only on opposing or matching subject+unit facts within the top-five reranked context. NLI-based entailment is treated as future work in §5.3.
 
 ### 4.5 Abstention Threshold Sensitivity
 
@@ -718,19 +718,20 @@ The useful result is modest but still important. On this small extractive-only t
 
 ### 4.12 Statistical Confidence
 
-Because the golden set is small, bootstrapped 95% confidence intervals were computed for the headline B3-Generative metrics.
+Because the corrected v2 golden set is small (n = 63: 40 answerable, 13 unanswerable, 10 contradiction), bootstrapped 95% confidence intervals were computed for the headline B5 Evidence-Gated Hybrid metrics; full per-baseline CIs (B1-B5) are in `results/tables/statistical_confidence_v2.csv`.
 
 <a id="tbl-4-11"></a>
 
-**Table 4.11: 95% bootstrap CIs for B3-Generative headline metrics. Each metric is bootstrapped over its own per-query denominator (Answer Rate over the 36 answerable queries; Abstention Accuracy over the 17 unanswerable queries; Evidence Recall@5 over the 46 queries with non-empty `gold_paragraph_ids`), seed = 42, n_resamples = 2,000. The values are produced by the committed bootstrap script and stored with the submitted results tables.**
+**Table 4.11: 95% bootstrap CIs for headline B5 metrics on the corrected v2 golden set. Each metric is bootstrapped over its own per-query denominator (Answer Rate over 40 answerable; Abstention Accuracy over 13 unanswerable; Evidence Recall@5 over 50 queries with non-empty `gold_paragraph_ids`; Citation Precision over the 36 cited surfaced responses), seed = 42, n_resamples = 2,000.**
 
 | Metric | Denominator | Point Estimate | 95% CI |
 | :--- | :--- | :--- | :--- |
-| Answer Rate | 36 answerable | 25.0% | [11.1%, 38.9%] |
-| Abstention Accuracy | 17 unanswerable | 94.1% | [82.4%, 100.0%] |
-| Evidence Recall@5 | 46 queries with gold | 73.9% | [65.2%, 82.6%] |
+| Answer Rate | 40 answerable | 90.0% | [80.0%, 97.5%] |
+| Abstention Accuracy | 13 unanswerable | 84.6% | [61.5%, 100.0%] |
+| Evidence Recall@5 | 50 with gold | 78.0% | [70.0%, 85.0%] |
+| Citation Precision | 36 cited | 100.0% | [100.0%, 100.0%] |
 
-The wide Answer Rate CI reflects the small number of answered queries (9 of 36); Abstention Accuracy's upper bound at 100% indicates a ceiling effect. With n = 63, all point estimates in this chapter are indicative rather than definitive, and an n = 200+ stratified evaluation is recommended for follow-up.
+The wide B5 AbsAcc CI reflects the small n = 13 unanswerable subset; the upper bound at 100% indicates a ceiling effect. B3-Generative on the same set bootstraps to AR 25.0% [12.5%, 40.0%] and AbsAcc 100%. With n = 63, all point estimates are indicative; an n = 200+ stratified evaluation is recommended for follow-up.
 
 ### 4.13 Discussion: Achievement Against Objectives
 
@@ -747,9 +748,9 @@ The wide Answer Rate CI reflects the small number of answered queries (9 of 36);
 | 5. Critic Mode F1 ≥ 85% | ≥ 85% | 93.8% (heuristic, 50-snippet labelled suite) | Met |
 | 6. Systematic Evaluation | Complete | Complete | Met |
 
-Headline grounding, Critic Mode F1, abstention (B3-Generative, B4 and B5), and the harness all meet their targets on the corrected v2 set. Objective 2 is met by B5 Evidence-Gated Hybrid (90.0%) and B3-Extractive on hybrid (92.5%); B5 is the stronger final configuration because it meets the answer-rate target while also preserving the abstention, citation-precision and surfaced-grounding floors. B3-Generative (25%) and B4 (50%) do not reach 85%. Objective 3 reaches 78%, two points below target with a CI overlapping 80%. B5 meets abstention at 84.6% but the CI is wide (n=13).
+Headline grounding, Critic Mode F1, abstention (B3-Generative, B4 and B5), and the harness all meet their targets on the corrected v2 set. Objective 2 is met by B5 Evidence-Gated Hybrid (90.0%) and B3-Extractive on hybrid (92.5%); B5 is the stronger final configuration because it meets the answer-rate target while preserving the abstention, citation-precision and surfaced-grounding floors (CI on B5 AbsAcc wide due to n=13). B3-Generative (25%) and B4 (50%) do not reach 85%. Objective 3 reaches 78%, two points below target, with a CI overlapping 80%.
 
-The remaining open issue is generative coverage. The §4.5 sweep showed 25% is the maximum attainable under the dual safety constraints on the BM25-fallback outputs. B4 addresses this by degrading gracefully: when generation fails the support gate and retrieval is strong, B4 returns the retrieved paragraph verbatim with its citation. Strict surfaced grounding can be combined with better coverage in this closed-corpus setting, with the cost paid as controlled extractive degradation rather than relaxed safety.
+The remaining open issue is generative coverage. The §4.5 sweep showed 25% is the maximum attainable under the dual safety constraints on the BM25-fallback outputs. B4 addresses this by degrading gracefully: when generation fails the support gate and retrieval is strong, B4 returns the retrieved paragraph verbatim with its citation. The cost of high coverage in this closed-corpus setting is paid as controlled extractive degradation rather than relaxed safety.
 
 ## Chapter 5 Conclusions and Reflection
 
@@ -761,7 +762,7 @@ Contribution. This project contributes an end-to-end design and empirical evalua
 
 The project asked whether a RAG system over a closed policy corpus could be made grounded enough to be useful in an audit setting, and the results support a qualified yes within this synthetic corpus and tested setup. Three observations are worth highlighting, all of which apply to the specific corpus and configuration tested here rather than to RAG systems in general.
 
-The first is that, of the four reliability layers, cross-encoder reranking did the most work in these ablations (§4.6). Removing it degraded every headline metric more than removing any other single component. A practical reading is that, for closed corpora of this size (under 2,000 paragraphs), a reranker is worth the engineering effort before trying anything more elaborate, such as LLM self-evaluation or multi-step verification chains. The cost of the reranker on consumer hardware was around 1.8 seconds per query, which was acceptable for a non-real-time policy use-case.
+The first is that, of the four reliability layers, cross-encoder reranking did the most work in these ablations (§4.6). Removing it degraded every headline metric more than removing any other single component. For closed corpora of this size (under 2,000 paragraphs), a reranker is worth the engineering effort before trying more elaborate alternatives such as LLM self-evaluation or multi-step verification chains. The reranker cost on consumer hardware was around 1.8 s per query — acceptable for a non-real-time policy use-case.
 
 The second is that the heuristic verification layer is useful but has a clear ceiling. It cut the per-claim ungrounded rate from 12% to 4%, which is a meaningful improvement, but the residual 4% mostly consists of claims that are semantically wrong while still using words that overlap with the cited paragraph. Catching that residual would require something like NLI-based entailment checking, which would add cost, latency, and a learned component to a layer that is currently deterministic. Whether that trade-off is worth it depends on the deployment context.
 
@@ -785,7 +786,7 @@ A single threats-to-validity table compiling each of the above against its mitig
 
 ### 5.3 Future Work and Reflection
 
-The limitations above suggest a prioritised future-work programme. The nearest technical step is NLI-based verification, using FEVER-style or SciFact-style entailment models as a backstop for borderline claims (Thorne et al., 2018; Wadden et al., 2020), addressing the heuristic-verification ceiling in L3. The second priority is backend-specific threshold tuning and domain-adapted embeddings on legal NLP corpora (Chalkidis et al., 2020). A stronger evaluation would expand the golden set to 200+ queries, compare two LLM families, and validate on a real organisational corpus with an industry partner. Looking back, designing the evaluation was harder than implementing the reliability features themselves: a safety-first RAG system cannot be judged by answer rate alone.
+The nearest future-work technical step is NLI-based verification (FEVER- or SciFact-style entailment models) as a backstop for borderline claims (Thorne et al., 2018; Wadden et al., 2020), addressing the L3 ceiling. The second priority is domain-adapted embeddings on legal NLP corpora (Chalkidis et al., 2020). A stronger evaluation would expand the golden set to 200+ queries, compare two LLM families, and validate on a real organisational corpus with an industry partner. In reflection, designing this evaluation was harder than building the reliability features: a safety-first RAG system cannot be judged by answer rate alone.
 
 </div>
 
@@ -1017,16 +1018,16 @@ The following self-assessment addresses the ethical dimensions of this research,
 
 #### B.7.1 Automated Test Suite
 
-The project's test suite collects 292 tests under the documented evaluator command (290 passed, 2 conditionally skipped) across 49 test files, covering retrieval logic, claim verification, generation schema validation, golden set integrity, contradiction detection, service layer orchestration, audit report export, hybrid retrieval fusion, UI state management, reviewer service, package import verification, threshold-retuning replay, and end-to-end integration.
+The project's test suite collects 346 tests under the documented evaluator command (344 passed, 2 conditionally skipped) across 60 test files, covering retrieval logic, claim verification, generation schema validation, golden set integrity, contradiction detection, service layer orchestration, audit report export, hybrid retrieval fusion, UI state management, reviewer service, package import verification, threshold-retuning replay, the B5 evidence-gated answerability gate, and end-to-end integration.
 
 Test execution summary (final submission build):
 
 ```
 $ pytest -q --ignore=tests/test_run_eval_requires_key_in_generative.py
-290 passed, 2 skipped in 7.39s
+344 passed, 2 skipped in 47.01s
 ```
 
-Environment: Python 3.10+, macOS, `pip install -e ".[dev]"`. The ignored test file (`tests/test_run_eval_requires_key_in_generative.py`) contains an integration test that requires a live API key and is excluded from the default evaluator command. Within the collected suite, the single skipped test is `test_exits_2_when_dense_index_missing`, which is conditionally skipped when the `[ml]` optional dependencies are installed (i.e. when a dense index could in principle be constructed).
+Environment: Python 3.10+, macOS, `pip install -e ".[dev]"`. The ignored test file (`tests/test_run_eval_requires_key_in_generative.py`) contains an integration test that requires a live API key and is excluded from the default evaluator command. Within the collected suite, the two skipped tests are `test_exits_2_when_dense_index_missing` (conditionally skipped when the `[ml]` optional dependencies are installed) and one additional ML-dependent skip.
 
 #### B.7.2 Figure Generation Pipeline
 
@@ -1189,7 +1190,7 @@ Table B.1: Comparative analysis of retrieval-augmented and grounded generation s
 
 <a id="tbl-b-2"></a>
 
-Table B.2: Representative testing and validation matrix. The 49 test files collect 292 pytest cases under the documented evaluator command (290 passed, 2 conditionally skipped); the 19 files listed below are representative files cited from the report body, while the remaining files cover additional edge cases and infrastructure checks.
+Table B.2: Representative testing and validation matrix. The 60 test files collect 346 pytest cases under the documented evaluator command (344 passed, 2 conditionally skipped); the 19 files listed below are representative files cited from the report body, while the remaining files cover additional edge cases and infrastructure checks (including the B5 evidence-gated gate and full-run integrity tests).
 
 | Test File | Tier | Component | Validates |
 | :--- | :--- | :--- | :--- |
