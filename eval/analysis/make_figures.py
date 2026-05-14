@@ -311,9 +311,9 @@ def _generative_subset(df: pd.DataFrame) -> pd.DataFrame:
     extractive ablation runs that share the variant name.
     """
     keep_runs = {
-        "b1_generative_final",
-        "b2_generative_bm25_fallback_final",
-        "b3_generative_bm25_fallback_final",
+        "b1_generative_v2",
+        "b2_generative_v2",
+        "b3_generative_v2",
     }
     return df[df["run_id"].isin(keep_runs)].copy()
 
