@@ -5,7 +5,6 @@ subject-overlap floor, and integration with detect_contradictions().
 """
 from __future__ import annotations
 
-import pytest
 
 from policy_copilot.verify.contradictions import detect_contradictions
 from policy_copilot.verify.policy_facts import (

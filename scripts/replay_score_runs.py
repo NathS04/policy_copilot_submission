@@ -13,11 +13,9 @@ from __future__ import annotations
 import argparse
 import csv
 import json
-import shutil
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Iterable
 
 
 ROOT = Path(__file__).resolve().parents[1]

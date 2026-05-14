@@ -21,7 +21,7 @@ per query, after the support gate has been applied.
 from __future__ import annotations
 
 import re
-from typing import Any, Dict, Iterable, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 
 # ----------------------------- defaults ----------------------------- #

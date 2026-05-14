@@ -26,7 +26,6 @@ import csv
 import json
 import sys
 from pathlib import Path
-from typing import Iterable
 
 import matplotlib
 
@@ -232,7 +231,6 @@ def validate_against_summary(
 def check_required_fields(records: list[dict]) -> list[str]:
     """Returns a list of human-readable problems with the inputs."""
     problems: list[str] = []
-    needed_in_answered = ("claim_verification",)
     for r in records:
         if "category" not in r:
             problems.append(f"{r.get('query_id')}: missing 'category'")

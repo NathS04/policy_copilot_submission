@@ -49,7 +49,7 @@ def test_dataset_version_marked(run_name):
     # We check via category counts in outputs.jsonl matching v2.
     path = ROOT / "results/runs" / run_name / "outputs.jsonl"
     with path.open() as f:
-        recs = [json.loads(l) for l in f if l.strip()]
+        recs = [json.loads(line) for line in f if line.strip()]
     cats = [r["category"] for r in recs]
     # v2 has 40 answerable / 13 unanswerable / 10 contradiction = 63
     assert len(recs) == 63

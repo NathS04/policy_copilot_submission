@@ -15,7 +15,6 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-import pytest
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -30,7 +29,7 @@ def test_b4_run_has_required_files():
 
 def _records():
     with (RUN_DIR / "outputs.jsonl").open() as f:
-        return [json.loads(l) for l in f if l.strip()]
+        return [json.loads(line) for line in f if line.strip()]
 
 
 def test_b4_records_have_mode_metadata():

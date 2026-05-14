@@ -4,7 +4,6 @@ Six unit tests using synthetic fixtures. No LLM calls, no file I/O.
 """
 from __future__ import annotations
 
-import pytest
 
 from policy_copilot.service.conservative_hybrid import (
     apply_b4_fallback_policy,

@@ -63,7 +63,7 @@
   },
   "b4_replay_provenance": {
     "replayed_from": "b3_generative_v2",
-    "replayed_at": "2026-05-14T01:37:02.265914+00:00",
+    "replayed_at": "2026-05-14T09:33:29.449906+00:00",
     "script": "scripts/run_b4_replay.py",
     "no_llm_calls": true,
     "mode_counts": {

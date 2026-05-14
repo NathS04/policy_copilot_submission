@@ -60,7 +60,7 @@ def test_v2_outputs_have_corrected_labels(run_name):
     corrected = _load_corrected_map()
     path = ROOT / "results/runs" / run_name / "outputs.jsonl"
     with path.open() as f:
-        recs = [json.loads(l) for l in f if l.strip()]
+        recs = [json.loads(line) for line in f if line.strip()]
     mismatches = []
     for rec in recs:
         qid = rec["query_id"]
@@ -81,7 +81,7 @@ def test_b3_generative_v2_denominators():
     """The headline run: 40 answerable / 13 unanswerable / 10 contradiction."""
     path = ROOT / "results/runs/b3_generative_v2/outputs.jsonl"
     with path.open() as f:
-        recs = [json.loads(l) for l in f if l.strip()]
+        recs = [json.loads(line) for line in f if line.strip()]
     cats = [r["category"] for r in recs]
     assert cats.count("answerable") == 40
     assert cats.count("unanswerable") == 13

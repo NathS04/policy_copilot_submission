@@ -39,6 +39,8 @@ ablation_no_abstain_hybrid_v2,b3,b3,all,extractive,hybrid,hybrid,hybrid,0.975,0.
 b2_test_extractive_bm25_20260514_101549,b2,b2,test,extractive,bm25,bm25,bm25,1.0,0.0,0.7344,0.7562,1.0,0.32,,0.0,,
 b3_test_extractive_bm25_20260514_021321,b3,b3,test,extractive,bm25,bm25,bm25,0.88,0.6667,0.8125,0.8984,1.0,0.5227,0.0,0.4286,0.2727,1.0
 b2_test_extractive_bm25_20260514_095908,b2,b2,test,extractive,bm25,bm25,bm25,1.0,0.0,0.7344,0.7562,1.0,0.32,,0.0,,
+b3_test_extractive_bm25_20260514_103307,b3,b3,test,extractive,bm25,bm25,bm25,0.88,0.6667,0.8125,0.8984,1.0,0.5682,0.0,0.4286,0.2,1.0
+b2_test_extractive_bm25_20260514_103829,b2,b2,test,extractive,bm25,bm25,bm25,1.0,0.0,0.7344,0.7562,1.0,0.32,,0.0,,
 b3_test_extractive_bm25_20260514_021711,b3,b3,test,extractive,bm25,bm25,bm25,0.88,0.6667,0.8125,0.8984,1.0,0.5227,0.0,0.4286,0.2727,1.0
 b3_test_extractive_bm25_20260514_020608,b3,b3,test,extractive,bm25,bm25,bm25,0.88,0.5,0.7344,0.7562,1.0,0.4545,0.0,0.5714,0.2857,1.0
 ablation_no_rerank_hybrid_v2,b3,b3 (no-rerank),all,extractive,hybrid,hybrid,hybrid,0.0,1.0,0.74,0.8363,,,,0.0,,
@@ -48,10 +50,12 @@ b3_test_extractive_bm25_20260514_101549,b3,b3,test,extractive,bm25,bm25,bm25,0.8
 b3_test_extractive_bm25_20260514_020310,b3,b3,test,extractive,bm25,bm25,bm25,0.88,0.5,0.7344,0.7562,1.0,0.4545,0.0,0.5714,0.2857,1.0
 b3_test_extractive_bm25_20260514_095909,b3,b3,test,extractive,bm25,bm25,bm25,0.88,0.6667,0.8125,0.8984,1.0,0.5227,0.0,0.4286,0.2727,1.0
 b2_extractive_hybrid_v2_final,b2,b2,all,extractive,hybrid,hybrid,hybrid,1.0,0.0,0.74,0.8327,1.0,0.3896,,0.0,,
+b3_test_extractive_bm25_20260514_103829,b3,b3,test,extractive,bm25,bm25,bm25,0.88,0.6667,0.8125,0.8984,1.0,0.5682,0.0,0.4286,0.2,1.0
 b2_test_extractive_bm25_20260514_021711,b2,b2,test,extractive,bm25,bm25,bm25,1.0,0.0,0.7344,0.7562,1.0,0.32,,0.0,,
 b2_test_extractive_bm25_20260514_020608,b2,b2,test,extractive,bm25,bm25,bm25,1.0,0.0,0.7344,0.7562,1.0,0.32,,0.0,,
 b3_test_extractive_bm25_20260514_100639,b3,b3,test,extractive,bm25,bm25,bm25,0.88,0.6667,0.8125,0.8984,1.0,0.5682,0.0,0.4286,0.2,1.0
 b2_test_extractive_bm25_20260514_021321,b2,b2,test,extractive,bm25,bm25,bm25,1.0,0.0,0.7344,0.7562,1.0,0.32,,0.0,,
+b2_test_extractive_bm25_20260514_103307,b2,b2,test,extractive,bm25,bm25,bm25,1.0,0.0,0.7344,0.7562,1.0,0.32,,0.0,,
 b2_test_extractive_bm25_20260514_011106,b2,b2,test,extractive,bm25,bm25,bm25,1.0,0.0,0.7344,0.7562,1.0,0.32,,0.0,,
 b3_test_extractive_bm25_20260514_101935,b3,b3,test,extractive,bm25,bm25,bm25,0.88,0.6667,0.8125,0.8984,1.0,0.5682,0.0,0.4286,0.2,1.0
 b3_extractive_hybrid_v2_final,b3,b3,all,extractive,hybrid,hybrid,hybrid,0.925,0.7692,0.78,0.8657,1.0,0.5225,0.0,0.4,0.1905,1.0

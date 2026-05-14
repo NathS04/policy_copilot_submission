@@ -115,7 +115,7 @@ def plot_v2_baselines(rows: List[dict]) -> None:
 
 
 def main() -> int:
-    rows = [_row(r, l, b) for r, l, b in RUNS]
+    rows = [_row(r, label, b) for r, label, b in RUNS]
     write_csv(rows)
     plot_v2_baselines(rows)
     print(f"Wrote {OUT_CSV}")
