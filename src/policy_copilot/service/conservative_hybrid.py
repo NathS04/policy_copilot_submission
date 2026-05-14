@@ -28,12 +28,20 @@ from typing import Any, Dict, List, Optional, Tuple
 DEFAULTS = {
     # Top reranker score required to consider retrieval "strong".
     # Reranker scores are sigmoid'd (0..1) for the cross-encoder used in the
-    # project; values >= 0.60 are confident on the dev split.
+    # project; values >= 0.60 are confident on the dev split. In the final
+    # BM25-fallback run the reranker score is saturated at 1.0 for every
+    # query, so this floor does little work; the overlap threshold below
+    # is the meaningful gate.
     "b4_rerank_threshold": 0.60,
     # Jaccard token-overlap floor between the question and the top
-    # retrieved paragraph. Stops B4 from quoting irrelevant high-rerank
-    # paragraphs.
-    "b4_overlap_threshold": 0.10,
+    # retrieved paragraph. Tuned on the dev split per Phase 2 of the
+    # residual-gap-closure plan: 0.09 is the lowest threshold that keeps
+    # dev-split Abstention Accuracy at 1.0 (the 80% floor is preserved
+    # by a clear margin). Lower thresholds (0.06-0.08) recover more
+    # answerable queries but also surface unanswerable false positives
+    # because answerable and unanswerable overlap distributions
+    # interleave in this corpus. See results/tables/b4_threshold_tune_dev.csv.
+    "b4_overlap_threshold": 0.09,
     # If the question contains a number-question shape (how long, how many,
     # what is the maximum, etc.) prefer extractive when the top retrieved
     # paragraph contains at least one number.

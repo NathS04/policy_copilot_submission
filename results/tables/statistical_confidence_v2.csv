@@ -19,7 +19,7 @@ b3_extractive_hybrid_v2_final,B3-Extractive hybrid (v2),b3,answer_rate,40,0.925,
 b3_extractive_hybrid_v2_final,B3-Extractive hybrid (v2),b3,abstention_accuracy,13,0.7692,0.5385,1.0,2000,42
 b3_extractive_hybrid_v2_final,B3-Extractive hybrid (v2),b3,evidence_recall_at_5,50,0.78,0.7,0.85,2000,42
 b3_extractive_hybrid_v2_final,B3-Extractive hybrid (v2),b3,citation_precision,37,1.0,1.0,1.0,2000,42
-b4_conservative_hybrid_replay_v2_final,B4 Conservative Hybrid (v2 replay),b4,answer_rate,40,0.45,0.3,0.6,2000,42
+b4_conservative_hybrid_replay_v2_final,B4 Conservative Hybrid (v2 replay),b4,answer_rate,40,0.5,0.35,0.65,2000,42
 b4_conservative_hybrid_replay_v2_final,B4 Conservative Hybrid (v2 replay),b4,abstention_accuracy,13,1.0,1.0,1.0,2000,42
 b4_conservative_hybrid_replay_v2_final,B4 Conservative Hybrid (v2 replay),b4,evidence_recall_at_5,50,0.73,0.65,0.81,2000,42
-b4_conservative_hybrid_replay_v2_final,B4 Conservative Hybrid (v2 replay),b4,citation_precision,18,1.0,1.0,1.0,2000,42
+b4_conservative_hybrid_replay_v2_final,B4 Conservative Hybrid (v2 replay),b4,citation_precision,20,1.0,1.0,1.0,2000,42
