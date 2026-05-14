@@ -39,10 +39,13 @@ DEFAULTS: Dict[str, Any] = {
     # at high values for almost every query, so this only catches genuine
     # non-matches (rerank near 0).
     "rerank_floor": 0.05,
-    # Lexical Jaccard overlap floor (stopwords stripped). Tuned on dev split.
-    "overlap_floor": 0.058,
+    # Lexical Jaccard overlap floor (stopwords stripped). Selected on dev
+    # split (see results/tables/b5_threshold_sweep_dev.csv); reproduces the
+    # submitted B5 headline (AR 90.0%, AbsAcc 84.6%) under bare invocation.
+    "overlap_floor": 0.05,
     # "High rerank, low overlap, question qualifier missing" anomaly gate.
-    "high_rerank": 0.95,
+    # high_rerank lowered to 0.90 by the dev-split sweep for the same reason.
+    "high_rerank": 0.90,
     "low_overlap_cutoff": 0.058,
     # If True, abstain on numeric questions whose top paragraph has no digit.
     "numeric_filter": True,

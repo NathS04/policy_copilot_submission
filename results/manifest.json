@@ -1,7 +1,7 @@
 {
   "source": "make_figures.py",
   "verified_by": "verify_artifacts.py",
-  "verified_at": "2026-05-14T11:36:29.444467+00:00",
+  "verified_at": "2026-05-14T11:45:15.626093+00:00",
   "strict": false,
   "allow_backend_mismatch": false,
   "runs": [
@@ -24,6 +24,7 @@
     "b2_test_extractive_bm25_20260514_121725",
     "b2_test_extractive_bm25_20260514_122757",
     "b2_test_extractive_bm25_20260514_123614",
+    "b2_test_extractive_bm25_20260514_124500",
     "b3_extractive_dense_v2_final",
     "b3_extractive_final",
     "b3_extractive_hybrid_v2_contra_upgraded",
@@ -40,6 +41,7 @@
     "b3_test_extractive_bm25_20260514_121725",
     "b3_test_extractive_bm25_20260514_122757",
     "b3_test_extractive_bm25_20260514_123615",
+    "b3_test_extractive_bm25_20260514_124500",
     "b4_conservative_hybrid_replay_v2_final",
     "b5_evidence_gated_hybrid_v3_final",
     "test_b2_extractive_bm25_integration"
@@ -216,6 +218,15 @@
       "backend_requested": "bm25",
       "backend_used": "bm25"
     },
+    "b2_test_extractive_bm25_20260514_124500": {
+      "run_config_sha256": "2990717015c70668a81d431575cc27f2d6747cec877091c02d2938956c5b79a3",
+      "summary_sha256": "497b27203b536b32d234b81349d758f281436346e98e8d497de2384714ce0164",
+      "baseline": "b2",
+      "split": "test",
+      "mode": "extractive",
+      "backend_requested": "bm25",
+      "backend_used": "bm25"
+    },
     "b3_extractive_dense_v2_final": {
       "run_config_sha256": "a524b2366a1f23cd31c063f5de77a3a0b53db1ed69ccb3683bfc3104c8ba6b47",
       "summary_sha256": "23615d2941b72f06d61ff562032da908f9d1ad141b5c795f28a245eedfd626b7",
@@ -360,6 +371,15 @@
       "backend_requested": "bm25",
       "backend_used": "bm25"
     },
+    "b3_test_extractive_bm25_20260514_124500": {
+      "run_config_sha256": "a201b5725bdd2f06ecaa0a6e0d1308e7fc16883ae86947687bc292825f5f4ce9",
+      "summary_sha256": "18f4968d150caacb5c452f32dd0f735bf63b9f017f6f55b75d4270a510fb487c",
+      "baseline": "b3",
+      "split": "test",
+      "mode": "extractive",
+      "backend_requested": "bm25",
+      "backend_used": "bm25"
+    },
     "b4_conservative_hybrid_replay_v2_final": {
       "run_config_sha256": "c35dd9761199d41f1aec868aaa4b458547f69747aa76a90c081204c046799d5e",
       "summary_sha256": "454c457692403e3440ad16cbcb10944db7fe15dc9c0b5c85b9f0e31b300fb852",
@@ -370,7 +390,7 @@
       "backend_used": "bm25"
     },
     "b5_evidence_gated_hybrid_v3_final": {
-      "run_config_sha256": "3c660dc14f76a7163f5fb862f18803df7c4d8816a0eae11e74fb800af60762c3",
+      "run_config_sha256": "6b34eb9059892d45c93d898212fc34a5bc2b0666614df78570158b1f184b11d2",
       "summary_sha256": "6560b6073ad324233c4f722e3edc45bf895c9121d8d30c442f297516dbdce181",
       "baseline": "b5",
       "split": null,
@@ -379,7 +399,7 @@
       "backend_used": "hybrid"
     },
     "test_b2_extractive_bm25_integration": {
-      "run_config_sha256": "b5afb29b1e65b993c7426786a8f862f1863e4968a74673b8e8ecd9982a4c34c4",
+      "run_config_sha256": "220016f0382621f1910c266e49aad1b1cbc6948f478b8b20fac844c47aa18e47",
       "summary_sha256": "497b27203b536b32d234b81349d758f281436346e98e8d497de2384714ce0164",
       "baseline": "b2",
       "split": "test",
