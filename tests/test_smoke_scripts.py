@@ -27,7 +27,11 @@ def test_run_eval_help():
 
 
 def test_reproduce_offline():
-    result = _run([str(SCRIPTS / "reproduce_offline.py")])
+    # 60s budget: torch/sentence_transformers import overhead in the [ml]
+    # install path pushes the BM25-only reproduce script just over the
+    # previous 15s timeout. The script itself runs in ~10s on consumer
+    # hardware once imports complete.
+    result = _run([str(SCRIPTS / "reproduce_offline.py")], timeout=60)
     assert result.returncode == 0
 
 

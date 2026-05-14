@@ -323,8 +323,21 @@ def run_baseline(baseline: str, golden_path: str, run_name: str,
     answerer = Answerer()
     retriever = None
     if baseline in ("b2", "b3"):
-        retriever = Retriever(backend=cfg["backend_requested"])
+        allow_fb = ablations.get("allow_fallback", True)
+        retriever = Retriever(backend=cfg["backend_requested"], allow_fallback=allow_fb)
         cfg["backend_used"] = retriever.backend_used
+
+        def _str_or_none(value):
+            return value if (value is None or isinstance(value, str)) else None
+        cfg["backend_reason"] = _str_or_none(
+            getattr(retriever, "backend_reason", None)
+        ) or "explicit_request"
+        cfg["dense_index_path"] = _str_or_none(
+            getattr(retriever, "dense_index_path", None)
+        )
+        cfg["dense_index_sha"] = _str_or_none(
+            getattr(retriever, "dense_index_sha", None)
+        )
     with open(run_dir / "run_config.json", "w") as f:
         json.dump(cfg, f, indent=2)
     if baseline in ("b2", "b3"):
@@ -664,7 +677,7 @@ def main():
     # -- Mode & Backend --
     parser.add_argument("--mode", choices=["generative", "extractive"], default="generative",
                         help="Evaluation mode: 'generative' (LLM enabled) or 'extractive' (LLM disabled + fallback)")
-    parser.add_argument("--backend", choices=["dense", "bm25"], default="dense",
+    parser.add_argument("--backend", choices=["dense", "bm25", "hybrid", "bm25_fallback"], default="dense",
                         help="Retrieval backend: 'dense' (FAISS) or 'bm25' (Offline/Lite)")
     parser.add_argument("--allow_no_key", action="store_true",
                         help="Allow generative mode without API key (produces LLM_DISABLED). For debug only.")
