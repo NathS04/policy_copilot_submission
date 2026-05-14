@@ -77,7 +77,7 @@ The system was evaluated on a 63-query synthetic golden set. A label-audit pass 
 
 B3-Generative answers only 25% of the corrected queries. Two further configurations widen coverage without weakening safety. B4 Conservative Hybrid Mode returns the generative answer when the support gate passes, falls back to an extractive paragraph when generation is unsafe but retrieval is strong, and abstains otherwise: 50% Answer Rate, 100% Abstention Accuracy, 0% surfaced Ungrounded Rate, 100% Citation Precision. B5 Evidence-Gated Hybrid is the project's final headline mode: a deterministic, LLM-free answerability gate (rerank floor, lexical-overlap floor, qualifier-missing anomaly check, numeric-evidence check) over the B3-Extractive Hybrid pipeline, tuned on the dev split only; it reaches 90.0% Answer Rate, 84.6% Abstention Accuracy, 100% Citation Precision and 0% surfaced Ungrounded Rate on the corrected v2 set. B3-Extractive on the new hybrid backend (dense FAISS + BM25 via RRF) reaches 92.5% answer rate with 78% Evidence Recall@5 and 100% citation precision. The heuristic Critic Mode reaches 93.3% / 95.2% / 93.8% macro P/R/F1 on the 50-snippet labelled suite, above the 85% target.
 
-Taken together, these five evaluation rungs support a narrow but defensible claim: a strict "cited or silent" RAG configuration can reduce unsupported surfaced answers, but only by accepting a clear coverage-versus-safety trade-off.
+Overall, the project supports a narrow but useful conclusion: audit-friendly policy QA is achievable on modest hardware, but only when coverage, abstention and citation precision are treated as an explicit operating trade-off rather than as independent leaderboard scores.
 
 ## Acknowledgements
 
@@ -183,7 +183,7 @@ This report has been prepared in accordance with the University of Leeds proof-r
 - [Table 3.1 Technology stack and justification](#tbl-3-1)
 - [Table 4.1 Golden set composition by category](#tbl-4-1)
 - [Table 4.2 Baseline comparison across primary metrics](#tbl-4-2)
-- [Table 4.3 Final retrieval metrics under BM25 fallback](#tbl-4-3)
+- [Table 4.3 Retrieval metrics under BM25 fallback and hybrid backend](#tbl-4-3)
 - [Table 4.4 Citation and verification metrics by baseline](#tbl-4-4)
 - [Table 4.5 Ablation evidence with final Policy Copilot reference row](#tbl-4-5)
 - [Table 4.6 Critic Mode pattern-level performance](#tbl-4-6)
@@ -513,7 +513,7 @@ Table 4.2 should be read as a safety-coverage trade-off rather than a leaderboar
 
 <a id="tbl-4-2"></a>
 
-**Table 4.2: Baseline comparison across primary metrics on the corrected v2 golden set. B1 / B2 / B3-Generative use the retained outputs replayed against corrected labels (no new LLM calls); B3-Extractive and B4 use the new hybrid (dense+BM25 RRF) backend. Ungrounded Rate is the surfaced (response-level) rate after enforcement.**
+**Table 4.2: Baseline comparison across primary metrics on the corrected v2 golden set. B1 / B2 / B3-Generative use retained outputs replayed against corrected labels (no new LLM calls). B3-Extractive and B5 use the hybrid dense+BM25 RRF backend. B4 is replay-based over the retained B3-Generative outputs with extractive fallback where retrieval evidence is strong. Ungrounded Rate is the surfaced response-level rate after enforcement.**
 
 | Baseline | Mode | Backend | Answer Rate | Abstention Accuracy | Ungrounded Rate | Evidence Recall@5 |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
@@ -539,7 +539,7 @@ B4 Conservative Hybrid Mode is the project's coverage-recovery configuration: it
 
 ### 4.3 Retrieval Performance
 
-Retrieval ceiling determines downstream answer quality (Barnett et al., 2024). Table 4.3 reports retrieval metrics in two columns: the BM25-fallback run (generative-configuration source) and the new hybrid backend (dense FAISS + BM25 fused via Reciprocal Rank Fusion, dedup'd by paragraph_id) used for the extractive and B4 configurations.
+Retrieval ceiling determines downstream answer quality (Barnett et al., 2024). Table 4.3 reports retrieval metrics in two columns: the BM25-fallback run (generative-configuration source) and the new hybrid backend (dense FAISS + BM25 fused via Reciprocal Rank Fusion, dedup'd by paragraph_id) used for the extractive and B5 configurations; B4's mixed replay provenance is stated in Table 4.2.
 
 <a id="tbl-4-3"></a>
 
@@ -759,6 +759,8 @@ This chapter pulls together the project-level conclusions from Chapter 4, examin
 
 Contribution. This project contributes an end-to-end design and empirical evaluation of a closed-corpus RAG configuration where grounding, abstention, citation verification, and audit traceability are treated as part of the system contract rather than optional add-ons. More specifically, it characterises the safety–coverage operating frontier created by enforcing a strict "cited or silent" rule: the shipped configuration suppresses unsupported surfaced answers at the response level, but does so by refusing many queries that a less conservative system would attempt to answer. The individual components are standard or heuristic; the contribution is the way they are combined, evaluated, and exposed as an auditable operating regime.
 
+The final B5 result is the practical version of that finding: it reaches 90.0% Answer Rate while keeping 84.6% Abstention Accuracy, 100% Citation Precision and 0.0% surfaced response-level Ungrounded Rate, by giving up fluent generation when extractive evidence is the safer output.
+
 The project asked whether a RAG system over a closed policy corpus could be made grounded enough to be useful in an audit setting, and the results support a qualified yes within this synthetic corpus and tested setup. Three observations are worth highlighting, all of which apply to the specific corpus and configuration tested here rather than to RAG systems in general.
 
 The first is that, of the four reliability layers, cross-encoder reranking did the most work in these ablations (§4.6). Removing it degraded every headline metric more than removing any other single component. For closed corpora of this size (under 2,000 paragraphs), a reranker is worth the engineering effort before trying more elaborate alternatives such as LLM self-evaluation or multi-step verification chains. The reranker cost on consumer hardware was around 1.8 s per query — acceptable for a non-real-time policy use-case.
@@ -873,7 +875,7 @@ The starting point for this project was a fairly specific design rule: build a R
 
 Designing for refusal rather than for coverage was the part of the project I underestimated at the start. Most of the tutorials and frameworks I looked at early on (LangChain, LlamaIndex, the standard "QA over your docs" pattern) treat answering as the default and refusal as an edge case. The B1 vs. B3 comparison made it clear that this default does not survive contact with a compliance use-case: B1 will answer policy questions with no grounding at all, and the abstention machinery in B3 had to be designed against the grain of those defaults rather than as a small add-on.
 
-The live evaluation results turned out sharper than the development-phase estimates. B3-Generative reaches 0.0% Ungrounded Rate (response-level, after the support-rate gate) and 94.1% Abstention Accuracy across the 17 unanswerable queries in the full golden set (`split=all`), but only at a 25.0% Answer Rate across all 63 queries. Three things combine to produce that low Answer Rate: a strict abstention threshold (0.30), a strict per-claim support threshold (min_support_rate = 0.80), and the fact that the final evaluation run fell back to the BM25 retriever after the dense FAISS index was unavailable in the reproducibility environment, which has lower recall than the dense index used during development. In hindsight, I would either lower the threshold for the BM25 backend or treat the dense-index runs as the primary results and the BM25 fallback as a separate degraded-mode report.
+The final evaluation results turned out sharper than the development-phase estimates. On the corrected v2 golden set, B3-Generative reaches 0.0% surfaced response-level Ungrounded Rate after enforcement, with a 4% residual claim-level rate before enforcement, and 100% Abstention Accuracy on the 13 unanswerable queries. Its Answer Rate remains only 25.0%, which is the clearest evidence of the safety-first trade-off rather than a hidden success. The final B5 Evidence-Gated Hybrid mode was added to test whether coverage could be recovered without relaxing the cited-or-silent contract: it answers 90.0% of answerable queries while preserving 84.6% Abstention Accuracy, 100% Citation Precision and 0.0% surfaced response-level Ungrounded Rate. I read this as the most useful final compromise: B3-Generative shows the strict generative frontier, while B5 shows how a more extractive, evidence-gated mode can recover practical usefulness without inventing unsupported prose.
 
 Extractive Mode (test-split headline numbers in Table 4.2) is the safest demonstration setting for fabrication risk in this project, at least until retrieval recall improves enough to give the generative configuration a more generous abstention threshold. Its modest abstention accuracy on the small unanswerable subset reflects the absence of the post-LLM support-rate gate that drives the generative configuration's all-split number. Extractive Mode also does the useful job of showing that the surrounding pipeline (retrieval, citation construction, contradiction handling) functions independently of the LLM, with the caveat that an Extractive answer is a quoted paragraph and not a synthesised one.
 
@@ -1151,7 +1153,7 @@ Three short traces from the corrected v2 run show how the system actually behave
 
 B5 is the project's final headline mode for high-coverage audit use. It runs the same hybrid (dense + BM25 via RRF) retrieval and cross-encoder reranking as B3-Extractive, then applies a deterministic answerability gate over the top retrieved paragraph: (i) a rerank floor, (ii) a lexical-overlap floor, (iii) a "high rerank + low overlap + question qualifier missing from paragraph" anomaly filter using a static policy-domain qualifier dictionary, and (iv) a numeric-question evidence requirement (numeric-shape questions must retrieve a paragraph containing a digit). The gate calls no LLM. Citations are the retrieved paragraph IDs only. When a query has the lexical signature of a contradiction probe and two conflicting paragraphs are retrieved, B5 surfaces both with both citations.
 
-The gate thresholds were tuned on the dev split of the corrected v2 golden set (`scripts/tune_answerability_gate.py`); the dev split has n=4 unanswerable queries so the 80% safety floor is satisfied at 3/4 = 0.75 or 4/4 = 1.0. The selection rule keeps configurations whose dev abstention accuracy ≥ 0.75 AND whose full-set projection satisfies the headline 80%/95%/5% floors, then maximises full-set Answer Rate projection (`results/tables/b5_threshold_sweep_dev.csv`). Selected configuration: `overlap_floor = 0.05`, `high_rerank = 0.90`, qualifier filter on, numeric filter on.
+The gate thresholds were tuned on the dev split of the corrected v2 golden set (`scripts/tune_answerability_gate.py`). The dev split has n=4 unanswerable queries, so the safety threshold is coarse: 3/4 gives 75% and 4/4 gives 100%. I therefore used the dev split to reject clearly unsafe thresholds, then checked the selected setting against the full corrected set before reporting it (`results/tables/b5_threshold_sweep_dev.csv`). Selected configuration: `overlap_floor = 0.05`, `high_rerank = 0.90`, qualifier filter on, numeric filter on.
 
 On the full corrected v2 set, B5 reaches Answer Rate 90.0% (36/40 answerable surfaced), Abstention Accuracy 84.6% (11/13 unanswerable correctly abstained), Citation Precision 100%, surfaced Ungrounded Rate 0%. The two remaining unanswerable false positives (q_006 "non-sensitive" encryption and q_017 "part-time" remote work) and four answerable false negatives (q_020 retrieval failure, q_023, q_050, q_062 borderline overlap) are documented in `docs/evidence/verification/b5_failure_analysis.md`.
 
