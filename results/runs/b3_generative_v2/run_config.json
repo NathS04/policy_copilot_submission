@@ -59,6 +59,10 @@
     "replayed_from": "b3_generative_bm25_fallback_final",
     "replayed_at": "2026-05-14T01:05:05.016697+00:00",
     "replay_script": "scripts/replay_score_runs.py",
-    "no_llm_calls": true
-  }
+    "no_llm_calls": true,
+    "backend_source_run": "b3_generative_bm25_fallback_final",
+    "backend_source_used": "bm25",
+    "replay_note": "Metrics re-scored over retained outputs from the BM25-fallback source run; the backend itself was not re-executed in this replay. backend_requested reflects the original source run config; backend_used reflects the source fallback that actually ran."
+  },
+  "replay_from_bm25_source": true
 }
