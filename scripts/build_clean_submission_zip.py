@@ -63,6 +63,7 @@ SCRIPTS_INCLUDE = [
     "replay_score_runs.py",                 # Phase B
     "run_b4_replay.py",                     # Phase F
     "run_component_ablations.py",           # Phase G
+    "tune_b4_overlap_threshold.py",         # Phase 2 residual-gap-closure
     "auto_label_gold.py",
     "build_audit_exports.py",
     "build_clean_submission_zip.py",
@@ -186,6 +187,9 @@ RESULTS_INCLUDE = [
     "results/tables/statistical_confidence.csv",
     "results/tables/statistical_confidence_v2.csv",       # Phase J
     "results/tables/threshold_sweep.csv",
+    "results/tables/baseline_snapshot_phase1.json",       # Phase 1 residual-gap-closure
+    "results/tables/b4_threshold_tune_dev.csv",           # Phase 2 residual-gap-closure
+    "results/tables/retrieval_v3_sweep.csv",              # Phase 4 residual-gap-closure
 ]
 
 # Whole canonical run folders.
