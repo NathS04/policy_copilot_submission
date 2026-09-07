@@ -1,13 +1,62 @@
 # Policy Copilot
 
+> **Reliable RAG under measurable constraints.** I built an evidence-grounded policy QA system around retrieval, reranking, abstention, claim-level citation verification, contradiction surfacing and audit export. On a 63-query synthetic evaluation set, the strict configuration reduced **response-level ungrounded output to 0%** and achieved **94.1% abstention accuracy**, but answer coverage fell to **25%**. The key result was therefore a measurable **reliability vs usefulness trade-off**, not simply a safety metric.
+
+`Python` · `RAG` · `BM25` · `Hybrid Retrieval` · `Reranking` · `Evaluation` · `Citation Verification` · `Streamlit` · `Reliability Engineering`
+
 [![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![Tests](https://github.com/NathS04/policy_copilot_submission/actions/workflows/ci.yml/badge.svg)](https://github.com/NathS04/policy_copilot_submission/actions/workflows/ci.yml)
 [![Code style: ruff](https://img.shields.io/badge/code%20style-ruff-000000.svg)](https://docs.astral.sh/ruff/)
 
-Policy Copilot is a closed-corpus question-answering system that answers only when it can cite paragraph-level evidence, and abstains otherwise. The contribution is not a new language model but a reproducible reliability stack — reranking, abstention, deterministic per-claim verification, contradiction surfacing, and audit export — wrapped around standard RAG and evaluated under a strict "cited or silent" rule. The headline finding is a measurable safety/coverage trade-off: on a 63-query synthetic policy corpus, the strict configuration drives the response-level ungrounded rate to zero while answer coverage drops to 25%. That trade-off is evaluated across a five-rung validation ladder: synthetic golden set, peer-reviewer evaluation, public-guidance transfer stress test, adversarial probe, and audit-export artefacts. The external-validity boundary is explicit: the primary benchmark is synthetic, the public-transfer set is small, and the reviewer pool is CS peers rather than compliance specialists.
+---
 
-This repository accompanies the COMP3931 dissertation *"Audit-Ready Policy Copilot: Evidence-Grounded Retrieval-Augmented Generation with Deterministic Reliability Controls"* (BSc Computer Science, University of Leeds, 2025/26).
+## 20-second project view
+
+| Dimension | Details |
+| :--- | :--- |
+| **Problem** | Closed-corpus policy QA where unsupported answers are more costly than abstaining. |
+| **System** | Retrieval + reranking + confidence gating + per-claim verification + contradiction detection + audit exports + Streamlit workbench. |
+| **Evaluation** | 63-query golden set + 292-test reliability suite + peer review + public-guidance transfer testing + adversarial probes. |
+| **Headline result** | **0.0%** response-level ungrounded rate under the strict configuration. |
+| **Trade-off** | Safety improved while answer coverage fell to **25%**. |
+| **Reproducibility** | Offline reproduction available without an LLM API key. |
+
+---
+
+## Product lesson
+
+> **A technically safer system can still be a worse product if the safety mechanism destroys useful coverage.**
+
+The strict operating point improved grounding partly because the system became too reluctant to answer. A production version must optimise reliability **and** usefulness simultaneously. This project quantifies that exact trade-off rather than presenting a safety metric in isolation.
+
+---
+
+## Demo / Workbench
+
+![Policy Copilot Streamlit Audit Workbench](docs/report/figures/screenshot_answerable_query.png)
+
+---
+
+## Architecture
+
+```mermaid
+graph TD
+    A[Policy PDFs] -->|Paragraph Ingestion & Stable IDs| B[Chunk Repository]
+    B --> C[BM25 / Dense / Hybrid Retrieval]
+    C --> D[Cross-Encoder Reranking]
+    D --> E{Confidence Gate}
+    E -->|Below Threshold| F[Abstain / Extractive Fallback]
+    E -->|Above Threshold| G[LLM Generation]
+    G --> H[Claim-Level Citation Verification]
+    H -->|Unsupported Claims| I[Prune / Extractive Fallback]
+    H -->|Verified Claims| J[Contradiction Handling]
+    J --> K[Answer + Paragraph Citations + Audit JSONL Export]
+```
+
+---
+
+This repository accompanies the COMP3931 dissertation *"Audit-Ready Policy Copilot: Evidence-Grounded Retrieval-Augmented Generation with Deterministic Reliability Controls"* (BSc Computer Science, University of Leeds, 2025/26). See [AI_WORKFLOW.md](AI_WORKFLOW.md) for verification details on AI-assisted development.
 
 ---
 
