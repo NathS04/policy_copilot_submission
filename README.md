@@ -17,7 +17,7 @@
 | :--- | :--- |
 | **Problem** | Closed-corpus policy QA where unsupported answers are more costly than abstaining. |
 | **System** | Retrieval + reranking + confidence gating + per-claim verification + contradiction detection + audit exports + Streamlit workbench. |
-| **Evaluation** | 63-query golden set + 292-test reliability suite + peer review + public-guidance transfer testing + adversarial probes. |
+| **Evaluation** | 63-query golden set + 292-test core reliability suite (343 tests passing across expanded 346-test collection) + peer review + public-guidance transfer testing + adversarial probes. |
 | **Headline result** | **0.0%** response-level ungrounded rate under the strict configuration. |
 | **Trade-off** | Safety improved while answer coverage fell to **25%**. |
 | **Reproducibility** | Offline reproduction available without an LLM API key. |
@@ -104,7 +104,7 @@ Standard RAG retrieves context and asks a language model to answer; it provides 
 | Path | Purpose |
 | :--- | :--- |
 | `src/policy_copilot/` | Production source: ingest, index, retrieve, rerank, generate, verify, critic, service, ui |
-| `tests/` | Test suite (292 collected under the documented command: 290 passed, 2 conditionally skipped) |
+| `tests/` | Test suite (292-test core reliability suite documented in dissertation; 343 passing across expanded 346-test project collection) |
 | `scripts/` | CLI entry points (eval runner, reproducibility, figure / report generation) |
 | `data/corpus/` | Synthetic policy PDFs and processed paragraphs (project data, not report prose) |
 | `data/public_transfer_corpus/` | Cached main text from NCSC, ICO and ACAS guidance pages whose site terms or page footers state Open Government Licence v3.0, except where otherwise stated; provenance and hashes in `provenance.csv`, used by §4.11 |
